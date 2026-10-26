@@ -1,0 +1,434 @@
+/* Agent Architecture — the figures that are HTML rather than SVG. Loaded with
+   the deck (imported from its index), so nothing here is shared with the
+   other keynotes. */
+
+/* Cover subtitle under the title; Model · Context · Execution sit as glass pills centred at the foot */
+.title-words .title-sub { margin: -16px 0 0; font-size: 44px; line-height: 1.2; color: var(--blue-100); }
+.title-words .title-sub em { font-style: normal; font-weight: 500; color: var(--cyan-300); }
+
+/* Introduction: the two questions the talk answers; the definition of useful along the foot */
+.intro-foot { position: absolute; left: var(--frame-x); right: var(--frame-x); bottom: 120px; display: flex; justify-content: center; align-items: center; gap: 16px; font-size: 28px; color: var(--muted); }
+.intro-foot b { font-weight: 600; color: var(--cyan-300); }
+.intro-foot .eq { margin-right: 6px; }
+/* Intelligence 1.0: the three answers to the lead's question, as pills that
+   wrap inside the text column. */
+.i1-pills { display: flex; flex-wrap: wrap; gap: 12px; margin-top: -6px; font-size: 26px; }
+.intro-foot .pill, .models-foot .pill, .i1-pills .pill { padding: 10px 26px; border-radius: 999px; border: 1.5px solid color-mix(in srgb, var(--cyan-300) 45%, transparent); background: color-mix(in srgb, var(--cyan-300) 7%, transparent); color: var(--white); font-size: 26px; white-space: nowrap; }
+
+/* The definition as one open equation: Agent = the parts. Each part is an
+   icon in a ring, the word, and — on cue — one line on what it means for a
+   business. No boxes: the headline already quotes the four. Ownership, the
+   one colour. */
+.formula { display: flex; align-items: flex-start; width: 1640px; }
+/* Each term is one small grid: plus | icon | name on a 52px first row, the
+   gloss under icon + name on the second — so "Agent =", every icon, word and
+   plus sign share one line whatever the glosses do. Sized so five terms fit. */
+.formula-eq { display: flex; align-items: center; gap: 14px; height: 52px; padding-right: 22px; font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; }
+.formula-eq b { font-size: 54px; font-weight: 500; line-height: 1; }
+.formula-eq span { font-size: 42px; line-height: 1; color: var(--dim); }
+/* A term is one small grid: icon | name on a 52px first row, the gloss under
+   both on the second — so "Agent =", every icon, word and plus sign share one
+   line whatever the glosses do. Sized so five terms fit. */
+.formula-term {
+  flex: 1 1 0; min-width: 0;
+  display: grid; grid-template-columns: 52px minmax(0, 1fr); grid-template-rows: 52px auto;
+  grid-template-areas: "icon name" "gloss gloss"; row-gap: 12px; align-items: center;
+}
+.formula-plus { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; height: 52px; padding: 0 12px; font-family: var(--font-display); font-size: 36px; line-height: 1; color: var(--dim); }
+/* Four terms, no glosses: the row has slack. Terms take their natural width
+   and the three plus signs share the slack equally, each centred in its gap;
+   Model stays tight to "Agent =". With ownership in (five terms, glosses under
+   them) the row is full: terms share the width and the plus hugs the next. */
+.formula:not(.owned) .formula-term { flex: 0 0 auto; }
+.formula:not(.owned) .formula-plus { flex: 1 1 0; padding: 0; }
+.formula:not(.owned) .formula-gloss { display: none; } /* not yet shown, and it must not widen the term */
+.formula-part { display: contents; }
+.formula-part i {
+  grid-area: icon; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+  color: var(--cyan-300); border: 1.5px solid color-mix(in srgb, var(--cyan-300) 45%, transparent);
+  background: color-mix(in srgb, var(--cyan-300) 8%, transparent);
+}
+.formula-part i svg { width: 26px; height: 26px; }
+.formula-part b { grid-area: name; padding: 0 10px 0 12px; font-family: var(--font-display); font-weight: 500; font-size: 28px; letter-spacing: -0.02em; line-height: 1.1; color: var(--white); white-space: nowrap; }
+.formula-gloss { grid-area: gloss; align-self: start; display: block; padding-right: 22px; font-size: 21px; line-height: 1.32; color: var(--muted); text-wrap: pretty; }
+.formula-term.human .formula-part i { color: var(--amber-300); border-color: color-mix(in srgb, var(--amber-300) 45%, transparent); background: color-mix(in srgb, var(--amber-300) 8%, transparent); }
+.formula-term.human .formula-part b { color: var(--amber-300); }
+
+/* What is an agent?: two definitions under the title, centred in the room
+   below it — Jensen's alone, then ours beneath it, so the first drifts up on
+   the click. Each is a quote with its attribution, a size under the headline
+   so the pair fits. */
+.defs { display: grid; grid-template-columns: 1fr; row-gap: 56px; width: 1640px; text-align: left; }
+.defs-quotes { display: grid; row-gap: 44px; }
+/* On the click the pair moves left, a size down, and the drawing takes the right. */
+.defs:not(.on) .defs-graph { display: none; }
+.defs.on { grid-template-columns: minmax(0, 1fr) 640px; column-gap: 80px; align-items: center; }
+.defs.on .def-q { font-size: 46px; max-width: none; }
+.defs.on .def-by { font-size: 24px; }
+.defs-graph { display: grid; justify-items: end; }
+.def-q { margin: 0 0 14px; font-family: var(--font-display); font-weight: 500; font-size: 62px; letter-spacing: -0.02em; line-height: 1.15; color: var(--white); text-wrap: balance; max-width: 1500px; }
+.def-q em.lit { font-style: normal; color: var(--cyan-300); }
+.def-q em.lit.own { color: var(--amber-300); }
+.def-by { margin: 0; font-size: 30px; color: var(--dim); }
+
+/* Four kinds of agent — one column each across the full width. Each column
+   is a subgrid of the same four rows (glyph, name, line, facts), so the facts
+   sit on one line across the stage however long the line above them runs. */
+.frame-figure.wide .frame-fit { justify-self: stretch; }
+.kinds.four { grid-template-columns: repeat(4, 1fr); grid-template-rows: auto auto auto auto; column-gap: 56px; row-gap: 0; align-self: start; }
+.kinds.four .kind { display: grid; grid-template-rows: subgrid; grid-row: 1 / span 4; row-gap: 0; padding: 0; border: 0; }
+.kinds.four .glyph { padding: 0 0 8px; }
+.kinds.four .glyph svg { margin: 0 0 0 -12px; }
+.kinds.four .name { display: grid; row-gap: 4px; padding: 22px 0 16px; border-top: 1px solid var(--line-strong); }
+.kinds.four .h2 { font-size: 40px; }
+.kinds .kick { font-size: 19px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.kinds.four > .kind > p { font-size: 24px; padding-bottom: 22px; }
+.kinds .facts { display: grid; grid-template-columns: 112px 1fr; column-gap: 12px; row-gap: 8px; margin: 0; padding-top: 18px; border-top: 1px solid var(--line); align-content: start; }
+.kinds .facts dt { font-size: 21px; color: var(--dim); line-height: 1.35; }
+.kinds .facts dd { margin: 0; font-size: 21px; line-height: 1.35; color: var(--muted); text-wrap: pretty; }
+.kinds .facts dd.own { color: var(--cyan-300); }
+/* Five columns: tighter gap and type so each fits ~300px. */
+.kinds.five { grid-template-columns: repeat(5, 1fr); column-gap: 36px; }
+.kinds.five .h2 { font-size: 33px; }
+.kinds.five .kick { font-size: 16px; }
+.kinds.five > .kind > p { font-size: 20px; }
+.kinds.five .facts { grid-template-columns: 94px 1fr; }
+.kinds.five .facts dt, .kinds.five .facts dd { font-size: 18px; }
+
+/* The comparison table */
+.cmp { width: 1640px; border-collapse: collapse; align-self: start; }
+.cmp th, .cmp td { text-align: left; vertical-align: top; padding: 15px 22px; }
+.cmp th { font-family: var(--font-display); font-weight: 500; font-size: 32px; letter-spacing: -0.02em; border-bottom: 1px solid var(--line-strong); padding-bottom: 18px; }
+.cmp th small { display: block; margin-top: 4px; font-family: var(--font-body); font-size: 19px; font-weight: 400; letter-spacing: 0; color: var(--dim); }
+.cmp td { font-size: 24px; line-height: 1.3; color: var(--blue-100); border-bottom: 1px solid var(--line); text-wrap: pretty; }
+.cmp th:first-child, .cmp td:first-child { width: 200px; padding-left: 0; }
+.cmp td:first-child { font-size: 21px; color: var(--dim); padding-top: 18px; }
+.cmp tr.own td { color: var(--amber-300); }
+.cmp.five th { font-size: 27px; padding: 12px 16px 16px; }
+.cmp.five th small { font-size: 16px; }
+.cmp.five td { font-size: 20px; padding: 12px 16px; }
+.cmp.five th:first-child, .cmp.five td:first-child { width: 170px; padding-left: 0; }
+.cmp.five td:first-child { font-size: 18px; }
+.cmp tr.own td:first-child { color: var(--dim); }
+.cmp td .ex { color: var(--muted); }
+
+/* Tools and skills — three cards, the rules card lit */
+/* Agent capacities: three glass boxes (the launch deck's `.i2-boxes`, three
+   across), each an icon, the word and one line — nothing smaller. */
+.i2-boxes.three { grid-template-columns: repeat(3, 1fr); column-gap: 40px; }
+.i2-boxes.three .i2-box { min-height: 320px; row-gap: 16px; }
+.i2-boxes.three .i2-box h3 { font-size: 46px; }
+.i2-boxes.three .i2-box p { font-size: 28px; color: var(--blue-100); }
+/* On the click: today's two step forward in the deck's cyan, the third steps
+   back; the pill under them says so. */
+/* `caps-row`, not `cap` — a bare `.cap` here leaked into every product mock with a caption class. */
+.caps-row { display: grid; row-gap: 44px; width: 1640px; align-self: start; justify-items: center; }
+.caps-row .i2-box { transition: border-color .6s var(--ease-out), box-shadow .6s var(--ease-out), opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+.caps-row .i2-box.focus { border-color: color-mix(in srgb, var(--cyan-300) 70%, transparent); box-shadow: 0 30px 80px color-mix(in srgb, var(--navy-950) 45%, transparent), 0 0 70px color-mix(in srgb, var(--cyan-300) 22%, transparent), inset 0 1px 0 color-mix(in srgb, var(--white) 25%, transparent); transform: translateY(-6px); }
+.caps-row .i2-box.back { opacity: .38; }
+.caps-row-go { display: grid; justify-items: center; }
+.caps-row-go .shots-pill { font-size: 34px; padding: 14px 44px; border-color: var(--cyan-300); }
+
+/* A service: a container of things, then what it holds */
+.svc { display: grid; row-gap: 26px; width: 880px; justify-items: stretch; }
+.svc-card { display: grid; row-gap: 20px; padding: 26px 30px 28px; border-radius: 24px; background: var(--navy-800); border: 1px solid var(--line-strong); min-height: 560px; transition: border-color .6s; }
+.svc-card.holds { border-color: color-mix(in srgb, var(--blue-400) 75%, transparent); }
+.svc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.svc-name { font-family: var(--font-display); font-weight: 500; font-size: 32px; letter-spacing: -0.02em; }
+.svc-kick { position: relative; display: grid; font-size: 22px; color: var(--muted); text-align: right; }
+.svc-kick > span { grid-area: 1 / 1; white-space: nowrap; }
+.svc-kick > .on { color: var(--cyan-300); }
+.svc-layers { display: grid; }
+.svc-layers > * { grid-area: 1 / 1; }
+.svc-things { display: flex; flex-wrap: wrap; gap: 14px; align-content: start; padding-top: 6px; }
+.svc-things span { padding: 12px 22px; border: 1px dashed var(--line-strong); border-radius: 12px; font-size: 25px; color: var(--muted); }
+.svc-holds { display: grid; row-gap: 10px; align-content: start; }
+.svc-row { display: grid; grid-template-columns: 44px 230px 1fr; column-gap: 16px; align-items: center; padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--navy-900) 70%, transparent); border: 1px solid var(--line); }
+.svc-row i { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--cyan-300); background: color-mix(in srgb, var(--cyan-300) 12%, transparent); }
+.svc-row b { font-weight: 500; font-size: 24px; }
+.svc-row span { font-size: 21px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Context discovery: the chain of calls */
+.chain { display: flex; align-items: stretch; width: 1640px; }
+.chain-item { display: flex; align-items: stretch; flex: 1 1 0; min-width: 0; }
+.chain-arrow { display: flex; align-items: center; align-self: center; gap: 0; padding: 0 10px; color: var(--blue-300); }
+.chain-arrow i { display: block; width: 22px; height: 2px; background: currentColor; }
+.chain-node { position: relative; flex: 1 1 0; min-width: 0; display: grid; align-content: start; row-gap: 12px; padding: 26px 22px 24px; border-radius: 18px; background: var(--navy-800); border: 1px solid var(--line); transition: border-color .5s, box-shadow .5s; }
+.chain-node.now { border-color: color-mix(in srgb, var(--cyan-300) 70%, transparent); box-shadow: 0 0 0 6px color-mix(in srgb, var(--cyan-300) 10%, transparent); }
+.chain-node.last { border-color: color-mix(in srgb, var(--blue-400) 60%, transparent); }
+.chain-n { font-family: var(--font-display); font-size: 18px; letter-spacing: .1em; color: var(--dim); }
+.chain-node code { display: block; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 22px; line-height: 1.3; color: var(--white); white-space: pre-wrap; word-break: break-word; }
+.chain-node code.out { font-size: 19px; color: var(--cyan-300); }
+.chain-node.now > code:first-of-type { color: var(--cyan-300); }
+.chain-node.now code.out { color: var(--white); }
+.chain-more { display: grid; row-gap: 4px; }
+.chain-more code { font-size: 19px; color: var(--muted); }
+.chain-node p { margin: 8px 0 0; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 21px; line-height: 1.32; color: var(--muted); text-wrap: pretty; }
+
+/* Task models — the four glass boxes borrow the launch deck's `.i2-boxes` */
+.i2-box .tag { justify-self: start; padding: 4px 12px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--amber-300) 70%, transparent); font-size: 18px; color: var(--amber-300); }
+.i2-box .eg { margin-top: auto; padding-top: 14px; border-top: 1px dashed var(--line); font-size: 21px; color: var(--muted); }
+.i2-box .eg b { font-weight: 500; color: var(--dim); margin-right: 8px; }
+/* The closing line, in the intro slide's pill, once the fourth box is in. */
+.models-foot { display: flex; justify-content: center; margin-top: 44px; }
+
+/* Fallbacks with no specificity (`:where`), so the shared rules in
+   theme/components.css win as soon as they exist. */
+:where(.cues) { list-style: none; margin: 0; padding: 0; display: grid; row-gap: 12px; }
+:where(.cues li) { position: relative; padding-left: 30px; font-size: 25px; line-height: 1.3; color: var(--muted); text-wrap: pretty; }
+:where(.cues li)::before { content: ''; position: absolute; left: 0; top: .66em; width: 14px; height: 2px; background: var(--dim); }
+:where(.ph-screen) { display: grid; place-items: center; background: #F3F4F6; color: #6B7280; border: 1px dashed #CBD5E1; margin: 12px; border-radius: 10px; }
+:where(.ph-inner) { display: grid; justify-items: center; row-gap: 8px; text-align: center; padding: 40px; }
+:where(.ph-inner b) { font-size: 22px; color: #1F2937; }
+:where(.ph-inner span) { font-size: 15px; }
+:where(.ph-inner small) { font-size: 12px; color: #9CA3AF; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ── Why we build what we build: the six opening slides (ported from the
+   Rework keynote, references/brian.slide.html) ─────────────────────────── */
+@font-face { font-family: 'Caveat Sub'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('./assets/caveat-sub.woff2') format('woff2'); }
+.handline, .quoteline { font-family: 'Caveat Sub', cursive; font-weight: 700; margin: 0; }
+.handline { font-size: 34px; color: var(--cyan-300); }
+.quoteline { display: inline-block; font-size: 64px; color: var(--amber-300); transform: rotate(-3deg); }
+/* The Caveat subset has no Vietnamese glyphs; a Vietnamese stamp uses Dancing
+   Script (fontsource, all subsets) so every letter is in one hand. */
+.quoteline.vi, .handline.vi { font-family: 'Dancing Script Variable', cursive; }
+.ctx-kicker { margin: 0; font-size: 25px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+
+/* 1 — the next token: statement and a looping token stream, the side box beside */
+.llm-grid { display: grid; grid-template-columns: 1.7fr .72fr; width: 1640px; text-align: center; }
+.llm-grid > div { display: grid; row-gap: 34px; align-content: center; justify-items: center; padding-right: 80px; }
+.llm-grid > div + div { border-left: 1px solid var(--line); padding: 0 0 0 80px; justify-items: stretch; text-align: left; }
+.llm-stmt { font-family: var(--font-display); font-weight: 500; font-size: 72px; letter-spacing: -.02em; line-height: 1.14; }
+.tok-stream { display: flex; gap: 14px; align-items: flex-end; margin-top: 10px; }
+.tok { font-family: var(--font-display); font-size: 30px; padding: 14px 24px; border-radius: 14px; background: var(--navy-800); border: 1px solid var(--line); opacity: 0; animation: ctx-tok 5.6s infinite; }
+.tok-stream > .tok:nth-child(2) { animation-delay: .5s; }
+.tok-stream > .tok:nth-child(3) { animation-delay: 1s; }
+.tok-stream > .tok:nth-child(4) { animation-delay: 1.5s; }
+.tok.cursor, .tok.pred { background: var(--blue-500); border-color: var(--blue-400); color: var(--white); box-shadow: 0 0 26px color-mix(in srgb, var(--blue-400) 55%, transparent); }
+.tok.cursor { animation: ctx-cursor 5.6s infinite; }
+.tok.pred { animation: ctx-pred 5.6s infinite; }
+.tok.alt { font-size: 24px; padding: 9px 18px; animation: ctx-alt 5.6s infinite; }
+.tok.still { opacity: 1; animation: none; font-size: 22px; padding: 8px 18px; }
+.tok-pred { display: grid; row-gap: 10px; justify-items: start; }
+@keyframes ctx-tok { 0% { opacity: 0; transform: translateY(10px); } 6% { opacity: 1; transform: none; } 90% { opacity: 1; } 96%, 100% { opacity: 0; } }
+@keyframes ctx-cursor { 0%, 43% { opacity: 0; } 46% { opacity: 1; } 51% { opacity: .25; } 56% { opacity: 1; } 61% { opacity: .25; } 64%, 100% { opacity: 0; } }
+@keyframes ctx-pred { 0%, 64% { opacity: 0; transform: translateY(8px); } 70% { opacity: 1; transform: none; } 90% { opacity: 1; } 96%, 100% { opacity: 0; } }
+@keyframes ctx-alt { 0%, 68% { opacity: 0; transform: translateY(8px); } 74% { opacity: .45; transform: none; } 90% { opacity: .45; } 96%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tok, .tok.cursor, .tok.pred { animation: none; opacity: 1; } .tok.alt { animation: none; opacity: .45; } }
+.side-box { display: grid; row-gap: 20px; justify-items: start; padding: 40px 40px 44px; border: 1.5px dashed var(--line-strong); border-radius: 20px; }
+.side-box .lead { font-size: 27px; line-height: 1.45; }
+.side-box .lead strong { color: var(--white); font-weight: 600; }
+.side-box .small { margin: 0 0 12px; font-size: 20px; }
+.tok-pills { display: flex; gap: 18px; align-items: flex-start; }
+.tok-col { display: grid; row-gap: 8px; justify-items: center; }
+.tok-label { font-size: 16px; color: var(--dim); }
+
+/* 2 — same prompt, different answers */
+.answers { display: grid; row-gap: 20px; justify-items: center; }
+.answers .h1 { margin: 0; font-size: 60px; white-space: nowrap; }
+
+/* 3 — Context. */
+.ctx-answer { display: grid; row-gap: 48px; justify-items: center; }
+.ctx-answer .lead { font-size: 44px; color: var(--blue-100); }
+.ctx-answer .lead strong { color: var(--white); font-weight: 600; }
+.bigword { font-family: var(--font-display); font-weight: 500; font-size: 220px; letter-spacing: -.03em; line-height: 1; color: var(--white); }
+.ctx-more { margin: 0; max-width: 1240px; font-size: 30px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+
+/* 4 — the adoption gap */
+.gap { display: grid; row-gap: 20px; justify-items: start; text-align: left; }
+.gap-row { display: grid; grid-template-columns: 1110px 400px; column-gap: 130px; align-items: center; }
+.gap-stat {
+  display: grid; row-gap: 14px; padding: 40px 38px; border-radius: 22px;
+  border: 1px solid color-mix(in srgb, #FF8A5B 22%, transparent);
+  background: linear-gradient(135deg, rgba(255, 138, 91, .16), rgba(255, 138, 91, .06));
+}
+.gap-stat b { font-family: var(--font-display); font-size: 132px; font-weight: 600; line-height: .9; letter-spacing: -0.03em; color: #FF8A5B; }
+.gap-stat p { margin: 0; font-size: 32px; line-height: 1.25; font-weight: 500; color: var(--white); text-wrap: balance; }
+.gap-stat small { font-size: 18px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+
+/* 5 — business context is fragmented */
+.frag { display: grid; row-gap: 14px; justify-items: center; }
+.frag .h1 { margin: 0 0 8px; font-size: 60px; white-space: nowrap; }
+.frag-fig svg { display: block; }
+
+/* 6 — we cannot buy our business context */
+.buy { display: grid; row-gap: 44px; justify-items: start; text-align: left; width: 1460px; }
+.buy-lead { margin: 0; font-size: 34px; line-height: 1.6; color: var(--muted); }
+.buy .h1 { margin: 0; font-size: 96px; line-height: 1.1; }
+.buy-build { display: flex; align-items: baseline; gap: 48px; font-family: var(--font-display); font-weight: 500; font-size: 96px; letter-spacing: -.02em; }
+
+/* Tools — 01 Base CLI and 02 Base MCP as glass cards, each drawn like an
+   install page (a label, a one-liner in a box, the copy glyph); 03 the tools
+   themselves: service tools (four rows) and public tools (two rows), marquee
+   rows drifting opposite ways behind a soft edge mask. The list is doubled in
+   the markup so the loop never shows its seam. Every rule here is prefixed
+   `tools-`: a bare `.tools` class belongs to the product mocks' toolbars. */
+.tools-title { display: flex; align-items: center; gap: 12px; margin-bottom: 2px; }
+.tools-title svg { width: 30px; height: 30px; color: var(--cyan-300); margin: 0; }
+.tools-title h3 { margin: 0; font-family: var(--font-display); font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+.tools-cmd { display: grid; row-gap: 6px; }
+.tools-cmd .lbl { font-size: 17px; font-weight: 600; color: var(--muted); }
+.tools-cmd code { display: flex; align-items: center; gap: 14px; height: 46px; padding: 0 16px; border-radius: 10px; font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 17px; color: var(--white); background: color-mix(in srgb, var(--navy-950) 55%, transparent); border: 1px solid var(--line-strong); white-space: nowrap; }
+.tools-cmd code .line { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.tools-cmd code b { font-weight: 600; color: var(--amber-300); }
+.tools-cmd code i { font-style: normal; color: var(--muted); }
+.tools-cmd code u { text-decoration: none; color: var(--blue-300); }
+.tools-cmd code s { text-decoration: none; color: var(--dim); }
+.tools-right-wrap { display: grid; min-width: 0; }
+.tools-right { position: relative; display: grid; row-gap: 26px; min-width: 0; padding: 12px 0 12px 32px; border-left: 1px solid var(--line); }
+.tools-right > .i2-n { position: absolute; top: 12px; right: 0; font-size: 20px; color: var(--dim); }
+.tools-group { display: grid; row-gap: 10px; min-width: 0; }
+.tools-label { display: flex; align-items: baseline; gap: 14px; margin-bottom: 2px; }
+.tools-label b { font-family: var(--font-display); font-weight: 500; font-size: 32px; letter-spacing: -0.02em; }
+.tools-label span { font-size: 20px; color: var(--muted); }
+.tools-marquee { overflow: hidden; min-width: 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+/* One run is roughly 8–9 k px; these durations put the drift near 35 px/s. */
+.tools-track { display: flex; width: max-content; animation: tools-marquee 240s linear infinite; }
+.tools-marquee.right .tools-track { animation-direction: reverse; animation-duration: 280s; }
+.tools-marquee.slow .tools-track { animation-duration: 320s; }
+.tools-run { display: flex; gap: 12px; padding-right: 12px; }
+.tools-chip { flex: none; padding: 7px 16px; border-radius: 999px; font-size: 19px; line-height: 1.2; border: 1px solid var(--line-strong); color: var(--white); background: color-mix(in srgb, var(--navy-800) 60%, transparent); white-space: nowrap; }
+.tools-chip.code { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 18px; padding: 8px 16px; color: var(--cyan-300); border-color: color-mix(in srgb, var(--cyan-300) 35%, transparent); background: color-mix(in srgb, var(--cyan-300) 8%, transparent); }
+.tools-chip.app { border-color: color-mix(in srgb, var(--blue-300) 40%, transparent); background: color-mix(in srgb, var(--blue-300) 10%, transparent); }
+@keyframes tools-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .tools-track { animation: none; } }
+
+/* The Tools slides, split in three. A card on its own beside the words —
+   larger than in the pair — and the tool rows across the whole stage. */
+.i2-box.tools-box.tools-solo { width: 880px; row-gap: 22px; padding: 30px 36px 34px; border-radius: 24px; }
+.i2-box.tools-box.tools-solo .i2-n { top: 30px; right: 36px; }
+.tools-solo .tools-title { margin-bottom: 6px; }
+.tools-solo .tools-title svg { width: 40px; height: 40px; }
+.tools-solo .tools-title h3 { font-size: 40px; }
+.tools-solo .tools-cmd { row-gap: 8px; }
+.tools-solo .tools-cmd .lbl { font-size: 20px; }
+.tools-solo .tools-cmd code { height: 64px; padding: 0 22px; font-size: 21px; border-radius: 14px; }
+.tools-solo .tools-cmd code .cp { flex: none; width: 18px; height: 18px; margin: 0; color: var(--dim); }
+.tools-full { display: grid; row-gap: 30px; width: 1640px; align-self: start; min-width: 0; }
+.tools-full .tools-group { row-gap: 12px; }
+.tools-full .tools-label { gap: 18px; margin-bottom: 4px; }
+.tools-full .tools-label .i2-n { font-size: 20px; color: var(--dim); margin-right: 4px; }
+.tools-full .tools-label b { font-size: 36px; }
+.tools-full .tools-label span:not(.i2-n) { font-size: 22px; }
+.tools-full .tools-chip { font-size: 22px; padding: 9px 20px; }
+.tools-full .tools-chip.code { font-size: 21px; padding: 10px 20px; }
+
+/* Service chapter close — Service Architecture turns operations into business
+   context. Kicker, one-line headline, the two values side by side (human
+   amber, agent cyan), then the closing line with the hand-font stamp. */
+.concl { display: grid; row-gap: 40px; justify-items: start; text-align: left; width: 1560px; }
+.concl .h1 { margin: 0; font-size: 84px; line-height: 1.12; }
+.concl-pair { display: grid; grid-template-columns: 1fr 1fr; column-gap: 72px; width: 100%; padding: 8px 0 4px; }
+.concl-pair > div { display: grid; row-gap: 10px; padding-left: 26px; border-left: 2px solid var(--line-strong); }
+.concl-pair b { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; }
+.concl-pair p { margin: 0; font-size: 30px; line-height: 1.5; color: var(--muted); }
+/* The closing line runs as one paragraph so the stamp follows the text
+   wherever it wraps; the stamp is nudged off the baseline like a signature. */
+.concl-close { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 56px; line-height: 1.25; letter-spacing: -.02em; color: var(--white); }
+.concl-close .quoteline { font-size: 66px; margin-left: 28px; vertical-align: -6px; white-space: nowrap; }
+
+/* Context discovery: the five steps stand in a narrower text column so the
+   deal page beside them gets the width; no lead. */
+.frame:has(> .frame-body > .frame-figure.discovery) > .frame-body { grid-template-columns: 560px 1fr; column-gap: 50px; }
+.frame:has(> .frame-body > .frame-figure.discovery) .h1 { font-size: 58px; }
+.frame:has(> .frame-body > .frame-figure.discovery) .walk { margin-top: 8px; }
+/* The chain stacked in a text column: the number beside the call, what comes
+   back under it, and the current node's line of what the agent knows now. */
+.chain.stack { flex-direction: column; width: 560px; gap: 8px; }
+.chain.stack .chain-node { flex: none; grid-template-columns: 40px 1fr; column-gap: 8px; row-gap: 4px; align-items: start; padding: 11px 18px 10px; border-radius: 14px; }
+.chain.stack .chain-n { grid-row: 1 / span 3; padding-top: 4px; font-size: 16px; }
+.chain.stack .chain-node code { font-size: 21px; }
+.chain.stack .chain-node code.out { font-size: 17px; }
+.chain.stack .chain-node p { margin: 3px 0 0; padding-top: 8px; font-size: 19px; line-height: 1.3; }
+/* 3:1 — the headline, the cues and five boxes outgrow the column: drop the
+   cues and tighten the boxes. */
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.discovery) .h1 { font-size: 44px; }
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.discovery) .frame-text { row-gap: 14px; align-content: start; }
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.discovery) .cues { display: none; }
+:root[data-ratio='3x1'] .chain.stack { gap: 5px; }
+:root[data-ratio='3x1'] .chain.stack .chain-node { padding: 6px 14px 6px; row-gap: 1px; }
+:root[data-ratio='3x1'] .chain.stack .chain-node code { font-size: 17px; }
+:root[data-ratio='3x1'] .chain.stack .chain-node code.out { font-size: 14px; }
+:root[data-ratio='3x1'] .chain.stack .chain-node p { margin-top: 2px; padding-top: 4px; font-size: 15px; }
+
+/* Summary: four statements down the stage, numbered, arriving one after
+   another on their own. */
+.recap { display: grid; row-gap: 24px; width: 1640px; }
+.recap-row { display: grid; grid-template-columns: 90px 1fr; align-items: start; column-gap: 24px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.recap-row:last-child { border-bottom: 0; }
+.recap-n { font-family: var(--font-display); font-size: 24px; letter-spacing: .1em; color: var(--cyan-300); padding-top: 16px; }
+.recap-row .h2 { font-size: 54px; line-height: 1.15; margin: 0; }
+.recap-row .h2 em { font-style: normal; color: var(--blue-300); }
+.recap-vi { margin: 6px 0 0; font-size: 26px; line-height: 1.3; color: var(--muted); }
+:root[data-ratio='3x1'] .recap { row-gap: 20px; }
+:root[data-ratio='3x1'] .recap-row { padding-bottom: 18px; }
+:root[data-ratio='3x1'] .recap-row .h2 { font-size: 44px; }
+
+/* Summary — Base Agentic OS, centred over nine glass boxes (3×3), one term
+   each and nothing to read. The figure's fit box is stretched to the body
+   cell (the frame's own stretch is for `bleed`, which turns the cell into a
+   block) and the stage fills it; the stage is one grid whose columns
+   animate, px to px: on the click the title and grid fold into a 720px
+   column on the left, the title going small and left-aligned, the boxes
+   dimmer with their glow gone; a hairline fades in down the whole height,
+   from under the breadcrumb to the stage's foot; and the right column opens
+   with its words centred on that height. */
+.frame-figure.learn-fig .frame-fit { position: relative; justify-self: stretch; align-self: stretch; }
+.learn-stage { position: absolute; inset: 0; display: grid; grid-template-columns: 1640px 0px; column-gap: 0px; align-items: center; text-align: left; transition: grid-template-columns .8s var(--ease-out), column-gap .8s var(--ease-out); }
+.learn-stage.aside { grid-template-columns: 720px 848px; column-gap: 72px; }
+.learn-left { display: grid; row-gap: 40px; justify-items: center; min-width: 0; transition: row-gap .8s var(--ease-out); }
+.learn-stage.aside .learn-left { row-gap: 28px; justify-items: start; }
+.learn-title { margin: 0; font-size: 84px; line-height: 1.05; text-align: center; transition: font-size .8s var(--ease-out); }
+.learn-stage.aside .learn-title { font-size: 54px; text-align: left; }
+.learn-sub { margin: 12px 0 0; font-size: 34px; line-height: 1.3; color: var(--blue-100); text-align: center; white-space: nowrap; transition: font-size .8s var(--ease-out), margin .8s var(--ease-out); }
+.learn-stage.aside .learn-sub { margin-top: 6px; font-size: 25px; text-align: left; }
+.learn-grid.i2-boxes { width: 100%; grid-template-columns: repeat(3, 1fr); column-gap: 22px; row-gap: 22px; align-self: start; transition: opacity .8s var(--ease-out); }
+.learn-grid.i2-boxes::before { transition: opacity .8s var(--ease-out); }
+.learn-stage.aside .learn-grid.i2-boxes { column-gap: 14px; row-gap: 14px; opacity: .72; }
+.learn-stage.aside .learn-grid.i2-boxes::before { opacity: 0; }
+.learn-box.i2-box { min-height: 0; height: 150px; padding: 0 30px; place-content: center; border-radius: 22px; transition: height .8s var(--ease-out), border-radius .8s var(--ease-out), padding .8s var(--ease-out), box-shadow .8s var(--ease-out); }
+.learn-stage.aside .learn-box.i2-box { height: 112px; padding: 0 12px; border-radius: 16px; box-shadow: none; }
+.learn-box.i2-box h3 { font-size: 38px; text-align: center; transition: font-size .8s var(--ease-out); }
+.learn-stage.aside .learn-box.i2-box h3 { font-size: 23px; }
+.learn-box.i2-box .i2-n { top: 18px; right: 22px; transition: font-size .8s var(--ease-out), top .8s var(--ease-out), right .8s var(--ease-out); }
+.learn-stage.aside .learn-box.i2-box .i2-n { font-size: 14px; top: 10px; right: 14px; }
+.learn-divider { position: absolute; left: 756px; top: -10px; bottom: -100px; width: 1px; background: var(--line-strong); opacity: 0; transition: opacity .8s var(--ease-out) .2s; }
+.learn-stage.aside .learn-divider { opacity: 1; }
+.learn-right { align-self: stretch; min-width: 0; overflow: hidden; display: grid; align-content: center; padding-left: 72px; }
+.learn-rule { width: 64px; height: 4px; border-radius: 2px; background: var(--cyan-300); margin: 44px 0 28px; }
+.learn-ai { margin: 0; font-size: 34px; line-height: 1.3; color: var(--blue-100); white-space: nowrap; }
+.learn-ai b { display: block; font-family: var(--font-display); font-weight: 500; font-size: 46px; line-height: 1.1; letter-spacing: -0.02em; color: var(--white); margin-bottom: 6px; }
+.learn-word { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 150px; line-height: .94; letter-spacing: -0.045em; color: var(--cyan-300); }
+:root[data-ratio='3x1'] .learn-title { font-size: 64px; }
+:root[data-ratio='3x1'] .learn-left { row-gap: 22px; }
+:root[data-ratio='3x1'] .learn-box.i2-box { height: 96px; }
+:root[data-ratio='3x1'] .learn-box.i2-box h3 { font-size: 28px; }
+:root[data-ratio='3x1'] .learn-stage.aside .learn-title { font-size: 44px; }
+:root[data-ratio='3x1'] .learn-sub { font-size: 28px; }
+:root[data-ratio='3x1'] .learn-stage.aside .learn-sub { font-size: 22px; }
+:root[data-ratio='3x1'] .learn-stage.aside .learn-box.i2-box { height: 80px; }
+:root[data-ratio='3x1'] .learn-divider { bottom: -50px; }
+:root[data-ratio='3x1'] .learn-word { font-size: 104px; margin-top: 26px; }
+
+/* The last word (24-quote): the quote alone, centred; one click folds it into
+   a left column — smaller, dimmed, still left-aligned — and Base's promise
+   opens on the right: a small "Base sẽ", three lines with the verb in cyan,
+   and the closing clause lighter beneath. Columns animate px to px so the
+   quote reflows rather than jumps. */
+.final-stage { position: absolute; inset: 0; display: grid; grid-template-columns: 1640px 0px; column-gap: 0px; align-items: center; text-align: left; transition: grid-template-columns .8s var(--ease-out), column-gap .8s var(--ease-out); }
+.final-stage.aside { grid-template-columns: 760px 820px; column-gap: 60px; }
+.final-left { min-width: 0; transition: opacity .8s var(--ease-out); }
+.final-left blockquote { transition: padding .8s var(--ease-out); }
+.final-left p { transition: font-size .8s var(--ease-out); }
+.final-stage.aside .final-left { opacity: .72; }
+.final-stage.aside .final-left blockquote { padding: 16px 0 0 30px; }
+.final-stage.aside .final-left p { font-size: 36px; line-height: 1.2; }
+.final-stage.aside .final-left footer { font-size: 22px; margin-top: 18px; }
+.final-right { min-width: 0; overflow: hidden; display: grid; align-content: center; }
+.final-kick { margin: 0 0 10px; font-size: 34px; letter-spacing: .02em; color: var(--muted); }
+.final-word { margin: 0; display: grid; row-gap: 6px; font-family: var(--font-display); font-weight: 500; font-size: 76px; line-height: 1.1; letter-spacing: -0.03em; color: var(--white); white-space: nowrap; }
+.final-word em { font-style: normal; color: var(--cyan-300); }
+.final-end { margin: 26px 0 0; font-size: 40px; line-height: 1.3; color: var(--blue-100); white-space: nowrap; }
+:root[data-ratio='3x1'] .final-word { font-size: 58px; }
+:root[data-ratio='3x1'] .final-end { font-size: 32px; }
+:root[data-ratio='3x1'] .final-stage.aside .final-left p { font-size: 32px; }

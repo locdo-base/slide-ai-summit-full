@@ -1,0 +1,83 @@
+/* Three palettes for one deck.
+
+   The slot names are historical — they were written when the deck had only the
+   blue theme — but they are slots, not colours: `--navy-*` is the ground from
+   darkest to raised, `--blue-*` is the structural hue from saturated to pale.
+   A theme rebinds every slot, so every slide, figure and panel follows without
+   knowing a theme exists.
+
+   Constant across all three: `--cyan-300` is the agent, `--amber-300` is the
+   human. Those two carry meaning in the talk, so they keep their identity and
+   only shift enough to sit right on each ground. */
+
+/* ── Blue — the deep navy the deck was designed in ─────────────────────── */
+:root, :root[data-theme='blue'] {
+  --navy-950: #030A1F;
+  --navy-900: #051433;   /* ground */
+  --navy-800: #0A2152;   /* raised surface */
+  --navy-700: #143478;
+
+  --blue-500: #2F7BFF;   /* primary structure */
+  --blue-400: #4F93FF;
+  --blue-300: #7FB4FF;
+  --blue-200: #B3D2FF;
+  --blue-100: #D9E9FF;
+
+  --cyan-300: #5EE7FF;   /* the agent */
+  --amber-300: #FFC46B;  /* the human */
+
+  --white: #F4F8FF;
+  --muted: #9DB3DA;
+  --dim:   #5F7BA8;
+
+  --line: color-mix(in srgb, var(--blue-300) 22%, transparent);
+  --line-strong: color-mix(in srgb, var(--blue-300) 55%, transparent);
+}
+
+/* ── Green — the blue theme's density, moved to a clean green hue ──────── */
+:root[data-theme='green'] {
+  --navy-950: #031D0E;
+  --navy-900: #053318;   /* ground */
+  --navy-800: #0A5429;   /* raised surface */
+  --navy-700: #14783E;
+
+  --blue-500: #22C55E;   /* primary structure */
+  --blue-400: #4ADE80;
+  --blue-300: #86EFAC;
+  --blue-200: #BBF7D0;
+  --blue-100: #DDFCE8;
+
+  --cyan-300: #56DCFF;
+  --amber-300: #FFC46B;
+
+  --white: #F1FBF4;
+  --muted: #A7D0B8;
+  --dim:   #63A57F;
+
+  --line: color-mix(in srgb, var(--blue-300) 22%, transparent);
+  --line-strong: color-mix(in srgb, var(--blue-300) 55%, transparent);
+}
+
+/* ── Violet — an indigo ground, the structure in violet ────────────────── */
+:root[data-theme='violet'] {
+  --navy-950: #0A0620;
+  --navy-900: #150C34;
+  --navy-800: #241557;
+  --navy-700: #3A2288;
+
+  --blue-500: #7C5CFF;
+  --blue-400: #9A7BFF;
+  --blue-300: #BCA4FF;
+  --blue-200: #D8CAFF;
+  --blue-100: #EDE6FF;
+
+  --cyan-300: #6FE8FF;
+  --amber-300: #FFC46B;
+
+  --white: #F7F3FF;
+  --muted: #B0A2D8;
+  --dim:   #7365A6;
+
+  --line: color-mix(in srgb, var(--blue-300) 22%, transparent);
+  --line-strong: color-mix(in srgb, var(--blue-300) 55%, transparent);
+}

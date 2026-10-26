@@ -1,0 +1,4 @@
+# Internal working files — not part of the presentation itself.
+# preview/ holds ~26 MB of stale slide screenshots used during authoring.
+preview/
+assets/_build-outline.py

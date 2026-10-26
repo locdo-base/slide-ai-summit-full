@@ -1,0 +1,36 @@
+/* Design tokens that do not change with the theme. The palette lives in
+   `themes.css` — one ground, one structural hue, cyan for the agent, amber for
+   the human. Nothing else. Fonts are defaults: the config panel overrides
+   `--font-display` and `--font-body` on the root element. */
+:root {
+  color-scheme: dark;
+
+  --font-display: 'Sora Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter Variable', 'Segoe UI', system-ui, sans-serif;
+
+  /* Stage-pixel type scale (the stage is 1920×960, a 2:1 slide, and scales as a whole). */
+  --t-display: 124px;
+  --t-h1: 84px;
+  --t-h2: 56px;
+  --t-lead: 38px;
+  --t-body: 30px;
+  --t-small: 25px;
+  --t-micro: 21px;
+
+  /* The stage the deck is composed on. Overwritten by the aspect-ratio choice;
+     the width never changes, only the height. */
+  --stage-w: 1920px;
+  --stage-h: 960px;
+  --stage-ar: 2;
+
+  /* Where the frame starts: the brand sits at (--frame-x, --frame-top) on every
+     slide, framed or full-bleed, so it never moves between slides. Overwritten
+     by the aspect-ratio choice alongside the type scale. */
+  --frame-top: 72px;
+  --frame-x: 140px;
+  --frame-bottom: 64px;
+  --brand-mark: 36px;
+  --brand-word: 26px;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}

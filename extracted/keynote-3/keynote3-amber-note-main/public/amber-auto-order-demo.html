@@ -1,0 +1,2624 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amber Note &rarr; Quy trình Đặt hàng tự động</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --bg-page: #f8faff;
+      --bg-gradient: radial-gradient(circle at 15% 15%, rgba(254, 243, 199, 0.45) 0%, rgba(239, 246, 255, 0.6) 45%, #f1f5f9 100%);
+
+      --amber: #d97706;
+      --amber-light: #fbbf24;
+      --amber-wash: #fef3c7;
+      --amber-dark: #b45309;
+
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+      --blue-light: #eff6ff;
+      --blue-border: #dbeafe;
+
+      --green: #10b981;
+      --green-dark: #059669;
+      --green-wash: #ecfdf5;
+
+      --red: #ef4444;
+      --red-wash: #fef2f2;
+
+      --text-main: #111827;
+      --text-sub: #4b5563;
+      --text-muted: #9ca3af;
+      --text-light: #6b7280;
+
+      --border-color: #e5e7eb;
+      --border-light: #f1f3f7;
+
+      --shadow-window: 0 25px 60px -15px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(226, 232, 240, 0.85);
+      --shadow-phone: 0 25px 50px -12px rgba(0, 0, 0, 0.28), 0 0 0 8px #1e293b, 0 0 0 10px #64748b;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      font-family: var(--font-main);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 14px 16px 10px;
+      position: relative;
+    }
+
+    /* Outer Container */
+    .app-container {
+      width: min(1560px, 100%);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    /* Top Control Header */
+    .top-hero-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 12px;
+      padding: 2px 4px;
+      flex-shrink: 0;
+    }
+
+    .brand-headline {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #fef3c7;
+      color: #b45309;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      width: fit-content;
+      border: 1px solid #fde68a;
+    }
+
+    .pulse-dot-red {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: pulseRecord 1.4s ease-in-out infinite;
+    }
+    @keyframes pulseRecord { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.85); } }
+
+    .hero-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    /* Steps Bar in Header */
+    .steps-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .step-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .step-tab:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .step-tab.active {
+      background: #ffffff;
+      color: #2563eb;
+      font-weight: 700;
+      border-color: #dbeafe;
+      box-shadow: 0 2px 8px -2px rgba(37, 99, 235, 0.15);
+    }
+
+    .step-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #475569;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-tab.active .step-num {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .step-tab.is-done .step-num {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    /* Scrubber Controls */
+    .controls-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .ctrl-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      transition: all 0.15s ease;
+    }
+    .ctrl-btn:hover { background: #f8fafc; transform: scale(1.05); }
+    .ctrl-btn:active { transform: scale(0.95); }
+
+    .timer-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Main Showcase Grid: Left Phone + Right Web App */
+    .showcase-grid {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 14px;
+      align-items: stretch;
+      position: relative;
+      height: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      .showcase-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        overflow-y: auto;
+      }
+    }
+
+    /* =========================================================
+       LEFT VIEW: Realistic Smartphone Frame
+       ========================================================= */
+    .phone-container {
+      width: 100%;
+      max-width: 290px;
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .phone-device {
+      position: relative;
+      width: 280px;
+      height: 570px;
+      max-height: 100%;
+      background: #000000;
+      border-radius: 34px;
+      box-shadow: 0 16px 35px -8px rgba(0, 0, 0, 0.3), 0 0 0 5px #1e293b, 0 0 0 7px #64748b;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 3px solid #1e293b;
+      flex-shrink: 0;
+      margin: auto 0;
+    }
+
+    /* Dynamic Island & Status Bar */
+    .phone-statusbar {
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 600;
+      z-index: 50;
+      flex-shrink: 0;
+    }
+
+    .dynamic-island {
+      width: 80px;
+      height: 20px;
+      background: #000000;
+      border-radius: 12px;
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+    }
+
+    /* Phone Screen Content Views */
+    .phone-screen {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      background: #000000;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top iOS Push Notification Banner */
+    .ios-top-push-banner {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      background: rgba(36, 36, 38, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      padding: 9px 11px;
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.55);
+      z-index: 100;
+      transform: translateY(-80px);
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ios-top-push-banner.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .push-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+
+    .push-app-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7.5px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .push-app-name {
+      font-size: 10px;
+      font-weight: 700;
+      color: #fbbf24;
+      letter-spacing: 0.02em;
+    }
+
+    .push-time {
+      font-size: 8.5px;
+      color: #94a3b8;
+      margin-left: auto;
+    }
+
+    .push-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .push-desc {
+      font-size: 10px;
+      color: #cbd5e1;
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    .push-actions {
+      margin-top: 6px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .push-btn-ticket {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.45);
+      transition: transform 0.15s ease, background 0.15s ease;
+      animation: pulseTicketBtn 1.6s infinite;
+    }
+    @keyframes pulseTicketBtn {
+      0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.45); }
+      50% { transform: scale(1.04); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.7); }
+    }
+    .push-btn-ticket:hover { background: #fbbf24; }
+    .push-btn-ticket:active { transform: scale(0.95); }
+
+    /* Screen 0: Native Default iOS Incoming Call UI */
+    .view-incoming {
+      position: absolute;
+      inset: 0;
+      background: #1c1c1e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 45px 16px 24px;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      z-index: 15;
+    }
+
+    .view-incoming.hidden {
+      opacity: 0;
+      transform: scale(0.96);
+      pointer-events: none;
+    }
+
+    .incoming-caller-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+    }
+
+    .incoming-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .incoming-caller-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .incoming-caller-sub {
+      font-size: 11px;
+      color: #a1a1a6;
+      font-weight: 500;
+    }
+
+    .incoming-call-status {
+      font-size: 10.5px;
+      color: #34c759;
+      font-weight: 600;
+      margin-top: 3px;
+      animation: pulseIncoming 1.4s ease-in-out infinite;
+    }
+    @keyframes pulseIncoming {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .incoming-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 220px;
+      margin-bottom: 4px;
+    }
+
+    .incoming-action-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .incoming-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+      transition: transform 0.15s ease;
+    }
+    .incoming-btn:active { transform: scale(0.92); }
+    .incoming-btn svg { width: 22px; height: 22px; }
+
+    .btn-decline-call {
+      background: #eb4d3d;
+    }
+
+    .btn-accept-call {
+      background: #34c759;
+      position: relative;
+    }
+
+    .btn-accept-call::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 2px solid rgba(52, 199, 89, 0.65);
+      animation: rippleRing 1.3s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+    @keyframes rippleRing {
+      0% { transform: scale(0.92); opacity: 1; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+
+    .incoming-btn-label {
+      font-size: 10px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    /* Screen 1: Native Default iOS In-Call UI */
+    .view-call {
+      position: absolute;
+      inset: 0;
+      background: #1c1c1e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 45px 16px 20px;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      z-index: 10;
+    }
+
+    .view-call.hidden {
+      opacity: 0;
+      transform: scale(0.96);
+      pointer-events: none;
+    }
+
+    .native-caller-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 3px;
+    }
+
+    .native-caller-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .native-caller-sub {
+      font-size: 11px;
+      color: #a1a1a6;
+      font-weight: 500;
+    }
+
+    .native-call-timer {
+      font-size: 11px;
+      color: #8e8e93;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 6 Standard iOS In-Call Control Buttons */
+    .ios-call-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px 10px;
+      width: 100%;
+      max-width: 220px;
+      margin: auto 0;
+    }
+
+    .ios-call-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .ios-action-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .ios-action-circle:hover { background: rgba(255, 255, 255, 0.25); }
+    .ios-action-circle:active { transform: scale(0.92); }
+
+    .ios-action-circle svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+    }
+
+    .ios-action-label {
+      font-size: 9.5px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    /* Red Native End Call Button */
+    .ios-endcall-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #eb4d3d;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(235, 77, 61, 0.35);
+      transition: transform 0.15s ease;
+    }
+
+    .ios-endcall-btn:active { transform: scale(0.9); }
+    .ios-endcall-btn svg { width: 22px; height: 22px; }
+
+    /* Screen 2: Phone Home Screen */
+    .view-home {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80') center/cover;
+      display: flex;
+      flex-direction: column;
+      padding: 50px 14px 20px;
+      transition: opacity 0.4s ease;
+      z-index: 5;
+    }
+
+    .home-widget-clock {
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+      margin-top: 20px;
+      text-align: center;
+    }
+    .home-time { font-size: 38px; font-weight: 800; letter-spacing: -0.02em; }
+    .home-date { font-size: 11px; font-weight: 600; opacity: 0.9; margin-top: -2px; }
+
+    /* Screen 3: Amber Note Mobile App Screen */
+    .view-amber-app {
+      position: absolute;
+      inset: 0;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 10px 12px;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 25;
+      overflow-y: auto;
+    }
+
+    .view-amber-app.hidden {
+      opacity: 0;
+      transform: translateY(20px) scale(0.96);
+      pointer-events: none;
+    }
+
+    .amber-app-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+    }
+
+    .amber-app-logo {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      color: #ffffff;
+      font-size: 9.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
+    }
+
+    .amber-app-title-box {
+      flex: 1;
+    }
+
+    .amber-app-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .amber-app-sub {
+      font-size: 9px;
+      color: #fbbf24;
+      font-weight: 600;
+    }
+
+    .amber-card-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 9px;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+    }
+
+    .amber-caller-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+    }
+
+    .amber-caller-name {
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .amber-caller-tag {
+      font-size: 8px;
+      background: #3b82f6;
+      color: #fff;
+      padding: 1px 5px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .amber-transcript-title {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #fbbf24;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .amber-transcript-body {
+      font-size: 9.5px;
+      line-height: 1.35;
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 5px 7px;
+      border-radius: 6px;
+      border-left: 2.5px solid #f59e0b;
+    }
+
+    .amber-transcript-body mark {
+      background: rgba(245, 158, 11, 0.28);
+      color: #fef08a;
+      font-weight: 700;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .amber-table-title {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .amber-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9px;
+    }
+
+    .amber-items-table th {
+      text-align: left;
+      color: #94a3b8;
+      font-weight: 600;
+      padding: 2px 3px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .amber-items-table td {
+      padding: 3px 2px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+      color: #e2e8f0;
+    }
+
+    .amber-total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding-top: 3px;
+      border-top: 1px dashed #475569;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .amber-total-val {
+      color: #38bdf8;
+      font-size: 10.5px;
+    }
+
+    .amber-app-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn-amber-cancel {
+      flex: 1;
+      padding: 6px;
+      border-radius: 7px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #cbd5e1;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-amber-cancel:hover { background: #334155; color: #fff; }
+
+    .btn-amber-confirm {
+      flex: 1.4;
+      padding: 6px;
+      border-radius: 7px;
+      border: none;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+    }
+    .btn-amber-confirm:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5); }
+    .btn-amber-confirm:active { transform: scale(0.96); }
+
+    /* Home Bar indicator at bottom of iPhone */
+    .home-bar {
+      width: 90px;
+      height: 3.5px;
+      border-radius: 999px;
+      background: #ffffff;
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+    }
+
+    /* =========================================================
+       FLYING DATA PARTICLE (Mobile -> Web Flight Animation)
+       ========================================================= */
+    .flying-packet {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      background: #ffffff;
+      border: 1.5px solid #2563eb;
+      border-radius: 12px;
+      padding: 6px 12px;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35), 0 0 16px rgba(59, 130, 246, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: transform 0.05s linear;
+    }
+
+    .flying-packet.active {
+      opacity: 1;
+    }
+
+    .packet-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .packet-text {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #1e293b;
+    }
+
+    /* =========================================================
+       RIGHT VIEW: macOS Web Application "Đơn hàng"
+       ========================================================= */
+    .web-window {
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: var(--shadow-window);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: 100%;
+      min-height: 0;
+      position: relative;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+    }
+
+    /* Top Chrome Bar */
+    .window-header {
+      background: #fbfcfe;
+      border-bottom: 1px solid #edf1f7;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .ctrl-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .ctrl-close { background: #ff5f56; }
+    .ctrl-min { background: #ffbd2e; }
+    .ctrl-max { background: #27c93f; }
+
+    .window-address-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      max-width: 380px;
+      height: 24px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 0 10px;
+      font-size: 10.5px;
+      color: #64748b;
+      margin: 0 auto;
+    }
+
+    .window-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-avatar-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #1e3a8a;
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Web App Inner Navbar */
+    .app-inner-head {
+      padding: 6px 14px;
+      border-bottom: 1px solid #edf1f7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .app-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .app-logo-box {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: #eff6ff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-heading {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .btn-new-job {
+      background: #1877f2;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 4px rgba(24, 119, 242, 0.25);
+    }
+
+    /* Sub Navigation Tabs */
+    .app-tabs-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 14px;
+      border-bottom: 1px solid #edf1f7;
+      background: #fafbfc;
+      flex-shrink: 0;
+    }
+
+    .nav-tab-item {
+      padding: 6px 3px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+
+    .nav-tab-item.active {
+      color: #2563eb;
+      border-bottom-color: #2563eb;
+      font-weight: 700;
+    }
+
+    /* Toolbar Row */
+    .pipeline-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 14px;
+      border-bottom: 1px solid #edf1f7;
+      background: #ffffff;
+      font-size: 10.5px;
+      flex-shrink: 0;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tool-btn {
+      padding: 2px 7px;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      background: #ffffff;
+      color: #475569;
+      font-size: 10.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* 5 Pipeline Columns Grid */
+    .pipeline-board {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      padding: 10px;
+      background: #f8fafc;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+
+    .stage-column {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 140px;
+      min-height: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .stage-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .stage-title {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .stage-icon {
+      width: 12px;
+      height: 12px;
+      color: #f43f5e;
+    }
+    .stage-icon.green { color: #10b981; }
+
+    .stage-count {
+      font-size: 9.5px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #64748b;
+      padding: 1px 5px;
+      border-radius: 999px;
+    }
+
+    .stage-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    /* Job Card inside Pipeline */
+    .job-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .job-card:hover {
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+
+    .job-card.auto-created {
+      border: 1.5px solid #2563eb;
+      animation: orderCardGlow 1.2s ease-in-out 4 alternate;
+      background: #f0f7ff;
+    }
+
+    @keyframes orderCardGlow {
+      0% { box-shadow: 0 0 0 1px #2563eb; }
+      100% { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4), 0 4px 12px rgba(37, 99, 235, 0.2); }
+    }
+
+    .card-code {
+      font-size: 11px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .card-desc {
+      font-size: 9.5px;
+      color: #64748b;
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 5px;
+      padding-top: 4px;
+      border-top: 1px dashed #f1f5f9;
+    }
+
+    .card-user {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .card-avatar {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #d97706;
+      color: #fff;
+      font-size: 7.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-icon-send {
+      color: #94a3b8;
+      width: 11px;
+      height: 11px;
+    }
+
+    .empty-stage-text {
+      font-size: 9.5px;
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* AI Agent Floating Animation on Web */
+    .agent-processor-badge {
+      position: absolute;
+      top: 96px;
+      left: 14px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: #ffffff;
+      border: 1.5px solid rgba(59, 130, 246, 0.85);
+      border-radius: 999px;
+      padding: 5px 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), 0 0 16px rgba(59, 130, 246, 0.35);
+      z-index: 100;
+      opacity: 0;
+      transform: translateY(8px) scale(0.9);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .agent-processor-badge.col1 {
+      left: 14px;
+      top: 96px;
+    }
+
+    .agent-processor-badge.col2 {
+      left: 175px;
+      top: 96px;
+    }
+
+    .agent-processor-badge.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .agent-bot-orb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+      animation: pulseRecord 1.2s infinite;
+      position: relative;
+    }
+
+    .agent-bot-orb.scanning::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(59, 130, 246, 0.7);
+      animation: rippleRing 1.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+
+    .agent-status-text {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: 0.01em;
+    }
+
+    .card-ai-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 8.5px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      margin-top: 3px;
+    }
+
+    .card-ai-tag.checking {
+      background: #fef3c7;
+      color: #b45309;
+      border-color: #fde68a;
+    }
+
+    .card-ai-tag .ai-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseRecord 0.9s infinite;
+    }
+
+    /* =========================================================
+       ORDER DETAIL DRAWER / MODAL
+       ========================================================= */
+    .order-detail-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .order-detail-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-sheet {
+      width: min(680px, 100%);
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      max-height: 94%;
+      overflow: hidden;
+      transform: translateY(16px) scale(0.98);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .order-detail-modal.open .modal-sheet {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid #edf1f7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      flex-shrink: 0;
+    }
+
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-order-tag {
+      background: #eff6ff;
+      color: #2563eb;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .modal-main-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      color: #64748b;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-close-modal:hover { background: #e2e8f0; color: #0f172a; }
+
+    .modal-body {
+      padding: 12px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Customer Summary Pill Bar */
+    .cust-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: #f8fafc;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 10.5px;
+    }
+
+    .cust-field-label { color: #64748b; font-weight: 600; font-size: 9.5px; }
+    .cust-field-val { color: #0f172a; font-weight: 700; margin-top: 1px; }
+
+    /* Audio Transcript Snippet */
+    .transcript-box {
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .transcript-head {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #854d0e;
+    }
+
+    .transcript-quote {
+      font-size: 10.5px;
+      color: #713f12;
+      line-height: 1.4;
+      font-style: italic;
+    }
+
+    /* Items Table & Warehouse Slots */
+    .order-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+    }
+
+    .order-items-table th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      text-align: left;
+      padding: 6px 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .order-items-table td {
+      padding: 6px 8px;
+      border: 1px solid #e2e8f0;
+      color: #1e293b;
+    }
+
+    .slot-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+    }
+
+    .stock-ok-pill {
+      color: #059669;
+      font-weight: 700;
+      font-size: 10px;
+    }
+
+    .modal-footer {
+      padding: 10px 16px;
+      border-top: 1px solid #edf1f7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      flex-shrink: 0;
+    }
+
+    .total-amount-box {
+      font-size: 11.5px;
+      color: #475569;
+      font-weight: 600;
+    }
+    .total-amount-box strong {
+      font-size: 13.5px;
+      color: #0f172a;
+      font-weight: 800;
+      margin-left: 4px;
+    }
+
+    .modal-actions-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-secondary {
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+
+    .btn-primary-action {
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: none;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Flying Packet Token -->
+  <div class="flying-packet" id="flyingPacket">
+    <div class="packet-icon">📦</div>
+    <div class="packet-text">Đơn #DH-8902 &rarr; Quy trình Đặt hàng</div>
+  </div>
+
+  <div class="app-container">
+    
+    <!-- Top Hero Bar -->
+    <header class="top-hero-bar">
+      <div class="brand-headline">
+        <div class="badge-pill">
+          <span class="pulse-dot-red"></span>
+          <span>Amber Note &rarr; Auto Order</span>
+        </div>
+        <h1 class="hero-title">Ghi âm cuộc gọi tự động trích xuất &amp; tạo đơn hàng trên Base</h1>
+      </div>
+
+      <!-- Step Navigation Tabs -->
+      <ul class="steps-nav" id="stepsNav">
+        <li class="step-tab active" data-step="1">
+          <span class="step-num">1</span>
+          <span>Cuộc gọi &amp; Ghi âm</span>
+        </li>
+        <li class="step-tab" data-step="2">
+          <span class="step-num">2</span>
+          <span>Transcript &amp; Tạo ticket</span>
+        </li>
+        <li class="step-tab" data-step="3">
+          <span class="step-num">3</span>
+          <span>Tạo đơn Web</span>
+        </li>
+        <li class="step-tab" data-step="4">
+          <span class="step-num">4</span>
+          <span>AI Agent &amp; Chi tiết</span>
+        </li>
+      </ul>
+
+      <!-- Controls & Timer -->
+      <div class="controls-wrap">
+        <button class="ctrl-btn" id="btnPlayPause" title="Tạm dừng / Phát tiếp">⏸</button>
+        <button class="ctrl-btn" id="btnReplayAll" title="Phát lại từ đầu">⟲</button>
+        <div class="timer-badge" id="demoTimer">00:00 / 00:26</div>
+      </div>
+    </header>
+
+    <!-- Main Showcase Grid -->
+    <main class="showcase-grid">
+      
+      <!-- =========================================================
+           LEFT: Smartphone Screen (Incoming Call & Amber Sync)
+           ========================================================= -->
+      <div class="phone-container">
+        <div class="phone-device" id="phoneDevice">
+          
+          <!-- Top Status Bar & Dynamic Island -->
+          <div class="phone-statusbar">
+            <span id="phoneClock">09:41</span>
+            <div class="dynamic-island" id="dynamicIsland"></div>
+            <span>5G 􀋦</span>
+          </div>
+
+          <!-- Screen Views Container -->
+          <div class="phone-screen">
+            
+            <!-- Top iOS Push Notification Banner (Amber Note recording & sync) -->
+            <div class="ios-top-push-banner" id="topPushBanner">
+              <div class="push-head">
+                <div class="push-app-icon">AN</div>
+                <span class="push-app-name">AMBER NOTE</span>
+                <span class="push-time" id="pushTimeText">Vừa xong</span>
+              </div>
+              <div class="push-title" id="pushTitle">
+                <span class="pulse-dot-red"></span>
+                <span>Bắt đầu ghi âm cuộc gọi</span>
+              </div>
+              <div class="push-desc" id="pushDesc">Đang tự động ghi âm &amp; nhận diện nội dung đặt hàng...</div>
+              <div class="push-actions" id="pushActions" style="display: none;">
+                <button class="push-btn-ticket" id="btnPushCreateTicket" type="button">
+                  <span>Tạo ticket</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- View 0: Native Incoming Call UI -->
+            <div class="view-incoming hidden" id="viewIncoming">
+              <div class="incoming-caller-box">
+                <div class="incoming-avatar">H</div>
+                <div class="incoming-caller-name">Anh Hoàng (ĐL Sài Gòn)</div>
+                <div class="incoming-caller-sub">0988 234 567</div>
+                <div class="incoming-call-status">Cuộc gọi thoại đến...</div>
+              </div>
+
+              <div class="incoming-actions-row">
+                <div class="incoming-action-item">
+                  <button class="incoming-btn btn-decline-call" id="btnDeclineCall" title="Từ chối cuộc gọi" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-6-6 19.8 19.8 0 0 1-3.12-8.68A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"></path>
+                    </svg>
+                  </button>
+                  <span class="incoming-btn-label">Từ chối</span>
+                </div>
+
+                <div class="incoming-action-item">
+                  <button class="incoming-btn btn-accept-call" id="btnAcceptCall" title="Nhận cuộc gọi" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                  </button>
+                  <span class="incoming-btn-label">Trả lời</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- View 1: Default Native iOS In-Call UI -->
+            <div class="view-call hidden" id="viewCall">
+              <div class="native-caller-box">
+                <div class="native-caller-name">Anh Hoàng (ĐL Sài Gòn)</div>
+                <div class="native-caller-sub">0988 234 567</div>
+                <div class="native-call-timer" id="nativeCallTimer">00:14</div>
+              </div>
+
+              <div class="ios-call-grid">
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                  </button>
+                  <span class="ios-action-label">Tắt tiếng</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="4" height="4" rx="1"></rect><rect x="10" y="4" width="4" height="4" rx="1"></rect><rect x="16" y="4" width="4" height="4" rx="1"></rect><rect x="4" y="10" width="4" height="4" rx="1"></rect><rect x="10" y="10" width="4" height="4" rx="1"></rect><rect x="16" y="10" width="4" height="4" rx="1"></rect><rect x="4" y="16" width="4" height="4" rx="1"></rect><rect x="10" y="16" width="4" height="4" rx="1"></rect><rect x="16" y="16" width="4" height="4" rx="1"></rect></svg>
+                  </button>
+                  <span class="ios-action-label">Bàn phím</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                  </button>
+                  <span class="ios-action-label">Loa ngoài</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                  </button>
+                  <span class="ios-action-label">Thêm cuộc gọi</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                  </button>
+                  <span class="ios-action-label">FaceTime</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </button>
+                  <span class="ios-action-label">Danh bạ</span>
+                </div>
+              </div>
+
+              <!-- Red End Call Button -->
+              <button class="ios-endcall-btn" id="btnSimEndCall" title="Kết thúc cuộc gọi" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-6-6 19.8 19.8 0 0 1-3.12-8.68A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- View 2: Phone Home Screen -->
+            <div class="view-home" id="viewHome">
+              <div class="home-widget-clock">
+                <div class="home-time" id="homeClockText">09:41</div>
+                <div class="home-date">Thứ Ba, 15 tháng 9</div>
+              </div>
+            </div>
+
+            <!-- View 3: Amber Note Mobile App View (Transcript & Order Extraction) -->
+            <div class="view-amber-app hidden" id="viewAmberApp">
+              
+              <!-- App Header -->
+              <div class="amber-app-head">
+                <div class="amber-app-logo">AN</div>
+                <div class="amber-app-title-box">
+                  <div class="amber-app-title">Amber Note</div>
+                  <div class="amber-app-sub">AI Trích xuất đơn hàng từ cuộc gọi</div>
+                </div>
+              </div>
+
+              <!-- Caller & Recording Strip -->
+              <div class="amber-card-box">
+                <div class="amber-caller-strip">
+                  <div class="amber-caller-name">
+                    <span>Anh Hoàng (ĐL Sài Gòn)</span>
+                  </div>
+                  <span class="amber-caller-tag">0988 234 567</span>
+                </div>
+              </div>
+
+              <!-- Transcript Box -->
+              <div class="amber-card-box">
+                <div class="amber-transcript-title">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                  <span>Transcript hội thoại</span>
+                </div>
+                <div class="amber-transcript-body">
+                  "Lấy cho anh <mark>50 bộ vòng bi SKF 6205</mark> và <mark>20 bạc đạn 6308</mark> nhé, ưu tiên giao về <mark>kho Tân Bình</mark> trước 17h hôm nay..."
+                </div>
+              </div>
+
+              <!-- Recognized Items Table -->
+              <div class="amber-card-box" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="amber-table-title">
+                  <span>📦 Danh sách sản phẩm phát hiện</span>
+                  <span style="font-size: 9px; color: #10b981; font-weight: 700;">2 mục</span>
+                </div>
+                <table class="amber-items-table">
+                  <thead>
+                    <tr>
+                      <th>Sản phẩm</th>
+                      <th style="text-align: center;">SL</th>
+                      <th style="text-align: right;">Thành tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>SKF 6205-2RSH</strong>
+                        <div style="font-size: 8.5px; color: #94a3b8;">Vòng bi 25x52mm</div>
+                      </td>
+                      <td style="text-align: center; font-weight: 700; color: #fbbf24;">50</td>
+                      <td style="text-align: right; font-weight: 600;">12.500.000 ₫</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>SKF 6308-2Z</strong>
+                        <div style="font-size: 8.5px; color: #94a3b8;">Bạc đạn 40x90mm</div>
+                      </td>
+                      <td style="text-align: center; font-weight: 700; color: #fbbf24;">20</td>
+                      <td style="text-align: right; font-weight: 600;">26.000.000 ₫</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="amber-total-row">
+                  <span>Tổng giá trị đơn:</span>
+                  <span class="amber-total-val">38.500.000 ₫</span>
+                </div>
+              </div>
+
+              <!-- Bottom Actions Bar -->
+              <div class="amber-app-actions">
+                <button class="btn-amber-cancel" id="btnAmberCancel" type="button">Cancel</button>
+                <button class="btn-amber-confirm" id="btnAmberConfirm" type="button">
+                  <span id="txtAmberConfirm">Confirm &rarr;</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Bottom Home Indicator -->
+          <div class="home-bar"></div>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           RIGHT: macOS Web Application "Đơn hàng" Pipeline
+           ========================================================= -->
+      <div class="web-window" id="webWindow">
+        
+        <!-- Top Browser Header -->
+        <div class="window-header">
+          <div class="window-controls">
+            <span class="ctrl-dot ctrl-close"></span>
+            <span class="ctrl-dot ctrl-min"></span>
+            <span class="ctrl-dot ctrl-max"></span>
+          </div>
+
+          <div class="window-address-bar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>base.vn · Quy trình Đặt hàng · Pipeline</span>
+          </div>
+
+          <div class="window-top-actions">
+            <div class="user-avatar-badge">TH</div>
+          </div>
+        </div>
+
+        <!-- App Inner Header -->
+        <div class="app-inner-head">
+          <div class="app-title-group">
+            <div class="app-logo-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+            </div>
+            <span class="app-heading">Đơn hàng</span>
+            <span style="color:#cbd5e1; font-size:14px">☆ ⓘ ⚙</span>
+          </div>
+
+          <button class="btn-new-job">+ New job</button>
+        </div>
+
+        <!-- Tabs Nav -->
+        <div class="app-tabs-bar">
+          <div class="nav-tab-item active">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            Pipeline
+          </div>
+          <div class="nav-tab-item">Kanban</div>
+          <div class="nav-tab-item">Table</div>
+          <div class="nav-tab-item">Workflow</div>
+          <div class="nav-tab-item">Linked Flows</div>
+          <div class="nav-tab-item">Reports</div>
+        </div>
+
+        <!-- Pipeline Action Toolbar -->
+        <div class="pipeline-toolbar">
+          <div class="toolbar-left">
+            <button class="tool-btn">Customize columns</button>
+            <button class="tool-btn">Card fields</button>
+            <button class="tool-btn">All viewable</button>
+            <button class="tool-btn">Filters</button>
+            <button class="tool-btn">Newest first</button>
+          </div>
+        </div>
+
+        <!-- 5 Pipeline Columns Board -->
+        <div class="pipeline-board">
+          
+          <!-- Column 1: Xác nhận thông tin đơn hàng -->
+          <div class="stage-column" id="colStep1">
+            <div class="stage-head">
+              <div class="stage-title">
+                <svg class="stage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                Xác nhận thông tin đơn hàng
+              </div>
+              <span class="stage-count" id="countCol1">1</span>
+            </div>
+
+            <div class="stage-card-list" id="listCol1">
+              
+              <!-- Existing Dummy Card -->
+              <div class="job-card">
+                <div class="card-code">Anh Long - BST</div>
+                <div class="card-desc">Đơn kiểm tra định kỳ</div>
+                <div class="card-footer">
+                  <div class="card-user">
+                    <span class="card-avatar">T</span>
+                    Thanh
+                  </div>
+                  <span class="card-icon-send">✈</span>
+                </div>
+              </div>
+
+              <!-- New Auto Created Card will be injected here -->
+
+            </div>
+          </div>
+
+          <!-- Column 2: Lên đơn -->
+          <div class="stage-column" id="colStep2">
+            <div class="stage-head">
+              <div class="stage-title">
+                <svg class="stage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                Lên đơn
+              </div>
+              <span class="stage-count" id="countCol2">3</span>
+            </div>
+
+            <div class="stage-card-list" id="listCol2">
+              <div class="job-card">
+                <div class="card-code">Chị Lan - 0123456789</div>
+                <div class="card-footer">
+                  <div class="card-user"><span class="card-avatar">T</span>Thanh</div>
+                  <span class="card-icon-send">✈</span>
+                </div>
+              </div>
+              <div class="job-card">
+                <div class="card-code">Anh Lê - HUD Towner</div>
+                <div class="card-footer">
+                  <div class="card-user"><span class="card-avatar">T</span>Thanh</div>
+                  <span class="card-icon-send">✈</span>
+                </div>
+              </div>
+              <div class="job-card">
+                <div class="card-code">Chị Giang - 47 Nguyễn Tuân</div>
+                <div class="card-footer">
+                  <div class="card-user"><span class="card-avatar">T</span>Thanh</div>
+                  <span class="card-icon-send">✈</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: Vận chuyển -->
+          <div class="stage-column" id="colStep3">
+            <div class="stage-head">
+              <div class="stage-title">
+                <svg class="stage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                Vận chuyển
+              </div>
+              <span class="stage-count">0</span>
+            </div>
+            <div class="empty-stage-text">No jobs in this step</div>
+          </div>
+
+          <!-- Column 4: Bàn giao -->
+          <div class="stage-column" id="colStep4">
+            <div class="stage-head">
+              <div class="stage-title">
+                <svg class="stage-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                Bàn giao
+              </div>
+              <span class="stage-count">0</span>
+            </div>
+            <div class="empty-stage-text">No jobs in this step</div>
+          </div>
+
+          <!-- Column 5: Completed -->
+          <div class="stage-column" id="colStep5">
+            <div class="stage-head">
+              <div class="stage-title">
+                <svg class="stage-icon green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Completed
+              </div>
+              <span class="stage-count">0</span>
+            </div>
+            <div class="empty-stage-text">No completed jobs.</div>
+          </div>
+
+        </div>
+
+        <!-- Floating AI Agent Processing Badge -->
+        <div class="agent-processor-badge" id="agentBadge">
+          <div class="agent-bot-orb">🤖</div>
+          <span class="agent-status-text" id="agentText">AI Agent: Đang kiểm kho &amp; định vị vị trí lưu trữ…</span>
+        </div>
+
+        <!-- =========================================================
+             ORDER DETAIL DRAWER / MODAL
+             ========================================================= -->
+        <div class="order-detail-modal" id="orderModal">
+          <div class="modal-sheet">
+            
+            <div class="modal-header">
+              <div class="modal-title-wrap">
+                <span class="modal-order-tag">#DH-8902</span>
+                <span class="modal-main-title">Đơn hàng vòng bi SKF — Anh Hoàng (ĐL Sài Gòn)</span>
+              </div>
+              <button class="btn-close-modal" id="btnCloseModal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+              
+              <!-- Customer Summary Grid -->
+              <div class="cust-summary-grid">
+                <div>
+                  <div class="cust-field-label">Khách hàng</div>
+                  <div class="cust-field-val">Anh Hoàng · ĐL Sài Gòn</div>
+                </div>
+                <div>
+                  <div class="cust-field-label">Số điện thoại</div>
+                  <div class="cust-field-val">0988 234 567</div>
+                </div>
+                <div>
+                  <div class="cust-field-label">Nguồn dữ liệu</div>
+                  <div class="cust-field-val" style="color:#d97706">Cuộc gọi Amber Note (Auto)</div>
+                </div>
+              </div>
+
+              <!-- AI Transcript Quote -->
+              <div class="transcript-box">
+                <div class="transcript-head">
+                  <span>🎙 Transcript trích xuất bởi Amber AI</span>
+                </div>
+                <div class="transcript-quote">
+                  "Lấy cho anh 50 bộ vòng bi SKF 6205 và 20 bạc đạn 6308 nhé, ưu tiên giao về kho Tân Bình trước 17h hôm nay..."
+                </div>
+              </div>
+
+              <!-- Items & Warehouse Location Table -->
+              <div>
+                <h4 style="font-size: 13px; font-weight: 800; margin-bottom: 8px; color:#0f172a;">
+                  Danh sách sản phẩm &amp; Vị trí kho lưu trữ
+                </h4>
+                <table class="order-items-table">
+                  <thead>
+                    <tr>
+                      <th>Mã &amp; Tên sản phẩm</th>
+                      <th style="text-align:center">SL đặt</th>
+                      <th style="text-align:center">Vị trí trong kho</th>
+                      <th style="text-align:center">Tồn kho</th>
+                      <th style="text-align:right">Thành tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <strong>Vòng bi SKF 6205-2RSH</strong>
+                        <div style="font-size:10.5px; color:#64748b">Quy cách: 25x52x15mm · Xuất xứ: Italy</div>
+                      </td>
+                      <td style="text-align:center"><strong>50</strong> cái</td>
+                      <td style="text-align:center">
+                        <span class="slot-badge">📍 Kệ A2 - Tầng 3 - Ô 14</span>
+                      </td>
+                      <td style="text-align:center"><span class="stock-ok-pill">320 (Đủ hàng)</span></td>
+                      <td style="text-align:right; font-weight:700">12.500.000 ₫</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <strong>Bạc đạn SKF 6308-2Z</strong>
+                        <div style="font-size:10.5px; color:#64748b">Quy cách: 40x90x23mm · Xuất xứ: France</div>
+                      </td>
+                      <td style="text-align:center"><strong>20</strong> cái</td>
+                      <td style="text-align:center">
+                        <span class="slot-badge">📍 Kệ B1 - Tầng 2 - Ô 08</span>
+                      </td>
+                      <td style="text-align:center"><span class="stock-ok-pill">85 (Đủ hàng)</span></td>
+                      <td style="text-align:right; font-weight:700">26.000.000 ₫</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+            <div class="modal-footer">
+              <div class="total-amount-box">
+                Tổng giá trị đơn hàng: <strong>38.500.000 ₫</strong>
+              </div>
+              <div class="modal-actions-btn-group">
+                <button class="btn-secondary" id="btnPrintSlip">In phiếu xuất kho</button>
+                <button class="btn-primary-action" id="btnApproveOrder">Xuất kho &rarr;</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Javascript Simulation Engine -->
+  <script>
+    (function(){
+      const STEPS = [
+        { num: 1, name: "Cuộc gọi & Ghi âm", dur: 6500 },
+        { num: 2, name: "Transcript & Tạo ticket", dur: 8500 },
+        { num: 3, name: "Tạo đơn Web", dur: 4500 },
+        { num: 4, name: "AI Agent & Chi tiết", dur: 6500 }
+      ];
+      const totalDuration = STEPS.reduce((acc, s) => acc + s.dur, 0);
+
+      const state = {
+        currentStep: 1,
+        paused: false,
+        elapsedMs: 0
+      };
+
+      const stepTabs = document.querySelectorAll('.step-tab');
+      const btnPlayPause = document.getElementById('btnPlayPause');
+      const btnReplayAll = document.getElementById('btnReplayAll');
+      const demoTimer = document.getElementById('demoTimer');
+
+      // Elements
+      const viewIncoming = document.getElementById('viewIncoming');
+      const viewCall = document.getElementById('viewCall');
+      const viewHome = document.getElementById('viewHome');
+      const viewAmberApp = document.getElementById('viewAmberApp');
+      const dynamicIsland = document.getElementById('dynamicIsland');
+      const topPushBanner = document.getElementById('topPushBanner');
+      const pushTitle = document.getElementById('pushTitle');
+      const pushDesc = document.getElementById('pushDesc');
+      const pushTimeText = document.getElementById('pushTimeText');
+      const pushActions = document.getElementById('pushActions');
+      const btnPushCreateTicket = document.getElementById('btnPushCreateTicket');
+      const btnAmberCancel = document.getElementById('btnAmberCancel');
+      const btnAmberConfirm = document.getElementById('btnAmberConfirm');
+      const txtAmberConfirm = document.getElementById('txtAmberConfirm');
+      const btnAcceptCall = document.getElementById('btnAcceptCall');
+      const btnDeclineCall = document.getElementById('btnDeclineCall');
+      const btnSimEndCall = document.getElementById('btnSimEndCall');
+      const flyingPacket = document.getElementById('flyingPacket');
+      const listCol1 = document.getElementById('listCol1');
+      const listCol2 = document.getElementById('listCol2');
+      const countCol1 = document.getElementById('countCol1');
+      const countCol2 = document.getElementById('countCol2');
+      const agentBadge = document.getElementById('agentBadge');
+      const agentText = document.getElementById('agentText');
+      const orderModal = document.getElementById('orderModal');
+      const btnCloseModal = document.getElementById('btnCloseModal');
+
+      // Order Card DOM Template
+      let createdCardEl = null;
+      let incomingTimer = null;
+      let acceptTimer = null;
+      let syncTimer1 = null;
+      let openAppTimer = null;
+      let confirmTicketTimer = null;
+      let agentCheckTimer = null;
+      let modalTimer = null;
+
+      function createOrderCardElement(){
+        const card = document.createElement('div');
+        card.className = 'job-card auto-created';
+        card.id = 'autoJobCard';
+        card.innerHTML = `
+          <div class="card-code">#DH-8902 · Anh Hoàng</div>
+          <div class="card-desc">50x SKF 6205, 20x 6308 · 38.5M ₫</div>
+          <div class="card-ai-tag checking" id="cardAiTag">
+            <span class="ai-dot"></span>
+            <span id="cardAiTagText">Agents đang kiểm tra dữ liệu</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-user"><span class="card-avatar" style="background:#2563eb">AI</span>Amber Bot</div>
+            <span class="card-icon-send" style="color:#2563eb">✨</span>
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          orderModal.classList.add('open');
+        });
+        return card;
+      }
+
+      function fmtTime(ms){
+        const s = Math.floor(ms / 1000);
+        const m = Math.floor(s / 60);
+        const ss = String(s % 60).padStart(2, '0');
+        return String(m).padStart(2, '0') + ':' + ss;
+      }
+
+      function setStepActive(stepNum){
+        state.currentStep = stepNum;
+        stepTabs.forEach(tab => {
+          const s = parseInt(tab.getAttribute('data-step'), 10);
+          tab.classList.toggle('active', s === stepNum);
+          tab.classList.toggle('is-done', s < stepNum);
+        });
+      }
+
+      // Manual Tab Switching
+      stepTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const s = parseInt(tab.getAttribute('data-step'), 10);
+          jumpToStep(s);
+        });
+      });
+
+      if(btnAcceptCall){
+        btnAcceptCall.addEventListener('click', () => {
+          clearTimeout(acceptTimer);
+          acceptIncomingCall();
+        });
+      }
+
+      if(btnDeclineCall){
+        btnDeclineCall.addEventListener('click', () => {
+          clearTimeout(incomingTimer);
+          clearTimeout(acceptTimer);
+          viewIncoming.classList.add('hidden');
+        });
+      }
+
+      if(btnSimEndCall){
+        btnSimEndCall.addEventListener('click', () => {
+          jumpToStep(2);
+        });
+      }
+
+      if(btnPushCreateTicket){
+        btnPushCreateTicket.addEventListener('click', () => {
+          clearTimeout(openAppTimer);
+          openAmberApp();
+        });
+      }
+
+      if(btnAmberCancel){
+        btnAmberCancel.addEventListener('click', () => {
+          clearAllStepTimers();
+          viewAmberApp.classList.add('hidden');
+          jumpToStep(1);
+        });
+      }
+
+      if(btnAmberConfirm){
+        btnAmberConfirm.addEventListener('click', () => {
+          clearTimeout(confirmTicketTimer);
+          confirmAndSyncOrder();
+        });
+      }
+
+      function clearAllStepTimers(){
+        clearTimeout(incomingTimer);
+        clearTimeout(acceptTimer);
+        clearTimeout(syncTimer1);
+        clearTimeout(openAppTimer);
+        clearTimeout(confirmTicketTimer);
+        clearTimeout(agentCheckTimer);
+        clearTimeout(modalTimer);
+      }
+
+      function acceptIncomingCall(){
+        viewIncoming.classList.add('hidden');
+        viewCall.classList.remove('hidden');
+        viewAmberApp.classList.add('hidden');
+        topPushBanner.classList.add('show');
+        pushActions.style.display = 'none';
+        pushTimeText.textContent = "Vừa xong";
+        pushTitle.innerHTML = '<span class="pulse-dot-red"></span><span>Bắt đầu ghi âm cuộc gọi</span>';
+        pushDesc.textContent = 'Amber Note đã tự động bắt đầu ghi âm cuộc gọi...';
+      }
+
+      function openAmberApp(){
+        topPushBanner.classList.remove('show');
+        viewAmberApp.classList.remove('hidden');
+        if(txtAmberConfirm) txtAmberConfirm.textContent = 'Confirm →';
+        if(btnAmberConfirm) btnAmberConfirm.disabled = false;
+      }
+
+      function confirmAndSyncOrder(){
+        if(txtAmberConfirm) txtAmberConfirm.textContent = '✓ Đang tạo đơn…';
+        if(btnAmberConfirm) btnAmberConfirm.disabled = true;
+        setTimeout(() => {
+          triggerFlightAnimation();
+        }, 400);
+      }
+
+      function jumpToStep(stepNum){
+        clearAllStepTimers();
+
+        let targetMs = 0;
+        for(let i = 0; i < stepNum - 1; i++){
+          targetMs += STEPS[i].dur;
+        }
+        state.elapsedMs = targetMs;
+        executeStepVisuals(stepNum);
+      }
+
+      function executeStepVisuals(stepNum){
+        clearAllStepTimers();
+        setStepActive(stepNum);
+
+        if(stepNum === 1){
+          // Step 1:
+          // 0s - 2s: Phone is on Home screen
+          viewIncoming.classList.add('hidden');
+          viewCall.classList.add('hidden');
+          viewAmberApp.classList.add('hidden');
+          topPushBanner.classList.remove('show');
+          pushActions.style.display = 'none';
+          agentBadge.classList.remove('show', 'col1', 'col2');
+          orderModal.classList.remove('open');
+          flyingPacket.classList.remove('active');
+
+          if(createdCardEl && createdCardEl.parentNode){
+            createdCardEl.parentNode.removeChild(createdCardEl);
+            countCol1.textContent = "1";
+            countCol2.textContent = "3";
+          }
+
+          // At 2.0s: Incoming Call appears!
+          incomingTimer = setTimeout(() => {
+            viewIncoming.classList.remove('hidden');
+            viewCall.classList.add('hidden');
+            viewAmberApp.classList.add('hidden');
+            topPushBanner.classList.remove('show');
+          }, 2000);
+
+          // At 3.8s: Auto Accept -> Switch to active call & show top push notification
+          acceptTimer = setTimeout(() => {
+            acceptIncomingCall();
+          }, 3800);
+        }
+        else if(stepNum === 2){
+          // Step 2: Call ended -> Home Screen -> Push Noti ("Phát hiện có đặt đơn hàng" + button "Tạo ticket") -> Open Amber Note App -> Confirm -> Flight to Web
+          viewIncoming.classList.add('hidden');
+          viewCall.classList.add('hidden');
+          viewAmberApp.classList.add('hidden');
+          agentBadge.classList.remove('show', 'col1', 'col2');
+          orderModal.classList.remove('open');
+
+          // Phase 2A (0s - 1.5s): Home screen with Push Noti transcripting
+          topPushBanner.classList.add('show');
+          pushTimeText.textContent = "Vừa xong";
+          pushTitle.innerHTML = '<span>Đang transcript hội thoại…</span>';
+          pushDesc.textContent = 'Đang phân tích dữ liệu cuộc gọi 0988 234 567...';
+          pushActions.style.display = 'none';
+
+          // Phase 2B (At 1.5s): Push Notification updates to "Phát hiện có đặt đơn hàng" + Show Button "Tạo ticket"
+          syncTimer1 = setTimeout(() => {
+            pushTitle.innerHTML = '<span style="color:#fbbf24">⚡ Phát hiện có đặt đơn hàng</span>';
+            pushDesc.textContent = 'AI trích xuất: 50x SKF 6205, 20x 6308.';
+            pushActions.style.display = 'flex';
+          }, 1500);
+
+          // Phase 2C (At 3.5s): Auto click "Tạo ticket" -> Opens Amber Note App screen
+          openAppTimer = setTimeout(() => {
+            openAmberApp();
+          }, 3500);
+
+          // Phase 2D (At 6.2s): Auto click "Confirm" -> Triggers flight animation to Web Base Workflow
+          confirmTicketTimer = setTimeout(() => {
+            confirmAndSyncOrder();
+          }, 6200);
+        }
+        else if(stepNum === 3){
+          // Step 3: Card automatically created on Web (Base Workflow Column 1: Xác nhận thông tin đơn hàng)
+          viewIncoming.classList.add('hidden');
+          viewCall.classList.add('hidden');
+          viewAmberApp.classList.add('hidden');
+          topPushBanner.classList.add('show');
+          pushActions.style.display = 'none';
+          pushTimeText.textContent = "Vừa xong";
+          pushTitle.innerHTML = '<span>Đã đồng bộ thành công ✓</span>';
+          pushDesc.textContent = 'Đơn hàng mới đã được tự động tạo trên Base';
+          
+          orderModal.classList.remove('open');
+
+          if(!createdCardEl){
+            createdCardEl = createOrderCardElement();
+          }
+          if(createdCardEl.parentNode !== listCol1){
+            listCol1.prepend(createdCardEl);
+            countCol1.textContent = "2";
+          }
+
+          // Show AI Agent Checking Animation on Column 1
+          agentBadge.className = 'agent-processor-badge show col1';
+          agentText.innerHTML = 'Agents đang kiểm tra dữ liệu…';
+          const cardTag = document.getElementById('cardAiTag');
+          const cardTagTxt = document.getElementById('cardAiTagText');
+          if(cardTag) cardTag.className = 'card-ai-tag checking';
+          if(cardTagTxt) cardTagTxt.textContent = 'Agents đang kiểm tra dữ liệu';
+
+          agentCheckTimer = setTimeout(() => {
+            agentText.innerHTML = '✓ Agents đã kiểm tra &amp; xác nhận dữ liệu';
+            if(cardTag) cardTag.className = 'card-ai-tag';
+            if(cardTagTxt) cardTagTxt.textContent = '✓ Dữ liệu hợp lệ';
+          }, 1800);
+        }
+        else if(stepNum === 4){
+          // Step 4: AI Agent badge moves to Column 2 ("Lên đơn") -> Open Detail Modal with slot locations
+          viewIncoming.classList.add('hidden');
+          viewCall.classList.add('hidden');
+          viewAmberApp.classList.add('hidden');
+          topPushBanner.classList.add('show');
+          pushActions.style.display = 'none';
+          pushTitle.innerHTML = '<span>Amber Note: AI Agent đang xử lý</span>';
+          pushDesc.textContent = 'Tự động kiểm tra tồn kho & chuyển trạng thái Lên đơn.';
+
+          if(!createdCardEl){
+            createdCardEl = createOrderCardElement();
+          }
+          if(createdCardEl.parentNode !== listCol2){
+            listCol2.prepend(createdCardEl);
+            countCol1.textContent = "1";
+            countCol2.textContent = "4";
+          }
+
+          const cardTag = document.getElementById('cardAiTag');
+          const cardTagTxt = document.getElementById('cardAiTagText');
+          if(cardTag) cardTag.className = 'card-ai-tag';
+          if(cardTagTxt) cardTagTxt.textContent = '✓ Đã lên đơn & kiểm kho';
+
+          // Move AI Agent Badge to Column 2
+          agentBadge.className = 'agent-processor-badge show col2';
+          agentText.innerHTML = 'AI Agent: Đang định vị vị trí kho &amp; Lên đơn…';
+
+          modalTimer = setTimeout(() => {
+            agentText.innerHTML = '✓ Đã hoàn tất lên đơn #DH-8902';
+            orderModal.classList.add('open');
+          }, 1500);
+        }
+      }
+
+      function triggerFlightAnimation(){
+        const phoneRect = document.getElementById('phoneDevice').getBoundingClientRect();
+        const col1Rect = document.getElementById('colStep1').getBoundingClientRect();
+
+        const startX = phoneRect.left + phoneRect.width / 2;
+        const startY = phoneRect.top + 200;
+        const endX = col1Rect.left + 50;
+        const endY = col1Rect.top + 80;
+
+        flyingPacket.style.left = startX + 'px';
+        flyingPacket.style.top = startY + 'px';
+        flyingPacket.classList.add('active');
+
+        let progress = 0;
+        const duration = 1200;
+        const startTime = performance.now();
+
+        function animateFlight(now){
+          const elapsed = now - startTime;
+          progress = Math.min(elapsed / duration, 1);
+
+          // Parabolic flight path
+          const curX = startX + (endX - startX) * progress;
+          const arcHeight = Math.sin(progress * Math.PI) * 120;
+          const curY = startY + (endY - startY) * progress - arcHeight;
+
+          flyingPacket.style.left = curX + 'px';
+          flyingPacket.style.top = curY + 'px';
+          flyingPacket.style.transform = `scale(${0.8 + 0.3 * Math.sin(progress * Math.PI)})`;
+
+          if(progress < 1){
+            requestAnimationFrame(animateFlight);
+          } else {
+            flyingPacket.classList.remove('active');
+            // Land on Column 1: Xác nhận thông tin đơn hàng
+            if(!createdCardEl) createdCardEl = createOrderCardElement();
+            if(createdCardEl.parentNode !== listCol1){
+              listCol1.prepend(createdCardEl);
+              countCol1.textContent = "2";
+            }
+            agentBadge.className = 'agent-processor-badge show col1';
+            agentText.innerHTML = 'Agents đang kiểm tra dữ liệu…';
+          }
+        }
+        requestAnimationFrame(animateFlight);
+      }
+
+      // Close Modal handlers
+      if(btnCloseModal){
+        btnCloseModal.addEventListener('click', () => {
+          orderModal.classList.remove('open');
+        });
+      }
+      if(orderModal){
+        orderModal.addEventListener('click', (e) => {
+          if(e.target === orderModal) orderModal.classList.remove('open');
+        });
+      }
+
+      // Controls
+      btnPlayPause.addEventListener('click', () => {
+        state.paused = !state.paused;
+        btnPlayPause.textContent = state.paused ? '▶' : '⏸';
+      });
+
+      btnReplayAll.addEventListener('click', () => {
+        state.elapsedMs = 0;
+        state.paused = false;
+        btnPlayPause.textContent = '⏸';
+        executeStepVisuals(1);
+      });
+
+      // Simulation Clock Loop
+      let lastTime = null;
+      function tick(now){
+        if(lastTime === null) lastTime = now;
+        const delta = now - lastTime;
+        lastTime = now;
+
+        if(!state.paused){
+          state.elapsedMs += delta;
+          if(state.elapsedMs > totalDuration){
+            state.elapsedMs = 0; // loop
+          }
+
+          demoTimer.textContent = fmtTime(state.elapsedMs) + ' / ' + fmtTime(totalDuration);
+
+          // Calculate current step based on elapsedMs
+          let accumulated = 0;
+          let activeStep = 1;
+          for(let i = 0; i < STEPS.length; i++){
+            if(state.elapsedMs >= accumulated && state.elapsedMs < accumulated + STEPS[i].dur){
+              activeStep = STEPS[i].num;
+              break;
+            }
+            accumulated += STEPS[i].dur;
+          }
+
+          if(activeStep !== state.currentStep){
+            executeStepVisuals(activeStep);
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+
+      // Start initial step
+      executeStepVisuals(1);
+      requestAnimationFrame(tick);
+
+    })();
+  </script>
+</body>
+</html>

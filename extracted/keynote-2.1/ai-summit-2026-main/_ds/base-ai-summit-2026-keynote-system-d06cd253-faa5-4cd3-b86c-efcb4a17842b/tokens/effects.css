@@ -1,0 +1,19 @@
+:root{
+--radius-card:24px;
+--radius-pill:999px;
+--radius-node:20px;
+--radius-frame:32px;
+
+--border-hairline:1px;
+
+--shadow-card:0 20px 50px rgba(0,0,0,.35);
+--shadow-lift:0 28px 64px rgba(0,0,0,.45);
+--glow-focus:0 0 0 1px var(--glass-border-bright),0 0 48px rgba(169,214,255,.28);
+--glow-node:0 0 40px rgba(169,214,255,.35);
+
+--blur-glass:blur(12px); /* @kind other */
+--dot-grid:radial-gradient(rgba(255,255,255,.08) 1.5px,transparent 1.5px); /* @kind other */
+--dot-grid-opacity:.5; /* @kind other */
+
+--scrim-bottom:linear-gradient(to top,rgba(6,17,48,.85) 0%,transparent 100%); /* @kind other */
+}

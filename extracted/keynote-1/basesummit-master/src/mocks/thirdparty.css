@@ -1,0 +1,95 @@
+/* Two products that are not ours, drawn at real density for the "current
+   software" slide: the Base HRM employees list and a Salesforce Lightning
+   opportunities board. Each is scoped to its root so nothing leaks into the
+   platform mocks. Drawn at 680px wide; the slide zooms them. */
+
+/* ── Base HRM ─────────────────────────────────────────────────────────── */
+.hrm { display: flex; width: 680px; height: 430px; overflow: hidden; background: #fff; color: #37474F; font-family: 'Inter Variable', 'Segoe UI', system-ui, sans-serif; font-size: 11px; line-height: 1.3; }
+.hrm-rail { width: 30px; background: #1E2A3B; display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 12px; color: #93A4BE; }
+.hrm-rail .av { width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #F59E0B, #7C3AED); margin-bottom: 4px; }
+.hrm-rail svg { width: 14px; height: 14px; }
+/* The sidebar is a fixed 132px: every child clips and ellipsises rather than
+   widening the column (grid items default to min-width auto). */
+.hrm-side { width: 132px; flex: none; min-width: 0; background: #263449; color: #DDE5F0; padding: 10px 8px; display: grid; align-content: start; gap: 2px; }
+.hrm-side > * { min-width: 0; }
+.hrm-side .org { font-weight: 600; font-size: 11.5px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hrm-side .org small { display: block; font-weight: 400; font-size: 9px; color: #9FB0C8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hrm-side .search { margin: 6px 0 8px; height: 20px; border-radius: 4px; background: #34435B; color: #9FB0C8; font-size: 9.5px; display: flex; align-items: center; gap: 5px; padding: 0 7px; white-space: nowrap; overflow: hidden; }
+.hrm-side .search svg { flex: none; }
+.hrm-side .grp { display: flex; justify-content: space-between; margin: 6px 0 2px; font-weight: 600; font-size: 10.5px; color: #fff; white-space: nowrap; }
+.hrm-side .row { display: flex; align-items: center; gap: 6px; height: 19px; padding: 0 6px; border-radius: 4px; font-size: 10px; color: #C9D4E3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hrm-side .row > span { overflow: hidden; text-overflow: ellipsis; }
+.hrm-side .row svg { width: 11px; height: 11px; flex: none; opacity: .8; }
+.hrm-side .row.on { background: #2F6FED; color: #fff; }
+.hrm-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.hrm-head { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px 0; }
+.hrm-head h1 { margin: 0; font-size: 15px; font-weight: 600; color: #1F2D3D; }
+.hrm-head .new { height: 22px; padding: 0 10px; border-radius: 4px; background: #2F6FED; color: #fff; font-size: 10px; font-weight: 500; display: inline-flex; align-items: center; }
+.hrm-tabs { display: flex; align-items: center; gap: 12px; padding: 6px 12px 0; border-bottom: 1px solid #E5E9F0; font-size: 9px; font-weight: 600; letter-spacing: .04em; color: #6B7A8F; white-space: nowrap; overflow: hidden; }
+.hrm-tabs span { padding: 4px 0 6px; }
+.hrm-tabs .on { color: #2F6FED; box-shadow: inset 0 -2px 0 #2F6FED; }
+.hrm-tabs .views { margin-left: auto; font-weight: 500; letter-spacing: 0; color: #4B5B70; display: flex; gap: 10px; }
+.hrm-tools { display: flex; align-items: center; gap: 6px; padding: 7px 12px; }
+.hrm-tools span { height: 20px; padding: 0 8px; border: 1px solid #D5DCE6; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-size: 9.5px; color: #4B5B70; white-space: nowrap; }
+.hrm-tools .q { width: 110px; color: #98A5B7; }
+.hrm-tools .on { background: #EAF1FF; border-color: #BBD0FA; color: #2F6FED; }
+.hrm-tools svg { width: 10px; height: 10px; }
+.hrm-table { border-top: 1px solid #E5E9F0; font-size: 10px; }
+.hrm-tr { display: grid; grid-template-columns: 22px 128px 66px 62px 58px 1fr 64px; align-items: center; height: 26px; border-bottom: 1px solid #EEF1F5; padding: 0 6px 0 8px; white-space: nowrap; }
+.hrm-tr > * { overflow: hidden; text-overflow: ellipsis; }
+.hrm-tr.h { height: 24px; background: #F7F9FC; font-size: 8.5px; font-weight: 600; letter-spacing: .05em; color: #6B7A8F; }
+.hrm-tr .cb { width: 10px; height: 10px; border: 1px solid #C3CCD8; border-radius: 2px; }
+.hrm-tr .who { display: flex; align-items: center; gap: 6px; font-weight: 500; color: #1F2D3D; }
+.hrm-tr .who i { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+.hrm-tr .code { color: #16A34A; font-weight: 500; }
+.hrm-tr .acct { color: #4B5B70; }
+.hrm-tr .st { display: flex; align-items: center; gap: 5px; }
+.hrm-tr .st::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #22C55E; }
+
+/* ── Salesforce Lightning ─────────────────────────────────────────────── */
+.sf { display: flex; flex-direction: column; width: 680px; height: 430px; overflow: hidden; background: #F3F3F3; color: #181818; font-family: 'Inter Variable', 'Segoe UI', system-ui, sans-serif; font-size: 10.5px; line-height: 1.3; }
+.sf-top { display: flex; align-items: center; gap: 10px; height: 30px; padding: 0 10px; background: #fff; border-bottom: 1px solid #E5E5E5; }
+.sf-top .logo { width: 22px; height: 18px; border-radius: 3px; background: #1B96FF; }
+.sf-top .q { flex: 0 0 240px; margin: 0 auto; height: 20px; border: 1px solid #C9C9C9; border-radius: 4px; display: flex; align-items: center; gap: 6px; padding: 0 8px; color: #706E6B; font-size: 9.5px; }
+.sf-top .q svg { width: 10px; height: 10px; }
+.sf-top .icons { display: flex; gap: 8px; color: #706E6B; }
+.sf-top .icons svg { width: 12px; height: 12px; }
+.sf-top .me { width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, #F4B860, #7C3AED); }
+.sf-tabs { display: flex; align-items: stretch; height: 26px; background: #fff; border-bottom: 1px solid #DDD; font-size: 9.5px; white-space: nowrap; }
+.sf-tabs .app { display: flex; align-items: center; gap: 6px; padding: 0 10px; font-size: 10.5px; font-weight: 500; border-right: 1px solid #DDD; }
+.sf-tabs .app i { width: 10px; height: 10px; background: repeating-linear-gradient(90deg, #706E6B 0 2px, transparent 2px 4px), repeating-linear-gradient(0deg, #706E6B 0 2px, transparent 2px 4px); }
+.sf-tabs span { display: flex; align-items: center; gap: 4px; padding: 0 9px; border-right: 1px solid #DDD; color: #444; }
+.sf-tabs span svg { width: 9px; height: 9px; color: #706E6B; }
+.sf-tabs .on { box-shadow: inset 0 3px 0 #0176D3; color: #181818; }
+.sf-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px 4px; }
+.sf-head .crown { width: 22px; height: 22px; border-radius: 4px; background: #E9A100; display: grid; place-items: center; color: #fff; }
+.sf-head .crown svg { width: 12px; height: 12px; }
+.sf-head .k { font-size: 8px; font-weight: 600; letter-spacing: .05em; color: #444; }
+.sf-head .t { font-size: 13px; font-weight: 600; color: #080707; }
+.sf-head .new { margin-left: auto; height: 20px; padding: 0 9px; border: 1px solid #C9C9C9; border-radius: 4px; background: #fff; color: #0176D3; display: inline-flex; align-items: center; font-size: 9.5px; }
+.sf-meta { display: flex; align-items: center; padding: 0 10px 6px; font-size: 8.5px; color: #444; }
+.sf-meta .btns { margin-left: auto; display: flex; gap: 3px; }
+.sf-meta .btns i { width: 16px; height: 14px; border: 1px solid #C9C9C9; border-radius: 3px; background: #fff; }
+.sf-meta .btns i.on { background: #0176D3; border-color: #0176D3; }
+.sf-body { flex: 1; min-height: 0; display: flex; gap: 6px; padding: 0 6px 6px 6px; }
+.sf-board { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; align-content: start; }
+.sf-col { min-width: 0; display: grid; gap: 4px; align-content: start; }
+.sf-stage { position: relative; height: 20px; background: #0176D3; color: #fff; font-size: 8.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 0 100%, 7px 50%); }
+.sf-col:first-child .sf-stage { clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 0 100%); }
+.sf-sum { background: #fff; border: 1px solid #E5E5E5; border-radius: 3px; height: 22px; display: grid; place-items: center; color: #2E844A; font-size: 10.5px; font-weight: 500; }
+.sf-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 3px; padding: 4px 5px; display: grid; gap: 2px; font-size: 8.5px; white-space: nowrap; }
+.sf-card > * { overflow: hidden; text-overflow: ellipsis; }
+.sf-card .n { color: #0176D3; display: flex; justify-content: space-between; gap: 4px; }
+.sf-card .n svg { width: 8px; height: 8px; flex: none; color: #706E6B; }
+.sf-card .a { color: #181818; }
+.sf-card .c { color: #0176D3; }
+.sf-card .s { display: flex; justify-content: space-between; align-items: center; color: #444; }
+.sf-card .s i { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 7px solid #FE9339; }
+.sf-charts { flex: 0 0 150px; background: #fff; border: 1px solid #E5E5E5; border-radius: 3px; padding: 8px; display: grid; gap: 8px; align-content: start; font-size: 9px; }
+.sf-charts .h { display: flex; justify-content: space-between; font-size: 11px; color: #444; }
+.sf-charts .sel { height: 18px; border: 1px solid #C9C9C9; border-radius: 3px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; font-size: 8.5px; }
+.sf-charts svg { display: block; margin: 2px auto; }
+.sf-charts .row { display: flex; justify-content: space-between; border-top: 1px solid #EEE; padding: 4px 0; color: #444; font-size: 8.5px; }
+.sf-foot { display: flex; gap: 16px; height: 20px; align-items: center; padding: 0 10px; background: #fff; border-top: 1px solid #DDD; font-size: 9px; color: #444; }
+.sf-foot span { display: flex; align-items: center; gap: 4px; }
+.sf-foot svg { width: 9px; height: 9px; }

@@ -1,0 +1,182 @@
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background: var(--navy-900);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: 1.35;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+a { color: inherit; }
+
+/* ── Stage: a fixed 1920×960 (2:1) canvas scaled to fit the room it is given ── */
+.stage-viewport {
+  position: absolute; inset: 0;
+  background: var(--navy-950);
+  overflow: hidden;
+}
+.stage {
+  position: absolute; left: 0; top: 0;   /* the whole-pixel offset comes from Stage.tsx */
+  width: var(--stage-w); height: var(--stage-h);
+  transform-origin: 0 0;
+  background: var(--navy-900);
+  overflow: hidden;
+}
+.slide { position: absolute; inset: 0; }
+
+/* ── Type ──────────────────────────────────────────────────────────────── */
+.display, .h1, .h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  margin: 0;
+  text-wrap: balance;
+}
+.display { font-size: var(--t-display); }
+.h1 { font-size: var(--t-h1); }
+.h2 { font-size: var(--t-h2); }
+.lead { font-size: var(--t-lead); line-height: 1.3; color: var(--blue-100); margin: 0; text-wrap: pretty; }
+.body { font-size: var(--t-body); }
+.small { font-size: var(--t-small); }
+.micro { font-size: var(--t-micro); }
+.muted { color: var(--muted); }
+.dim { color: var(--dim); }
+.num { font-variant-numeric: tabular-nums; }
+.tone-human { color: var(--amber-300); }
+.tone-agent { color: var(--cyan-300); }
+.tone-blue  { color: var(--blue-300); }
+strong { font-weight: 600; color: var(--white); }
+
+/* ── Frame: the per-slide layout ───────────────────────────────────────── */
+.frame {
+  position: absolute; inset: 0;
+  padding: var(--frame-top) var(--frame-x) var(--frame-bottom);
+  display: grid;
+  /* minmax(0, 1fr), not 1fr: the figure row must be allowed to be shorter than
+     its content, or a tall figure grows the row and runs off the stage. */
+  grid-template-rows: auto minmax(0, 1fr);
+  row-gap: 40px;
+}
+.frame-top {
+  display: flex; justify-content: space-between; align-items: center; column-gap: 40px;
+  font-size: var(--t-micro); color: var(--dim);
+  min-height: var(--brand-mark);
+}
+.frame-brand { display: flex; align-items: center; min-width: 0; }
+/* The breadcrumb after the brand, behind a hairline: keynote › slide. */
+.frame-crumbs {
+  display: flex; align-items: center; gap: 12px; min-width: 0;
+  margin-left: 22px; padding-left: 22px; border-left: 1px solid var(--line-strong);
+  line-height: 1.25; white-space: nowrap;
+}
+.frame-crumbs .crumb-sep { width: 0.7em; height: 0.7em; flex: none; opacity: 0.7; }
+.frame-slide { color: var(--muted); }
+
+/* ── Brand: the platform mark and wordmark, top-left of every slide ─────── */
+.brand { display: inline-flex; align-items: center; gap: 0.42em; font-size: var(--brand-word); color: var(--white); }
+.brand svg { display: block; width: var(--brand-mark); height: var(--brand-mark); flex-shrink: 0; }
+.brand b { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.015em; line-height: 1; white-space: nowrap; }
+/* Full-bleed slides pin it where the frame would have put it. */
+.brand-corner {
+  position: absolute; z-index: 2; left: var(--frame-x); top: var(--frame-top);
+  height: var(--brand-mark);
+}
+.frame-body { display: grid; min-height: 0; }
+.frame-split .frame-body { grid-template-columns: 680px 1fr; grid-template-rows: minmax(0, 1fr); column-gap: 80px; align-items: center; }
+.frame-stack .frame-body { grid-template-rows: auto minmax(0, 1fr); row-gap: 36px; }
+.frame-center .frame-body { grid-template-rows: minmax(0, 1fr); place-items: center; text-align: center; }
+/* The figure cell always fills its row — whatever the layout aligns around it —
+   so the fit box inside knows how much height it really has. */
+.frame-figure {
+  position: relative; min-width: 0; min-height: 0;
+  align-self: stretch; justify-self: stretch;
+  /* Bounded tracks, not implicit auto ones: an oversized figure must overflow
+     its row evenly around the centre, so scaling it down lands it back inside. */
+  display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center;
+}
+.frame-text { display: grid; row-gap: 32px; align-content: center; max-width: 1200px; }
+.frame-stack .frame-text { align-content: start; max-width: 1480px; }
+
+/* Figures are drawn at a fixed size; on a shorter stage the fit box scales the
+   whole figure down rather than letting it run off. */
+.frame-fit { display: grid; place-items: center; transform-origin: center center; }
+/* A bleed figure is product windows placed absolutely at x/y, so the fit box
+   has no flow content and would shrink to nothing at the centre of the cell.
+   It fills the cell instead and is positioned, so it is at once the windows
+   origin and the box a callout measures its ring against (Callout reads its
+   parent). Fitting is off for bleed, so the stretch costs nothing. */
+.frame-figure.bleed .frame-fit { position: relative; justify-self: stretch; align-self: stretch; }
+
+/* ── Aspect ratio: 1920 wide always, so only the vertical room changes ──── */
+:root[data-ratio='16x9'] { --frame-top: 92px; --frame-bottom: 84px; }
+:root[data-ratio='16x9'] .frame { row-gap: 48px; }
+
+:root[data-ratio='3x1'] {
+  --t-display: 96px;
+  --t-h1: 66px;
+  --t-h2: 46px;
+  --t-lead: 31px;
+  --t-body: 25px;
+  --t-small: 21px;
+  --t-micro: 18px;
+  --frame-top: 44px;
+  --frame-x: 110px;
+  --frame-bottom: 40px;
+  --brand-mark: 30px;
+  --brand-word: 22px;
+}
+:root[data-ratio='3x1'] .frame { row-gap: 22px; }
+:root[data-ratio='3x1'] .frame-stack .frame-body { row-gap: 22px; }
+:root[data-ratio='3x1'] .frame-split .frame-body { grid-template-columns: 620px 1fr; column-gap: 56px; }
+:root[data-ratio='3x1'] .frame-split .h1 { font-size: 54px; }
+:root[data-ratio='3x1'] .frame-stack .h1 { font-size: 60px; }
+:root[data-ratio='3x1'] .frame-split .lead { font-size: 27px; }
+:root[data-ratio='3x1'] .title-words .display { font-size: 104px; }
+:root[data-ratio='3x1'] .title-words { row-gap: 24px; }
+
+/* SVG text inherits the body face */
+svg text { font-family: var(--font-body); fill: var(--white); }
+svg text.sd { font-family: var(--font-display); font-weight: 500; }
+svg text.muted { fill: var(--muted); }
+svg text.dim { fill: var(--dim); }
+svg text.tone-agent { fill: var(--cyan-300); }
+svg text.tone-human { fill: var(--amber-300); }
+svg text.tone-blue  { fill: var(--blue-300); }
+
+/* ── Deck chrome ───────────────────────────────────────────────────────── */
+/* One segment per slide with a 2px gap between them, lit up to the current one. */
+.progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; display: flex; gap: 2px; }
+.progress > i { flex: 1 1 0; display: block; height: 100%; background: color-mix(in srgb, var(--blue-300) 10%, transparent); transition: background .5s var(--ease-out); }
+.progress > i.on { background: var(--blue-400); }
+/* Hidden from the slides, the build view keeps it across the top of the page. */
+.progress.progress-top { top: 0; bottom: auto; z-index: 5; pointer-events: none; }
+
+/* ── Launcher ──────────────────────────────────────────────────────────── */
+.launcher {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  background: var(--navy-900);
+}
+.launcher-inner { width: min(1100px, 90vw); display: grid; row-gap: 48px; }
+.launcher h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(36px, 5vw, 72px); margin: 0; letter-spacing: -0.02em; }
+.launcher .sub { color: var(--muted); font-size: clamp(16px, 1.6vw, 24px); margin-top: 8px; }
+.launcher ul { list-style: none; margin: 0; padding: 0; display: grid; row-gap: 4px; }
+.launcher li a {
+  display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 24px;
+  padding: 28px 8px; text-decoration: none;
+  border-top: 1px solid var(--line);
+  font-size: clamp(20px, 2.2vw, 34px); font-family: var(--font-display); font-weight: 400;
+  transition: padding-left .3s var(--ease-out), color .3s;
+}
+.launcher li a:hover { padding-left: 24px; color: var(--blue-200); }
+.launcher li a small { font-family: var(--font-body); font-size: clamp(14px, 1.2vw, 18px); color: var(--dim); }
+.launcher li.soon a { color: var(--dim); pointer-events: none; }
+.launcher .keys { color: var(--dim); font-size: clamp(13px, 1.1vw, 16px); line-height: 1.7; }
+.launcher kbd { font-family: var(--font-body); border: 1px solid var(--line); border-radius: 4px; padding: 1px 7px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .progress > i { transition: none; }
+}

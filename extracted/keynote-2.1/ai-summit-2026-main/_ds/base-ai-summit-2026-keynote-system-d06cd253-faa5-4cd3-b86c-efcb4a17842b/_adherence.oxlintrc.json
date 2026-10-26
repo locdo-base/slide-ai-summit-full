@@ -1,0 +1,389 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/diagram/**",
+              "components/presenter/**",
+              "components/stage/**",
+              "components/surfaces/**",
+              "components/typography/**",
+              "slides/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Afacad))/i]",
+        "message": "Font not provided by the design system. Available: Afacad."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='AppCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:name|appkey|group|role|icon|state|onClick|style|key|ref|className|style|children)$/]",
+        "message": "<AppCard> doesn't accept that prop. Declared props: name, appkey, group, role, icon, state, onClick, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='AppCard'] > JSXAttribute[name.name='state'] > Literal[value!=/^(?:default|active|dim)$/]",
+        "message": "<AppCard> state must be one of 'default' | 'active' | 'dim'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='EvidenceFrame'] > JSXAttribute > JSXIdentifier[name!=/^(?:src|alt|video|poster|demo|caption|callouts|style|key|ref|className|style|children)$/]",
+        "message": "<EvidenceFrame> doesn't accept that prop. Declared props: src, alt, video, poster, demo, caption, callouts, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|title|children|footer|state|reveal|delay|as|onClick|style|key|ref|className|style|children)$/]",
+        "message": "<GlassCard> doesn't accept that prop. Declared props: label, title, children, footer, state, reveal, delay, as, onClick, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassCard'] > JSXAttribute[name.name='state'] > Literal[value!=/^(?:default|active|dim)$/]",
+        "message": "<GlassCard> state must be one of 'default' | 'active' | 'dim'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='JourneyStep'] > JSXAttribute > JSXIdentifier[name!=/^(?:index|title|action|state|result|status|last|onClick|style|key|ref|className|style|children)$/]",
+        "message": "<JourneyStep> doesn't accept that prop. Declared props: index, title, action, state, result, status, last, onClick, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='JourneyStep'] > JSXAttribute[name.name='status'] > Literal[value!=/^(?:done|active|upcoming)$/]",
+        "message": "<JourneyStep> status must be one of 'done' | 'active' | 'upcoming'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Metric'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|unit|label|source|tone|align|style|key|ref|className|style|children)$/]",
+        "message": "<Metric> doesn't accept that prop. Declared props: value, unit, label, source, tone, align, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Metric'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:white|cyan|green|orange)$/]",
+        "message": "<Metric> tone must be one of 'white' | 'cyan' | 'green' | 'orange'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Metric'] > JSXAttribute[name.name='align'] > Literal[value!=/^(?:left|center)$/]",
+        "message": "<Metric> align must be one of 'left' | 'center'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PresenterControls'] > JSXAttribute > JSXIdentifier[name!=/^(?:current|total|onPrev|onNext|onOverview|onAutoplay|onNotes|onFullscreen|style|key|ref|className|style|children)$/]",
+        "message": "<PresenterControls> doesn't accept that prop. Declared props: current, total, onPrev, onNext, onOverview, onAutoplay, onNotes, onFullscreen, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SectionEyebrow'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|dot|children|style|key|ref|className|style|children)$/]",
+        "message": "<SectionEyebrow> doesn't accept that prop. Declared props: tone, dot, children, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SectionEyebrow'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:cyan|sub|muted)$/]",
+        "message": "<SectionEyebrow> tone must be one of 'cyan' | 'sub' | 'muted'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ServiceNode'] > JSXAttribute > JSXIdentifier[name!=/^(?:name|object|operator|state|output|status|onClick|style|key|ref|className|style|children)$/]",
+        "message": "<ServiceNode> doesn't accept that prop. Declared props: name, object, operator, state, output, status, onClick, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ServiceNode'] > JSXAttribute[name.name='status'] > Literal[value!=/^(?:default|active|dim)$/]",
+        "message": "<ServiceNode> status must be one of 'default' | 'active' | 'dim'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SlideShell'] > JSXAttribute > JSXIdentifier[name!=/^(?:deck|slideNo|total|glow|dots|animate|align|children|style|key|ref|className|style|children)$/]",
+        "message": "<SlideShell> doesn't accept that prop. Declared props: deck, slideNo, total, glow, dots, animate, align, children, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SlideShell'] > JSXAttribute[name.name='glow'] > Literal[value!=/^(?:center|left|right|none)$/]",
+        "message": "<SlideShell> glow must be one of 'center' | 'left' | 'right' | 'none'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SlideShell'] > JSXAttribute[name.name='align'] > Literal[value!=/^(?:start|center)$/]",
+        "message": "<SlideShell> align must be one of 'start' | 'center'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StageBackground'] > JSXAttribute > JSXIdentifier[name!=/^(?:glow|dots|children|style|key|ref|className|style|children)$/]",
+        "message": "<StageBackground> doesn't accept that prop. Declared props: glow, dots, children, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StageBackground'] > JSXAttribute[name.name='glow'] > Literal[value!=/^(?:center|left|right|none)$/]",
+        "message": "<StageBackground> glow must be one of 'center' | 'left' | 'right' | 'none'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatementHighlight'] > JSXAttribute > JSXIdentifier[name!=/^(?:h|key|ref|className|style|children)$/]",
+        "message": "<StatementHighlight> doesn't accept that prop. Declared props: h."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "AppCard": {
+        "replaces": []
+      },
+      "EvidenceFrame": {
+        "replaces": []
+      },
+      "GlassCard": {
+        "replaces": []
+      },
+      "JourneyStep": {
+        "replaces": []
+      },
+      "Metric": {
+        "replaces": []
+      },
+      "PresenterControls": {
+        "replaces": []
+      },
+      "SectionEyebrow": {
+        "replaces": []
+      },
+      "ServiceNode": {
+        "replaces": []
+      },
+      "SlideShell": {
+        "replaces": []
+      },
+      "StageBackground": {
+        "replaces": []
+      },
+      "StatementHighlight": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent-blue",
+      "--accent-blue-light",
+      "--accent-cyan",
+      "--accent-green",
+      "--accent-orange",
+      "--accent-red",
+      "--base-blue",
+      "--bg-accent",
+      "--bg-darker",
+      "--bg-gradient",
+      "--bg-primary",
+      "--bg-radial-mesh",
+      "--blur-glass",
+      "--border-card",
+      "--border-card-active",
+      "--border-hairline",
+      "--card-pad",
+      "--dot-grid",
+      "--dot-grid-opacity",
+      "--dot-grid-step",
+      "--dur-focus",
+      "--dur-reveal",
+      "--dur-slide",
+      "--ease-stage",
+      "--edge-line",
+      "--edge-line-active",
+      "--font-body",
+      "--font-display",
+      "--fs-card-body",
+      "--fs-card-heading",
+      "--fs-eyebrow",
+      "--fs-h1-cover",
+      "--fs-h2-statement",
+      "--fs-h2-statement-max",
+      "--fs-h2-statement-min",
+      "--fs-h3-section",
+      "--fs-label",
+      "--fs-metric",
+      "--fw-black",
+      "--fw-bold",
+      "--fw-medium",
+      "--fw-regular",
+      "--fw-semibold",
+      "--gap-card",
+      "--gap-grid",
+      "--gap-section",
+      "--glass-bg",
+      "--glass-bg-hover",
+      "--glass-border",
+      "--glass-border-bright",
+      "--glass-shadow",
+      "--glow-focus",
+      "--glow-node",
+      "--grid-cols",
+      "--lh-body",
+      "--lh-cover",
+      "--lh-heading",
+      "--lh-statement",
+      "--link",
+      "--link-hover",
+      "--ls-cover",
+      "--ls-eyebrow",
+      "--ls-statement",
+      "--radius-card",
+      "--radius-frame",
+      "--radius-node",
+      "--radius-pill",
+      "--rise-distance",
+      "--scrim-bottom",
+      "--shadow-card",
+      "--shadow-lift",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--space-8",
+      "--space-9",
+      "--stage-h",
+      "--stage-pad-x",
+      "--stage-pad-y",
+      "--stage-w",
+      "--state-attention",
+      "--state-positive",
+      "--state-risk",
+      "--surface-card",
+      "--surface-card-hover",
+      "--surface-stage",
+      "--text-body",
+      "--text-card-body",
+      "--text-card-title",
+      "--text-cover",
+      "--text-eyebrow",
+      "--text-highlight",
+      "--text-meta",
+      "--text-muted",
+      "--text-statement",
+      "--text-sub",
+      "--text-title",
+      "--text-white"
+    ],
+    "tokenKinds": {
+      "--bg-primary": "color",
+      "--bg-accent": "color",
+      "--bg-darker": "color",
+      "--bg-gradient": "color",
+      "--bg-radial-mesh": "color",
+      "--text-white": "font",
+      "--text-sub": "font",
+      "--text-muted": "font",
+      "--accent-cyan": "color",
+      "--accent-blue": "color",
+      "--accent-blue-light": "color",
+      "--accent-green": "color",
+      "--accent-orange": "color",
+      "--accent-red": "color",
+      "--base-blue": "color",
+      "--glass-bg": "color",
+      "--glass-bg-hover": "color",
+      "--glass-border": "color",
+      "--glass-border-bright": "color",
+      "--glass-shadow": "shadow",
+      "--surface-stage": "color",
+      "--surface-card": "color",
+      "--surface-card-hover": "color",
+      "--border-card": "color",
+      "--border-card-active": "color",
+      "--text-title": "font",
+      "--text-body": "font",
+      "--text-meta": "font",
+      "--text-eyebrow": "font",
+      "--text-highlight": "font",
+      "--edge-line": "color",
+      "--edge-line-active": "color",
+      "--state-positive": "color",
+      "--state-attention": "color",
+      "--state-risk": "color",
+      "--link": "color",
+      "--link-hover": "color",
+      "--font-display": "font",
+      "--font-body": "font",
+      "--fs-h1-cover": "spacing",
+      "--fs-h2-statement": "spacing",
+      "--fs-h2-statement-min": "spacing",
+      "--fs-h2-statement-max": "spacing",
+      "--fs-h3-section": "spacing",
+      "--fs-eyebrow": "spacing",
+      "--fs-card-heading": "spacing",
+      "--fs-card-body": "spacing",
+      "--fs-metric": "spacing",
+      "--fs-label": "spacing",
+      "--lh-cover": "other",
+      "--lh-statement": "other",
+      "--lh-heading": "other",
+      "--lh-body": "other",
+      "--ls-cover": "other",
+      "--ls-statement": "other",
+      "--ls-eyebrow": "other",
+      "--fw-regular": "other",
+      "--fw-medium": "other",
+      "--fw-semibold": "other",
+      "--fw-bold": "other",
+      "--fw-black": "other",
+      "--text-cover": "font",
+      "--text-statement": "font",
+      "--text-card-title": "font",
+      "--text-card-body": "font",
+      "--stage-w": "spacing",
+      "--stage-h": "spacing",
+      "--stage-pad-x": "spacing",
+      "--stage-pad-y": "spacing",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--space-8": "spacing",
+      "--space-9": "spacing",
+      "--gap-card": "spacing",
+      "--gap-grid": "spacing",
+      "--gap-section": "spacing",
+      "--card-pad": "spacing",
+      "--grid-cols": "other",
+      "--dot-grid-step": "spacing",
+      "--radius-card": "radius",
+      "--radius-pill": "radius",
+      "--radius-node": "radius",
+      "--radius-frame": "radius",
+      "--border-hairline": "spacing",
+      "--shadow-card": "shadow",
+      "--shadow-lift": "shadow",
+      "--glow-focus": "color",
+      "--glow-node": "shadow",
+      "--blur-glass": "other",
+      "--dot-grid": "other",
+      "--dot-grid-opacity": "other",
+      "--scrim-bottom": "other",
+      "--ease-stage": "other",
+      "--dur-slide": "other",
+      "--dur-reveal": "other",
+      "--dur-focus": "other",
+      "--rise-distance": "spacing"
+    },
+    "fontFamilies": [
+      "Afacad"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+:root{
+--ease-stage:cubic-bezier(.16,1,.3,1); /* @kind other */
+--dur-slide:500ms; /* @kind other */
+--dur-reveal:300ms; /* @kind other */
+--dur-focus:200ms; /* @kind other */
+--rise-distance:24px;
+}

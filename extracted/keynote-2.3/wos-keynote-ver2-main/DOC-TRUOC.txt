@@ -1,0 +1,13 @@
+KEYNOTE WOS - GOI CHOT (22/09/2026) - dung cho ca WEB va USB
+
+MO TREN MAY / USB (khong can mang)
+- Chuot phai index.html > Open With > Google Chrome > nhan F. (mac dinh che do LED keo dan)
+- Xem binh thuong tren laptop: mo laptop.html.
+- Video slide 17 va nhac nen nam trong assets/, mo tu o dia van chay.
+
+DA VA SO VOI BAN XUAT TU CLAUDE DESIGN
+1. React de san trong assets/vendor, khong tai tu unpkg.com (mat mang la den man hinh).
+2. Khoa color-scheme: light only o deck va 9 mock -> het khung trang quanh mock khi may de Dark Mode.
+3. mock-orbit, mock-constellation: font nhung san, bo nen toi rieng, tran man hinh (slide 16).
+4. Nhac nen WAV 17MB doi sang MP3 2MB, index.html tro sang file moi.
+5. Bo 111 file tai nguyen khong duoc dung va mock-calls.html: goi tu 116MB con 24MB.

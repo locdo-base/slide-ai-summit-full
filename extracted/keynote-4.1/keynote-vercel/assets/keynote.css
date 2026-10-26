@@ -1,0 +1,2064 @@
+@import url('fonts.css');
+
+/* =========================================================================
+   Enterprise AI Summit 2026 — "Xây dựng AI chuyên biệt cho doanh nghiệp"
+   Task 04 · design skeleton
+
+   Structure comes from `Keynote 2-v1.pptx`.
+   Visual language comes from the sibling summit keynote (Keynote 4).
+
+   House position: this is a scientific keynote, not a product launch.
+   Evidence regions are sized for model names, benchmark names, metrics and
+   experimental conditions — not for one large number. The table is a
+   first-class layout, not a fallback.
+   ========================================================================= */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* ---- canvas -------------------------------------------------------
+     2:1, matching the summit reference deck. The PPTX is 16:9; if the
+     venue confirms 16:9, change --canvas-h to 1440 and nothing else. */
+  --canvas-w: 2560;
+  --canvas-h: 1280;
+
+  /* ---- colour -------------------------------------------------------
+     Restrained on purpose. Blue carries structure, amber carries emphasis
+     and appears rarely, grey carries everything secondary. No semantic
+     green/red in the base system — result slides decide that per case. */
+  --ink:       #FFFFFF;
+  --ink-2:     #D5DEEA;
+  --ink-3:     #9FB4CF;
+  --ink-4:     #6E839E;
+
+  --blue:      #1E88E5;
+  --blue-lt:   #66B4F0;
+  --amber:     #F0A23B;
+
+  --bg-deep:   #061530;
+  --bg:        radial-gradient(120% 90% at 50% 0%, #123A78 0%, #0A1F44 45%, #061530 100%);
+  --bg-grid:   radial-gradient(rgba(255,255,255,.07) 1.5px, transparent 1.5px) 0 0 / 48px 48px;
+
+  --surface:   rgba(255,255,255,.05);
+  --line:      rgba(255,255,255,.12);
+  --line-2:    rgba(255,255,255,.20);
+
+  /* ---- type ---------------------------------------------------------
+     Be Vietnam Pro ships 400/500/700/800 — never request 600, the browser
+     would synthesise it and display text would smear. Slide titles sit at
+     700 rather than 800: editorial weight, not advertising weight. */
+  --sans: 'Be Vietnam Pro', Inter, system-ui, -apple-system, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --t-display:  128px;
+  --t-divider:  112px;
+  --t-title:     64px;   /* slide title */
+  --t-title-sm:  54px;   /* long slide title */
+  --t-eyebrow:   28px;
+  --t-lead:      36px;
+  --t-body:      30px;
+  --t-table:     30px;
+  --t-caption:   24px;
+  --t-micro:     21px;
+
+  /* ---- space -------------------------------------------------------- */
+  --pad-x:     140px;
+  --pad-y:     104px;
+  --gap:        48px;
+  --radius:     14px;
+}
+
+/* =========================================================================
+   Stage — fixed canvas scaled to the viewport
+   ========================================================================= */
+
+html, body { height: 100%; background: var(--bg-deep); overflow: hidden; }
+body {
+  font-family: var(--sans); color: var(--ink);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+
+#stage-wrap { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+
+#stage {
+  position: relative; flex: none;
+  width: calc(var(--canvas-w) * 1px);
+  height: calc(var(--canvas-h) * 1px);
+  transform-origin: center center;
+  background: var(--bg-deep);
+  overflow: hidden;
+}
+
+/* =========================================================================
+   Slide shell
+   ========================================================================= */
+
+.slide {
+  position: absolute; inset: 0;
+  display: none; flex-direction: column;
+  padding: var(--pad-y) var(--pad-x);
+  background: var(--bg);
+}
+.slide.is-active { display: flex; }
+
+/* running foot — quiet, and never on title or divider slides */
+/* 21px was legible on a laptop but small from the back of a room. 26px keeps
+   the footer subordinate to the closing line (36px) while staying readable. */
+.slide__foot {
+  position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 44px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 26px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-4);
+}
+/* the number is the functional half — a speaker or an audience member looking
+   for "which slide was that" — so it carries a little more weight */
+.slide__foot .num { font-family: var(--mono); font-size: 28px; letter-spacing: .06em; color: var(--ink-3); }
+
+/* =========================================================================
+   Heads
+   ========================================================================= */
+
+.slide-head { display: flex; flex-direction: column; gap: 16px; margin-bottom: var(--gap); }
+
+.eyebrow {
+  font-size: var(--t-eyebrow); font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--blue-lt);
+}
+.eyebrow--amber { color: var(--amber); }
+
+.slide-title {
+  font-size: var(--t-title); font-weight: 700;
+  letter-spacing: -.015em; line-height: 1.14;
+  max-width: 2000px; text-wrap: balance;
+}
+.slide-title--sm { font-size: var(--t-title-sm); }
+/* An untitled PPTX slide leaves this element in place but empty, so the
+   grid below it does not shift. See report §5. */
+.slide-title:empty { min-height: 0; }
+
+.slide-intro { font-size: var(--t-lead); line-height: 1.4; color: var(--ink-2); max-width: 1900px; }
+
+/* =========================================================================
+   Slide type 1 — Title
+   ========================================================================= */
+
+.slide--title, .slide--divider, .slide--conclusion {
+  background: var(--bg-grid), var(--bg);
+  align-items: flex-start; justify-content: center;
+}
+.slide--title .title-block { display: flex; flex-direction: column; gap: 40px; max-width: 2340px; }
+/* One line on the cover: 112px is the largest size at which the Vietnamese
+   title still fits the 2340px block without wrapping. */
+.display {
+  font-size: 112px; font-weight: 800;
+  letter-spacing: -.032em; line-height: 1.04; white-space: nowrap;
+}
+.subtitle { font-size: 52px; font-weight: 500; color: var(--ink-3); letter-spacing: -.01em; }
+.title-rule { width: 160px; height: 2px; background: var(--line-2); }
+
+/* =========================================================================
+   Slide type 2 — Section divider
+   ========================================================================= */
+
+.slide--divider .divider-block {
+  display: flex; align-items: baseline; gap: 64px;
+}
+.divider-num {
+  font-family: var(--mono); font-size: 220px; font-weight: 500;
+  line-height: .9; color: var(--blue); opacity: .55; letter-spacing: -.04em;
+}
+.divider-title {
+  font-size: var(--t-divider); font-weight: 800;
+  letter-spacing: -.02em; line-height: 1.05;
+}
+
+/* Transition slide — replaces the numbered Part divider. Carries the handover
+   explicitly: what the previous part was about, then the new subject. */
+.transition { display: flex; flex-direction: column; gap: 30px; max-width: 2100px; }
+.transition__from  { font-size: 38px; line-height: 1.4; color: var(--ink-4); }
+.transition__rule  { width: 120px; height: 3px; background: var(--amber); opacity: .8; border-radius: 2px; }
+.transition__title { font-size: 150px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+.transition__to    { font-size: 48px; font-weight: 500; color: var(--amber); letter-spacing: -.01em; }
+
+/* =========================================================================
+   Slide type 3 — Statement
+   Defined for completeness; no PPTX slide is a pure statement (report §5).
+   ========================================================================= */
+
+.slide--statement { align-items: flex-start; justify-content: center; }
+.statement {
+  font-size: 92px; font-weight: 800; letter-spacing: -.025em;
+  line-height: 1.12; max-width: 2150px; text-wrap: balance;
+}
+.statement-sub { font-size: var(--t-lead); color: var(--ink-3); margin-top: 36px; max-width: 1700px; }
+
+/* =========================================================================
+   Slide type 4 — Scientific text
+   ========================================================================= */
+
+.rows { display: flex; flex-direction: column; }
+.row {
+  display: grid; grid-template-columns: 72px 1fr;
+  align-items: baseline; gap: 32px;
+  padding: 26px 0; border-top: 1px solid var(--line);
+}
+.rows .row:last-child { border-bottom: 1px solid var(--line); }
+.row__n { font-family: var(--mono); font-size: var(--t-caption); color: var(--ink-4); }
+.row__t { font-size: var(--t-body); line-height: 1.4; color: var(--ink-2); }
+
+.rows--spaced { margin-top: 34px; }
+
+/* ---- lines instead of cards (slides 15, 17, 19, 23) -------------------
+   The closing slide states its items as hairline-separated lines. These four
+   slides used pills, chips and cards; they now use the same idiom, so the only
+   boxed things left in the deck are the data charts. */
+.rows--plain .row  { grid-template-columns: 1fr; gap: 0; }
+.rows--tight .row  { padding: 17px 0; }
+.rows--lg .row__t  { font-size: 44px; font-weight: 500; color: var(--ink); letter-spacing: -.01em; }
+/* two-column line: a named concept and what it buys */
+.rows--pair .row   { grid-template-columns: 520px 1fr; gap: 44px; }
+.row__k { font-size: 40px; font-weight: 700; letter-spacing: -.01em; color: var(--ink); }
+/* second line under a row, for steps that carry an explanation */
+.row__sub { display: block; margin-top: 10px; font-size: 27px; color: var(--ink-3); line-height: 1.35; font-weight: 400; }
+
+/* a progression stated as one line rather than a row of pills */
+.flowline { margin-top: 18px; font-size: 46px; font-weight: 500; line-height: 1.35; letter-spacing: -.01em; color: var(--ink); }
+.flowline i { font-style: normal; color: var(--blue-lt); padding: 0 16px; }
+
+/* the outcome that closes a list of steps */
+/* The closing line of a slide — ONE treatment for the whole deck: pinned to
+   the bottom of the content area, above a 2px rule, blue, --t-lead. Every
+   slide that ends with a line uses this, so the last thing read always sits
+   in the same place at the same size. Slides 19 and 24 previously had their
+   own variants sitting tight under the content; both now use this. */
+.takeaway {
+  margin-top: auto; padding-top: 32px;
+  border-top: 2px solid var(--line-2);
+  font-size: var(--t-lead); line-height: 1.35; color: var(--blue-lt);
+  max-width: 2100px;
+}
+/* leading arrow, where the line states an outcome rather than a conclusion */
+.takeaway i { font-style: normal; color: var(--ink-4); margin-right: 20px; }
+
+/* =========================================================================
+   Slide type 5 — Scientific result
+   Head · benchmark label · large evidence region · takeaway · source.
+   The evidence region accepts a table, a figure or a chart; the layout
+   makes no assumption that a result reduces to a single number.
+   ========================================================================= */
+
+.slide--result .result-meta {
+  display: flex; align-items: baseline; gap: 28px; flex-wrap: wrap;
+  margin-bottom: 26px; min-height: 34px;
+  font-size: var(--t-caption); color: var(--ink-3);
+}
+.result-meta .bench {
+  font-family: var(--mono); letter-spacing: .04em; color: var(--ink-2);
+}
+.result-meta .sep { color: var(--ink-4); }
+
+.result-area {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column; justify-content: flex-start;
+}
+.result-area--split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+/* a short table reads better balanced in the space than pinned to the top */
+.result-area--center { justify-content: center; }
+
+.result-foot {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 48px;
+  margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--line);
+}
+.result-takeaway { font-size: 34px; line-height: 1.35; color: var(--ink); max-width: 1600px; }
+.result-source   { font-size: var(--t-micro); color: var(--ink-4); font-family: var(--mono);
+                   letter-spacing: .04em; text-align: right; white-space: nowrap; }
+
+/* =========================================================================
+   Slide type 6 — Scientific table  (first-class, not a fallback)
+   ========================================================================= */
+
+.sci-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+
+.sci-table caption {
+  caption-side: top; text-align: left;
+  font-size: var(--t-caption); font-weight: 700; color: var(--ink-3);
+  letter-spacing: .14em; text-transform: uppercase;
+  padding-bottom: 18px;
+}
+
+/* grouped header band: <tr class="group"><th colspan="n">…  */
+.sci-table thead tr.group th {
+  font-size: var(--t-micro); font-weight: 700; color: var(--ink-4);
+  letter-spacing: .16em; text-transform: uppercase;
+  padding: 0 20px 12px; text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+.sci-table thead tr.group th.spacer { border-bottom: none; }
+
+.sci-table thead th {
+  font-size: var(--t-caption); font-weight: 700; color: var(--ink-3);
+  letter-spacing: .10em; text-transform: uppercase;
+  padding: 16px 20px; text-align: right; vertical-align: bottom;
+  border-bottom: 2px solid var(--line-2);
+}
+.sci-table thead th:first-child { text-align: left; }
+
+.sci-table tbody td {
+  font-size: var(--t-table); color: var(--ink-2);
+  padding: 18px 20px; text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+.sci-table tbody td:first-child {
+  text-align: left; color: var(--ink); font-weight: 500;
+  white-space: nowrap;
+}
+
+/* row-group label spanning several rows (Level 1 / Level 2 …) */
+.sci-table td.rowgroup {
+  font-size: var(--t-caption); font-weight: 700; color: var(--ink-3);
+  letter-spacing: .12em; text-transform: uppercase;
+  vertical-align: middle; border-right: 1px solid var(--line);
+}
+
+/* states the result slides will need in Task 05 */
+.sci-table .is-best     { color: var(--ink); font-weight: 700; }
+.sci-table .is-missing  { color: var(--ink-4); }            /* render as – */
+.sci-table .is-gain     { color: var(--blue-lt); }
+.sci-table .is-loss     { color: var(--amber); }
+.sci-table tbody tr.is-ours td { background: rgba(30,136,229,.10); }
+.sci-table tbody tr.is-ours td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
+.sci-table--tight tbody td { padding: 13px 18px; font-size: var(--t-caption); }
+.sci-table--tight thead th { padding: 12px 18px; }
+
+/* ---- fine-tuning result table (slide 10) ---------------------------------
+   Eight columns, and three of the task names are long. The names are fixed by
+   the source and may not be shortened, so the headers wrap instead — renaming
+   a task to save width would delete an experimental dimension. */
+
+.sci-table--finetune { table-layout: fixed; }
+.sci-table--finetune th:first-child,
+.sci-table--finetune td:first-child { width: 440px; }
+
+.sci-table--finetune thead th {
+  font-size: 22px; letter-spacing: .08em;
+  white-space: normal; line-height: 1.3;
+  padding: 14px 16px; vertical-align: bottom;
+}
+
+/* Two-line column head: the benchmark identifier above the verified task
+   name. The identifier stays because it is how the source labels the column;
+   the name is what makes it readable from the back of the room. */
+.th-id {
+  display: block; font-family: var(--mono);
+  font-size: 20px; font-weight: 500; color: var(--ink-4);
+  letter-spacing: .04em; text-transform: none; margin-bottom: 7px;
+}
+.th-name { display: block; font-size: 23px; font-weight: 700; letter-spacing: .06em; }
+
+/* =========================================================================
+   Benchmark chart — two panels, one bar group per task
+   Height = score (0–100, zero baseline, never truncated).
+   Width  = model size, on a compressed scale so 70B does not swamp the plot;
+            the legend says "theo kích thước", not "proportional", because the
+            scale is ordinal rather than linear.
+   Each task keeps its own group: the two panels hold several tasks measured on
+   different metrics, so a single averaged bar per panel would be a number that
+   exists nowhere in the source.
+   ========================================================================= */
+
+.bench { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.bench__div   { background: var(--line-2); }
+.bench__panel { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.bench__label {
+  font-size: 28px; font-weight: 700; color: var(--ink-3);
+  letter-spacing: .14em; text-transform: uppercase;
+  margin-bottom: 30px;
+}
+/* One benchmark per slide: the plot is centred and each group is capped so
+   three groups do not stretch into three lonely islands. */
+/* Groups are TOP-aligned, not bottom-aligned: .bgroup__bars is a fixed height,
+   so this puts every group's zero line at the same y. Bottom-aligning instead
+   let a two-line task label push its whole group upward, which made the bars
+   of one-line groups sit lower than the rest for no data-related reason. */
+.bench__plot { display: flex; align-items: flex-start; justify-content: center; position: relative; }
+/* One continuous axis across the whole plot. Four abutting per-group borders
+   left a visible seam where the groups met, which reads as a rendering fault
+   on a projected slide. */
+.bench__plot::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 620px;
+  height: 1px; background: var(--line-2);
+}
+
+.bgroup { flex: 1; max-width: 560px; display: flex; flex-direction: column; min-width: 0; }
+/* A tinted zone per task. Inset by a margin so the zones do not tile into one
+   continuous field, and kept very low-alpha so it reads as a background zone
+   rather than a panel sitting on top of the chart. */
+.bgroup__bars {
+  background: rgba(255,255,255,.04);
+  border-radius: 12px 12px 0 0;
+  margin: 0 30px;
+  height: 620px; padding-top: 58px;
+  /* Tight inside a group, loose between groups — the four bars have to read
+     as one task before the eye compares tasks. The empty 70B slot in the
+     product groups otherwise splits each group visually down the middle. */
+  display: flex; align-items: flex-end; justify-content: center; gap: 28px;
+}
+.bgroup__name {
+  margin-top: 22px; text-align: center;
+  font-size: 26px; font-weight: 700; line-height: 1.3; color: var(--ink-2);
+  letter-spacing: .04em;
+}
+
+.bar {
+  position: relative; border-radius: 4px 4px 0 0;
+  height: calc(var(--v) * 1%); min-height: 3px;
+}
+.bar__v {
+  position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%);
+  margin-bottom: 12px;
+  font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums;
+  white-space: nowrap; color: var(--ink-3);
+}
+
+/* three baselines share one grey family — width already separates them;
+   the fine-tuned model is the only one in brand blue */
+.bar--7b  { width: 50px; background: rgba(159,180,207,.30); }
+.bar--32b { width: 88px; background: rgba(159,180,207,.45); }
+.bar--70b { width: 126px; background: rgba(159,180,207,.60); }
+.bar--ft  { width: 50px; background: var(--blue); }
+.bar--ft .bar__v { color: var(--ink); font-weight: 700; }
+
+/* A task with no result keeps its slot, so the absence stays visible — now
+   labelled "updating" rather than left as a bare dash. */
+.bar--none { height: 0; min-height: 0; background: none; }
+
+.pending {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  margin: 0 auto; width: fit-content;
+  padding: 7px 9px;
+  border: 1px dashed rgba(159,180,207,.38); border-radius: 7px;
+  font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-4); white-space: nowrap; line-height: 1;
+}
+/* The slot has zero height, so without this the next bar — later in DOM order
+   — paints straight over the box. */
+.bar--none { z-index: 3; }
+/* When every model on a task is unmeasured, one box for the task reads better
+   than four identical ones. */
+.pending--group {
+  position: static; transform: none; align-self: flex-end;
+  padding: 16px 28px; font-size: 22px; letter-spacing: .14em;
+}
+
+.bench__legend {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 36px;
+  margin-top: 34px; padding-top: 24px; border-top: 1px solid var(--line);
+  font-size: var(--t-caption); color: var(--ink-3);
+}
+.lg { display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+.lg .sw { height: 22px; border-radius: 3px; flex: none; display: block; }
+.sw--7b  { width: 10px; background: rgba(159,180,207,.30); }
+.sw--32b { width: 18px; background: rgba(159,180,207,.45); }
+.sw--70b { width: 26px; background: rgba(159,180,207,.60); }
+.sw--ft  { width: 10px; background: var(--blue); }
+.lg--note { margin-left: auto; color: var(--ink-4); }
+
+/* compact experiment setup, one restrained line above the table */
+.setup-strip {
+  display: flex; align-items: baseline; flex-wrap: wrap;
+  gap: 18px; margin-bottom: 56px;
+  font-size: 28px; color: var(--ink-2);
+}
+.setup-strip .arrow { color: var(--ink-4); font-size: 26px; }
+.sci-table--finetune tbody td { font-size: 34px; padding: 22px 16px; }
+.sci-table--finetune tbody td:first-child { font-size: 30px; }
+
+/* the one stronger rule in the table: the boundary between task families */
+.sci-table--finetune .colsep { border-left: 1px solid var(--line-2); padding-left: 26px; }
+.sci-table--finetune thead tr.group th.colsep { border-left: 1px solid var(--line-2); }
+
+/* small descriptive apparatus note under the table — not a takeaway */
+.result-note {
+  font-size: var(--t-micro); color: var(--ink-4);
+  letter-spacing: .04em;
+}
+
+/* =========================================================================
+   Slide type 7 — Diagram / architecture
+   ========================================================================= */
+
+.diagram-area { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.diagram-caption {
+  margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line);
+  font-size: var(--t-caption); color: var(--ink-3); max-width: 2000px;
+}
+
+/* Four-stage conceptual chain. Equal weight across all four: the PPTX does not
+   single one out, so neither does the slide. */
+.stages { display: flex; align-items: flex-start; width: 100%; }
+.stage  { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+/* Stroke-only, no fill, currentColor — the glyph is a small diagram of the
+   idea (graph, branch, validated mark, loop), not an emblem. */
+.stage__icon {
+  width: 88px; height: 88px; display: block; margin-bottom: 10px;
+  fill: none; stroke: var(--blue-lt); stroke-width: 2.2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.stage__name { font-size: 52px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.stage__desc { font-size: 28px; line-height: 1.5; color: var(--ink-3); max-width: 460px; }
+.stage__arrow {
+  flex: none; padding: 26px 30px 0;
+  font-size: 40px; line-height: 1.1; color: var(--ink-4);
+}
+
+/* =========================================================================
+   Slide type 8 — Comparison / before-after
+   ========================================================================= */
+
+.compare { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1px 1fr; gap: 72px; }
+.compare__rule { background: var(--line-2); }
+.compare__side { display: flex; flex-direction: column; gap: 24px; min-height: 0; }
+.compare__label {
+  font-size: var(--t-caption); font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+}
+.compare__side--b .compare__label { color: var(--blue-lt); }
+.compare__body { flex: 1; min-height: 0; }
+
+/* from → to, stacked. Two parallel tracks, numbered like the reference deck:
+   blue for the first, amber for the second. The destination carries the
+   weight; the origin is deliberately quieter. */
+.path { display: flex; flex-direction: column; gap: 24px; justify-content: center; height: 100%; }
+.path__num {
+  font-family: var(--mono); font-size: 104px; font-weight: 500;
+  line-height: 1; letter-spacing: -.03em; margin-bottom: 12px;
+}
+.compare__side--a .path__num { color: var(--blue-lt); }
+.compare__side--b .path__num { color: var(--amber); }
+.path__from  { font-size: 44px; font-weight: 500; color: var(--ink-3); letter-spacing: -.01em; }
+.path__arrow { font-size: 44px; line-height: 1; color: var(--ink-4); }
+.path__to    { font-size: 66px; font-weight: 800; letter-spacing: -.02em; line-height: 1.12; text-wrap: balance; }
+
+/* Same two tracks, but each one now carries what it actually involves: a lead
+   line, the work behind it, and the destination. Top-aligned rather than
+   centred so the two sides start on the same baseline even though the left
+   track lists three points and the right one lists two. */
+.path--track { justify-content: flex-start; gap: 0; }
+.path__eyebrow {
+  font-family: var(--mono); font-size: 30px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase; line-height: 1;
+  margin-bottom: 40px;
+}
+.compare__side--a .path__eyebrow { color: var(--blue-lt); }
+.compare__side--b .path__eyebrow { color: var(--amber); }
+.path__lead {
+  font-size: 54px; font-weight: 700; line-height: 1.24;
+  letter-spacing: -.015em; color: var(--ink); text-wrap: balance;
+  margin: 0 0 52px;
+}
+.path__list { list-style: none; margin: 0 0 48px; padding: 0; display: flex; flex-direction: column; gap: 30px; }
+.path__list li {
+  position: relative; padding-left: 44px;
+  font-size: 40px; font-weight: 400; line-height: 1.32; color: var(--ink-2);
+}
+/* Small square marker rather than a bullet glyph: same restraint as the
+   legend swatches elsewhere in the deck. */
+.path__list li::before {
+  content: ""; position: absolute; left: 0; top: .52em;
+  width: 12px; height: 12px; border-radius: 2px; background: var(--ink-4);
+}
+.compare__side--a .path__list li::before { background: var(--blue); }
+.compare__side--b .path__list li::before { background: var(--amber); }
+/* Pinned to the bottom so both destinations land on one line despite the two
+   sides listing a different number of points. The bottom margin keeps it off
+   the slide footer. */
+.path__out {
+  margin-top: auto; margin-bottom: 64px;
+  padding-top: 40px; border-top: 1px solid var(--line-2);
+  font-size: 56px; font-weight: 800; line-height: 1.16;
+  letter-spacing: -.01em; text-transform: uppercase; text-wrap: balance;
+}
+.path__out i { font-style: normal; color: var(--ink-4); margin-right: 18px; }
+.compare__side--a .path__out { color: var(--blue-lt); }
+.compare__side--b .path__out { color: var(--amber); }
+
+/* =========================================================================
+   Slide type 9 — Conclusion
+   ========================================================================= */
+
+/* flex:1 so the block fills the content area — without it the block is
+   content-sized and the closing line cannot pin to the bottom the way it does
+   on every other slide. */
+.slide--conclusion .conclusion-block { display: flex; flex-direction: column; gap: 44px; max-width: 2200px; flex: 1; min-height: 0; width: 100%; }
+.conclusion-title { font-size: 84px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+
+/* =========================================================================
+   Slide type 10 — Reference / appendix
+   ========================================================================= */
+
+.ref-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 72px; align-content: start; }
+.ref {
+  display: grid; grid-template-columns: 360px 1fr; gap: 28px;
+  align-items: baseline; padding: 20px 0; border-top: 1px solid var(--line);
+}
+.ref__k { font-size: var(--t-caption); font-weight: 700; color: var(--ink-2); letter-spacing: .04em; }
+.ref__v { font-family: var(--mono); font-size: var(--t-micro); color: var(--ink-3);
+          word-break: break-all; line-height: 1.5; }
+
+/* =========================================================================
+   Card — supporting container, used sparingly
+   ========================================================================= */
+
+.card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 40px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.card__label {
+  font-size: var(--t-caption); font-weight: 700; color: var(--ink-3);
+  letter-spacing: .14em; text-transform: uppercase;
+}
+
+/* four paired concepts — name, arrow, meaning (slide 19) */
+.own-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 52px; }
+.own { gap: 14px; padding: 44px 40px; justify-content: flex-start; }
+.own__name  { font-size: 42px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.own__arrow { font-size: 30px; color: var(--ink-4); line-height: 1; }
+.own__val   { font-size: 30px; line-height: 1.4; color: var(--ink-3); }
+
+/* closing slide (slide 20) — the four lines carry more weight than a normal
+   body list, and the final sentence is the last thing said in the talk. */
+.close__rows { display: flex; flex-direction: column; }
+.close__row {
+  display: grid; grid-template-columns: 86px 1fr; align-items: baseline; gap: 30px;
+  padding: 26px 0; border-top: 1px solid var(--line);
+}
+.close__rows .close__row:last-child { border-bottom: 1px solid var(--line); }
+.close__n { font-family: var(--mono); font-size: var(--t-caption); color: var(--ink-4); }
+.close__t { font-size: 44px; font-weight: 500; letter-spacing: -.01em; line-height: 1.25; }
+.close__arrow { color: var(--amber); padding: 0 6px; }
+
+/* Group reveal with an internal stagger: the band arrives as one gesture,
+   but its items cascade rather than popping together. */
+.statgrid .stat-item:nth-child(1) { transition-delay: 0ms; }
+.statgrid .stat-item:nth-child(2) { transition-delay: 80ms; }
+.statgrid .stat-item:nth-child(3) { transition-delay: 160ms; }
+.statgrid .stat-item:nth-child(4) { transition-delay: 240ms; }
+.statgrid .stat-item:nth-child(5) { transition-delay: 320ms; }
+.statgrid .stat-item:nth-child(6) { transition-delay: 400ms; }
+
+/* the first band animates in on slide entry, same cascade */
+.slide.is-active .statgrid--lead .stat-item { animation: rise 460ms cubic-bezier(.16,1,.3,1) both; }
+.slide.is-active .statgrid--lead .stat-item:nth-child(1) { animation-delay: .16s; }
+.slide.is-active .statgrid--lead .stat-item:nth-child(2) { animation-delay: .26s; }
+.slide.is-active .statgrid--lead .stat-item:nth-child(3) { animation-delay: .36s; }
+body.is-static .statgrid--lead .stat-item { animation: none !important; opacity: 1 !important; transform: none !important; }
+@media print { .statgrid--lead .stat-item { animation: none !important; opacity: 1 !important; transform: none !important; } }
+
+/* benchmark name stated under the chart rather than as a heading above it */
+.bench__caption { margin-top: 30px; text-align: center;
+                  font-size: var(--t-caption); font-weight: 700;
+                  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+
+/* source attribution inside a caption — kept out of the uppercase transform
+   so a citation does not shout */
+.bench__cite { text-transform: none; font-weight: 500; letter-spacing: .02em; color: var(--ink-4); }
+
+/* work-in-progress marker. Deliberately visible on the canvas so an unfinished
+   slide cannot be presented by accident; remove the div when the slide is done. */
+.wip {
+  position: absolute; top: 54px; right: var(--pad-x);
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 20px; border-radius: 999px;
+  border: 1px dashed rgba(240,162,59,.55); background: rgba(240,162,59,.10);
+  font-size: var(--t-micro); font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--amber);
+}
+.wip::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+body.is-static .wip { display: none; }
+
+/* two bands on one slide: scale above, diversity below */
+.band { display: flex; flex-direction: column; gap: 8px; }
+.band + .band { margin-top: 70px; }
+.band__label { font-size: var(--t-micro); font-weight: 700; letter-spacing: .18em;
+               text-transform: uppercase; color: var(--ink-4); }
+.band .statgrid { margin-top: 24px; gap: 76px; }
+.band .stat-item__icon { width: 44px; height: 44px; }
+.band .stat-item { gap: 12px; }
+.band .stat-item__v { font-size: 44px; }
+.band .stat-item__l { font-size: 24px; }
+/* the scale band has three items, so it can carry larger values */
+.statgrid--lead .stat-item__v { font-size: 56px; }
+.statgrid--lead .stat-item__icon { width: 50px; height: 50px; }
+.statgrid--lead .stat-item__l { font-size: 26px; }
+
+.statgrid--tight { row-gap: 68px; }
+.statgrid--tight .stat-item__v { font-size: 30px; }
+.statgrid--tight .stat-item__l { font-size: 22px; }
+.band ~ .spec-note { margin-top: 40px; }
+
+/* Icon stat grid (slides 17-18). Replaces the spec tables on the author's
+   instruction. Glyphs are stroke-only, matching the slide-4 set. */
+.statgrid { display: grid; gap: 44px; margin-top: 56px; width: 100%; }
+.statgrid--5 { grid-template-columns: repeat(5, 1fr); }
+.statgrid--3 { grid-template-columns: repeat(3, 1fr); row-gap: 72px; }
+
+.stat-item { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.stat-item__icon { width: 54px; height: 54px; display: block;
+                   fill: none; stroke: var(--blue-lt); stroke-width: 2;
+                   stroke-linecap: round; stroke-linejoin: round; }
+.stat-item__v { font-size: 54px; font-weight: 800; letter-spacing: -.02em;
+                line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat-item__l { font-size: 26px; line-height: 1.35; color: var(--ink-3); }
+
+/* the diversity grid carries compound text rather than magnitudes */
+.statgrid--3 .stat-item__v { font-size: 34px; font-weight: 700; letter-spacing: -.01em; line-height: 1.3; }
+.statgrid--3 .stat-item__l { font-size: 24px; }
+
+/* Two-column spec tables (slides 17-18). Same geometry on both so the pair
+   reads as one exhibit; column 2 is right-aligned for pure magnitudes and
+   left-aligned where the value is compound text. */
+.sci-table--spec { table-layout: fixed; max-width: 1640px; }
+.sci-table--spec th:first-child,
+.sci-table--spec td:first-child { width: 600px; }
+.sci-table--spec thead th { font-size: var(--t-caption); padding: 0 0 22px; }
+.sci-table--spec tbody td { font-size: 40px; padding: 30px 0; color: var(--ink);
+                            font-variant-numeric: tabular-nums; }
+.sci-table--spec tbody td:first-child { font-size: 34px; font-weight: 500;
+                            color: var(--ink-2); white-space: nowrap; }
+.sci-table--spec-l tbody td:last-child,
+.sci-table--spec-l thead th:last-child { text-align: left; }
+.sci-table--spec-l tbody td:last-child { font-size: 34px; white-space: normal; line-height: 1.35; }
+.spec-note { margin-top: 34px; font-size: var(--t-micro); color: var(--ink-4); letter-spacing: .02em; }
+
+/* build steps: hidden until revealed; always visible in static/print */
+[data-build] { opacity: 0; transform: translateY(14px);
+               transition: opacity 420ms cubic-bezier(.16,1,.3,1), transform 420ms cubic-bezier(.16,1,.3,1); }
+[data-build].is-revealed { opacity: 1; transform: none; }
+@media print { [data-build] { opacity: 1 !important; transform: none !important; } }
+
+/* Knowledge Graph figure (slide 8) — paper-style node/edge diagram drawn from
+   the live corpus. Node and edge facts come from documents + doc_relations. */
+.kg-q { margin-top: 22px; font-size: 34px; color: var(--ink-2); display: flex; align-items: baseline; gap: 20px; }
+.kg-q__label { font-size: var(--t-micro); font-weight: 700; letter-spacing: .16em;
+               text-transform: uppercase; color: var(--ink-4); }
+
+.kg-split { display: grid; grid-template-columns: 560px 1px 1fr; gap: 52px;
+            flex: 1; min-height: 0; margin-top: 22px; }
+.kg-split__rule  { background: var(--line-2); }
+.kg-split__left, .kg-split__right { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+.compare__label--b { color: var(--blue-lt); }
+.kgfig, .ragfig { width: 100%; height: 100%; flex: 1; min-height: 0; display: block; }
+
+/* --- nodes --- */
+.kgfig .n        { fill: rgba(255,255,255,.05); stroke: var(--line); stroke-width: 1.6; }
+.kgfig .n--law   { fill: rgba(30,136,229,.12); stroke: rgba(30,136,229,.5); }
+.kgfig .n--sm    { fill: rgba(255,255,255,.04); }
+.kgfig .n--dead  { fill: none; stroke: rgba(248,113,113,.55); stroke-dasharray: 7 6; }
+.kgfig .n--live  { fill: rgba(30,136,229,.14); stroke: rgba(30,136,229,.6); }
+.kgfig .n--bad   { fill: rgba(248,113,113,.10); stroke: rgba(248,113,113,.5); }
+.kgfig .n--good  { fill: rgba(74,222,128,.12);  stroke: rgba(74,222,128,.55); }
+
+.kgfig .nt  { font-family: var(--mono); font-size: 25px; fill: var(--ink);
+              text-anchor: middle; letter-spacing: .01em; }
+.kgfig .nt--sm   { font-size: 22px; fill: var(--ink-2); }
+.kgfig .nt--dead { fill: var(--ink-3); }
+.kgfig .nt--bad  { font-family: var(--sans); font-weight: 700; fill: #F87171; }
+.kgfig .nt--good { font-family: var(--sans); font-weight: 700; fill: #4ADE80; }
+.kgfig .ns  { font-family: var(--sans); font-size: 20px; fill: var(--ink-4); text-anchor: middle; }
+.kgfig .ns--dead { fill: #F87171; }
+.kgfig .ns--live { fill: var(--blue-lt); }
+.kgfig .ns--bad  { fill: rgba(248,113,113,.8); }
+.kgfig .ns--good { fill: rgba(74,222,128,.85); }
+
+/* --- edges --- */
+.kgfig .cap { font-family: var(--sans); font-size: 21px; text-anchor: middle; }
+.kgfig .cap--bad  { fill: #F87171; }
+.kgfig .cap--good { fill: #4ADE80; }
+
+.kgfig .e        { fill: none; stroke: var(--ink-4); stroke-width: 2; }
+.kgfig .e--own   { stroke-dasharray: 6 6; }
+.kgfig .e--amend { stroke: var(--amber); stroke-width: 2.4; }
+.kgfig .e--repl  { stroke: var(--blue); stroke-width: 4; }
+.kgfig .et       { font-family: var(--mono); font-size: 20px; fill: var(--ink-4); text-anchor: middle; }
+.kgfig .et--amend{ fill: var(--amber); }
+.kgfig .et--repl { fill: var(--blue-lt); font-weight: 500; letter-spacing: .12em; }
+.kgfig g[transform] .et { text-anchor: start; }
+
+/* --- the RAG side: chunks with no edges --- */
+.ragfig .chunkbox rect { fill: rgba(255,255,255,.04); stroke: rgba(255,255,255,.12); stroke-width: 1.6; }
+.ragfig .chunkbox line { stroke: rgba(255,255,255,.13); stroke-width: 5; stroke-linecap: round; }
+.ragfig .chunkbox--hit rect { fill: rgba(248,113,113,.10); stroke: rgba(248,113,113,.55); stroke-width: 2; }
+.ragfig .ct     { font-family: var(--mono); font-size: 22px; fill: var(--ink-2); }
+.ragfig .ct--sub{ font-family: var(--sans); font-size: 24px; font-weight: 700; fill: var(--ink); }
+.ragfig .ct--sim{ font-family: var(--sans); font-size: 19px; fill: #F87171; }
+.ragfig .ragnote{ font-family: var(--sans); font-size: 22px; fill: var(--ink-4); }
+
+/* =========================================================================
+   BLUEPRINT MODE
+   Makes empty regions legible so the skeleton can be reviewed for rhythm,
+   alignment and capacity. Carries no content and no TODO/PENDING wording.
+   Toggle with B. Off  =  the production canvas, which is genuinely empty.
+   ========================================================================= */
+
+/* A region must show the space it will actually get, otherwise the skeleton
+   cannot be reviewed for capacity — so regions stretch to fill their slot
+   rather than collapsing to their (empty) content. */
+[data-region] { min-height: 0; }
+.diagram-area  > [data-region] { flex: 1; align-self: stretch; }
+.compare__body > [data-region] { flex: 1; }
+.result-area   > [data-region] { flex: 1; }
+.title-block   > [data-region] { align-self: flex-start; min-width: 720px; }
+.compare__body { display: flex; flex-direction: column; }
+
+body.blueprint [data-region] {
+  position: relative;
+  border: 1px dashed rgba(159,180,207,.28);
+  border-radius: 10px;
+  min-height: 90px;
+}
+body.blueprint [data-region]::before {
+  content: attr(data-region);
+  position: absolute; top: 8px; left: 12px;
+  font-family: var(--mono); font-size: 17px; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(159,180,207,.50);
+}
+body.blueprint [data-region="result"],
+body.blueprint [data-region="diagram"] { min-height: 220px; }
+
+/* Empty table cells get a neutral grey bar so column rhythm and density are
+   reviewable. Bars are not data and disappear with blueprint mode. */
+body.blueprint .sci-table td:empty::after,
+body.blueprint .sci-table th:empty::after {
+  content: ''; display: inline-block; height: 12px; width: 72px;
+  border-radius: 3px; background: rgba(159,180,207,.20);
+}
+body.blueprint .sci-table td:first-child:empty::after,
+body.blueprint .sci-table th:first-child:empty::after { width: 300px; }
+
+body.blueprint .slide-title:empty::after {
+  content: 'không có tiêu đề trong PPTX';
+  font-size: 30px; font-weight: 400; color: rgba(159,180,207,.45);
+  font-style: italic; letter-spacing: 0;
+}
+
+/* =========================================================================
+   Motion — restrained, and never required to understand a slide
+   ========================================================================= */
+
+@keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+.slide.is-active .slide-head,
+.slide.is-active .title-block,
+.slide.is-active .divider-block,
+.slide.is-active .conclusion-block { animation: rise 380ms cubic-bezier(.16,1,.3,1) both; }
+
+/* Freeze only what animates. This used to be `.slide *`, which also stripped
+   layout transforms (e.g. a translate-centred label) in screenshot and PDF
+   output while looking correct live. */
+body.is-static .slide-head,
+body.is-static .title-block,
+body.is-static .divider-block,
+body.is-static .conclusion-block { animation: none !important; opacity: 1 !important; transform: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .slide-head, .title-block, .divider-block, .conclusion-block {
+    animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+
+/* =========================================================================
+   Presenter chrome
+   ========================================================================= */
+
+#notes {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  max-height: 30vh; overflow: auto; padding: 20px 30px;
+  background: rgba(6,21,48,.96); border-top: 1px solid var(--line);
+  font-size: 16px; line-height: 1.55; color: var(--ink-2); display: none;
+}
+#notes.is-open { display: block; }
+#notes b { display: block; margin-bottom: 8px; font-size: 12px; color: var(--blue-lt);
+           letter-spacing: .12em; text-transform: uppercase; }
+
+#hud {
+  position: fixed; right: 14px; bottom: 12px; z-index: 40;
+  font-family: var(--mono); font-size: 12px; color: var(--ink-3); opacity: .45;
+  display: flex; gap: 16px;
+}
+#hud kbd { border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+body.is-static #hud, body.is-static #notes { display: none !important; }
+
+/* =========================================================================
+   Print / PDF — one slide per page, everything revealed
+   ========================================================================= */
+
+@media print {
+  @page { size: 2560px 1280px; margin: 0; }
+  html, body { overflow: visible; }
+  #stage-wrap { position: static; display: block; }
+  #stage { width: 2560px; height: auto; transform: none !important; }
+  .slide {
+    position: relative; display: flex !important;
+    width: 2560px; height: 1280px;
+    break-after: page; page-break-after: always;
+  }
+  .slide-head, .title-block, .divider-block, .conclusion-block {
+    animation: none !important; opacity: 1 !important; transform: none !important; }
+  #notes, #hud { display: none !important; }
+}
+
+
+/* =========================================================================
+   MERGED IN from docs/slide/output/07-content-pass (Task 08).
+   Additive only — nothing above this line was changed.
+   Supports slide 8 (VietLegal benchmark, five mini-tables). Slides 9 and 10
+   are untouched and do not use any of these rules.
+   ========================================================================= */
+
+/* left-aligned cell/header utility the merged table needs */
+.sci-table td.t-left, .sci-table th.t-left { text-align: left; }
+
+/* =========================================================================
+   TASK 08 — VietLegal benchmark as five mini-tables on one slide
+
+   The 23 metric rows used to sit in one dense block, which is unreadable
+   from the back of a room. They are now five small tables that share one
+   column system, so a level can be scanned on its own while the numbers
+   still line up across all five.
+
+   Task 07's .sci-table--dense rules are no longer used by any slide; they
+   are left in place rather than deleted so nothing else can shift.
+   ========================================================================= */
+
+/* This slide earns its margins back — five tables need the width. */
+.slide--bench5 { --pad-x: 80px; }
+
+.bench5 {
+  flex: 1; min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 40px 40px;          /* the panels do the separating now, so the gutters shrink */
+  align-content: start;
+}
+/* top row: three levels, two grid columns each.
+   bottom row: two levels, three grid columns each — no dead cell, and the
+   numeric columns stay the same width in both rows (only TASK grows). */
+.bench5__group       { grid-column: span 2; min-width: 0; position: relative; }
+.bench5__group--wide { grid-column: span 3; }
+
+/* Each level sits on its own panel. Whitespace alone was not separating them
+   at projection distance. This is the deck's existing .card fill (5% white,
+   1px hairline, 14px radius) — a wash, not a heavy container — and the
+   horizontal padding is kept small so the panels cost the task names almost
+   nothing. */
+.bench5__group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px 18px 14px;
+}
+
+.bench5__level {
+  font-size: var(--t-caption); font-weight: 700; color: var(--blue-lt);
+  letter-spacing: .14em; text-transform: uppercase;
+  padding-bottom: 12px; margin-bottom: 10px;
+  border-bottom: 1px solid var(--line-2);
+}
+/* The capability name each level actually tests. Sentence case and lighter
+   weight so the heading reads "index, then meaning" rather than as one long
+   shouted string. Names come from the VietLegal-Bench spec, not the PPTX. */
+.bench5__level .bench5__name {
+  text-transform: none; letter-spacing: 0; font-weight: 700;
+  color: var(--ink);
+}
+.bench5__level .bench5__sep { color: var(--ink-4); padding: 0 12px; font-weight: 400; }
+
+/* Fixed layout is what keeps CMC-Legal / Ours / Δ identical in width across
+   all five tables; TASK absorbs whatever is left. */
+.bench-mini { table-layout: fixed; }
+.bench-mini col.c-cmc    { width: 142px; }
+.bench-mini col.c-ours   { width: 112px; }
+.bench-mini col.c-delta  { width: 126px; }
+
+/* Column headers are the lowest readability priority of the five, so they
+   give up the millimetres that the task names need. Sentence case rather
+   than the deck's usual uppercase: "CMC-Legal" fits its column on one line
+   where "CMC-LEGAL" does not, and a wrapped header costs a line of height
+   in all five tables at once. It also reads closer to a paper figure. */
+.bench-mini thead th {
+  font-size: 20px; font-weight: 700; letter-spacing: .02em;
+  color: var(--ink-4); text-transform: none; white-space: nowrap;
+  padding: 0 12px 10px; vertical-align: bottom;
+  border-bottom: 1px solid var(--line-2);
+}
+.bench-mini thead th.t-left { text-align: left; }
+
+.bench-mini tbody td {
+  font-size: 24px; line-height: 1.28; padding: 11px 12px;
+  color: var(--ink-2); border-bottom: 1px solid var(--line);
+}
+.bench-mini tbody tr:last-child td { border-bottom: none; }
+.bench-mini tbody td:first-child {
+  white-space: normal;                 /* long task names may take two lines */
+  color: var(--ink); font-weight: 500;
+  text-align: left;
+}
+/* The METRIC column is gone (it cost ~120px in every table and repeated
+   "Accuracy" 16 times). The metric now rides with the task name as a quiet
+   qualifier, so nothing is lost — including the two rows of task 3.4, which
+   differ only by metric. */
+.bench-mini .mx {
+  font-size: 20px; color: var(--ink-4); font-weight: 400;
+  white-space: nowrap; margin-left: 12px;
+}
+/* continuation row: same task, second metric */
+.bench-mini td.cont { padding-left: 34px; color: var(--ink-3); font-weight: 400; }
+
+/* Δ is the column the audience should scan. Blue = improved, amber =
+   regressed; both restrained, and CMC-Legal / Ours stay neutral so neither
+   baseline nor ours reads as the highlighted one. */
+.bench-mini td.d { font-weight: 500; }
+.bench-mini td.d.is-gain { color: var(--blue-lt); }
+.bench-mini td.d.is-loss { color: var(--amber); }
+
+
+/* -------------------------------------------------------------------------
+   Title-slide speaker line. Fills the `speaker` region the Task 04 skeleton
+   reserved on slide 1. Name at display-adjacent weight, role quiet beneath.
+   ------------------------------------------------------------------------- */
+.speaker { display: flex; flex-direction: column; gap: 10px; }
+.speaker__name {
+  font-size: 44px; font-weight: 700; color: var(--ink); letter-spacing: -.015em;
+}
+.speaker__role {
+  font-size: 28px; font-weight: 400; color: var(--ink-3); letter-spacing: .01em;
+}
+
+
+/* =========================================================================
+   MERGED IN from docs/slide/output/07-content-pass (Task 07 components).
+   Additive only. Needed by the Knowledge Graph slide: the structure chain,
+   the relation chips and the named A-vs-B pair.
+   ========================================================================= */
+
+/* ---- chain: a process/progression stated with arrows in the PPTX ------- */
+.chain {
+  display: flex; align-items: stretch; justify-content: center;
+  gap: 28px; flex-wrap: wrap; width: 100%;
+}
+.chain__node {
+  flex: 1 1 0; min-width: 240px;
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 40px 36px;
+  font-size: 38px; font-weight: 700; line-height: 1.2; letter-spacing: -.01em;
+}
+.chain__node .chain__sub {
+  font-size: var(--t-caption); font-weight: 500; color: var(--ink-3);
+  letter-spacing: .04em;
+}
+.chain__node--start { border-color: var(--line-2); }
+.chain__node--end   { border-color: rgba(30,136,229,.45); background: rgba(30,136,229,.10); }
+.chain__arrow {
+  flex: none; align-self: center;
+  font-family: var(--mono); font-size: 40px; color: var(--blue-lt); opacity: .85;
+}
+
+/* vertical chain — the method slide reads top to bottom, so the arrows point
+   down and the nodes are one centred column rather than a row. */
+.chain--down {
+  flex-direction: column; align-items: center; gap: 24px;
+  width: 100%; max-width: 1560px; margin: 0 auto;
+}
+.chain--down .chain__node {
+  flex: none; width: 100%; align-items: center; text-align: center;
+  padding: 38px 48px; font-size: 46px; gap: 14px;
+}
+.chain--down .chain__sub { font-size: 30px; letter-spacing: .01em; }
+.chain--down .chain__arrow { font-size: 46px; }
+
+/* Four nodes instead of three, each carrying a sub-line, so the same vertical
+   chain has to run tighter to clear the footer. */
+.chain--compact { gap: 16px; max-width: 1760px; }
+.chain--compact .chain__node { padding: 26px 44px; font-size: 38px; gap: 10px; }
+.chain--compact .chain__sub  { font-size: 27px; }
+.chain--compact .chain__arrow { font-size: 38px; }
+/* numbered step head: the number reads as an index, not as part of the title */
+.chain__num {
+  font-family: var(--mono); font-weight: 500; color: var(--blue-lt);
+  margin-right: 18px; letter-spacing: .04em;
+}
+/* the outcome node closes the chain, so it carries an arrow instead of
+   following one */
+/* row, not column: the node is a flex column by default, which would drop the
+   arrow onto its own line above the text */
+.chain__node--goal { margin-top: 14px; flex-direction: row; align-items: center; justify-content: center; }
+.chain__node--goal i { font-style: normal; color: var(--ink-4); margin-right: 18px; }
+
+/* compact chain — used where the chain is one line inside a text slide */
+.chain--inline { justify-content: flex-start; gap: 20px; }
+.chain--inline .chain__node {
+  flex: 0 1 auto; min-width: 0; padding: 22px 28px; font-size: 32px;
+}
+.chain--inline .chain__arrow { font-size: 30px; }
+
+/* trailing set of relation labels (slide 11: dẫn chiếu / sửa đổi / …) */
+.chip-set { display: flex; flex-wrap: wrap; gap: 14px; }
+
+/* larger chip set used where the chips are the slide's main content */
+/* Constrained width so the set wraps into a block rather than a single thin
+   line across the canvas. */
+.chip-set--spread { margin-top: 48px; gap: 20px; max-width: 1560px; }
+/* scoped rather than a bare .chip--lg: the base .chip rule is declared later
+   in this file and would otherwise win on equal specificity */
+.chip-set--spread .chip { font-size: 40px; padding: 24px 38px; color: var(--ink); }
+
+/* shared core beneath the domain chain (slide 14) */
+/* Separated from the domain line above: the label opens a new idea ("what the
+   tracks have in common"), so it needs more air than a normal paragraph gap. */
+.core__label { margin-top: 104px; font-size: var(--t-lead); color: var(--ink-3); }
+.core__row   { margin-top: 20px; align-items: center; }
+.core__row .chip { font-size: 30px; padding: 16px 30px; color: var(--ink); }
+.core__plus  { font-size: 30px; color: var(--ink-4); }
+.chip {
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 12px 24px; font-size: var(--t-caption); font-weight: 500;
+  color: var(--ink-2); letter-spacing: .02em; white-space: nowrap;
+}
+
+/* ---- versus pair: two named approaches, as the PPTX states them -------- */
+.vs-pair { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 48px; }
+.vs-pair__plate {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); padding: 44px 40px;
+  font-size: 44px; font-weight: 700; letter-spacing: -.01em; text-align: center;
+}
+.vs-pair__plate--b { border-color: rgba(30,136,229,.45); background: rgba(30,136,229,.10); }
+.vs-pair__vs {
+  font-family: var(--mono); font-size: var(--t-caption); color: var(--ink-4);
+  letter-spacing: .18em; text-transform: uppercase;
+}
+
+
+.arr { color: var(--blue-lt); font-family: var(--mono); padding: 0 12px; }
+
+
+/* =========================================================================
+   Retrieval slide — two-series variant of the existing bar kit.
+   Reuses .bench / .bgroup / .bar unchanged; adds only the second series
+   colour and a shorter plot, since this slide carries five groups and a
+   per-group Δ where the fine-tuning slides carry three or four.
+   ========================================================================= */
+.slide--retr .bgroup__bars      { height: 540px; padding-top: 52px; }
+.slide--retr .bench__plot::after{ top: 540px; }
+.slide--retr .bgroup            { max-width: 460px; }
+
+.bar--base { width: 84px; background: rgba(159,180,207,.38); }
+.bar--kg   { width: 84px; background: var(--blue); }
+.bar--kg .bar__v { color: var(--ink); font-weight: 700; }
+
+/* Δ is the reason this slide exists, so each group states it under its name. */
+.bgroup__delta {
+  margin-top: 10px; text-align: center;
+  font-size: 26px; font-weight: 700; color: var(--blue-lt);
+  font-variant-numeric: tabular-nums;
+}
+.sw--base { width: 22px; background: rgba(159,180,207,.38); }
+.sw--kg   { width: 22px; background: var(--blue); }
+
+
+/* =========================================================================
+   End-to-end comparison — one panel per metric, four systems in each.
+   Grouping by metric rather than by system so the audience compares like
+   with like: all four citation scores against each other, then all four
+   answer scores. Same bar kit; colour still means "whose system".
+   ========================================================================= */
+.bench--dual { flex-direction: row; gap: 80px; align-items: stretch; }
+.bench--dual .bench__div { width: 1px; flex: none; }
+.bench--dual .bench__panel { flex: 1; min-width: 0; }
+
+.slide--e2e .bgroup__bars       { height: 500px; padding-top: 52px; margin: 0 14px;
+                                  background: none; border-radius: 0; }
+.slide--e2e .bench__plot::after { top: 500px; }
+
+/* One tinted field per metric, not per system: the grouping that matters here
+   is citation vs answer, and four separate zones inside a panel implied the
+   systems were the groups. Drawn as a band behind the bars only, stopping at
+   the axis, so it never sits behind the logos or names. */
+.slide--e2e .bench__plot        { position: relative; }
+.slide--e2e .bench__plot::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 500px;
+  background: rgba(255,255,255,.04); border-radius: 12px 12px 0 0; z-index: 0;
+}
+.slide--e2e .bgroup { position: relative; z-index: 1; }
+/* capped so the four systems cluster instead of spreading across the panel;
+   .bench__plot centres them, so a smaller cap pulls the columns together */
+.slide--e2e .bgroup             { max-width: 200px; }
+.slide--e2e .bgroup__name       { margin-top: 24px; font-size: 24px; }
+.slide--e2e .bench__label       { margin-bottom: 26px; color: var(--ink-2); }
+/* Sentence case here: these two captions are Vietnamese phrases, not the
+   short all-caps labels the rest of the deck uses. */
+.slide--e2e .bench__label--bottom { text-transform: none; letter-spacing: .02em; }
+
+.bar--sys  { width: 104px; background: rgba(159,180,207,.42); }
+.bar--ours { width: 104px; background: var(--blue); }
+.bar--ours .bar__v { color: var(--ink); font-weight: 700; }
+.bgroup--ours .bgroup__name { color: var(--ink); font-weight: 700; }
+
+/* Vendor marks under each column. Files supplied by the author and copied
+   into assets/logos so the deck stays self-contained offline.
+   The OpenAI mark ships solid black, which is invisible on the navy, so it
+   is inverted to white — a tone change only, the mark itself is untouched.
+   Gemini and Claude ship in colour and are used as-is. */
+.slide--e2e .bgroup__logo {
+  height: 46px; margin-top: 24px;
+  display: flex; align-items: center; justify-content: center;
+}
+.slide--e2e .bgroup__logo img { height: 46px; width: auto; display: block; }
+.logo--invert { filter: invert(1); }
+.slide--e2e .bgroup__name { margin-top: 16px; }
+
+/* second line of a table header: the metric and its direction */
+.sci-table thead th .unit {
+  display: block; margin-top: 5px;
+  font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em;
+  color: var(--ink-4); text-transform: none;
+}
+
+/* Speech table: "best" needs a colour of its own here. White-bold was the
+   deck default, but three of the five winners sit on the blue "ours" row,
+   where bold white barely separates from the other values. Light blue reads
+   as "best result" consistently with the gain colour used elsewhere, and
+   still carries on the blue row wash. */
+.slide--speech .sci-table .is-best { color: var(--blue-lt); font-weight: 700; }
+
+/* =========================================================================
+   ASR domain slides. Same bar kit. One important difference from every
+   other chart in this deck: CER is an ERROR RATE, so the SHORTEST bar wins.
+   Blue therefore marks the lowest value in each panel — not "our" model.
+   Colouring ours blue here would put a tall blue bar on the code-switching
+   slide, where our model is in fact the worse of the two.
+   Bar heights are normalised within each panel (zero baseline kept), because
+   the panels span 1.61 to 85.82 and one shared scale would flatten the
+   meeting results into invisible stubs.
+   ========================================================================= */
+.slide--asr .bgroup__bars        { height: 620px; padding-top: 56px; margin: 0 14px;
+                                   background: none; border-radius: 0; }
+.slide--asr .bench__plot         { position: relative; }
+.slide--asr .bench__plot::after  { top: 600px; }
+/* Slide 4 carries the model line above the charts (same language as slide 05),
+   so the plot gives that strip its height back. */
+.slide--asr .bgroup__bars        { height: 600px; }
+.slide--asr .bench__plot::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 600px;
+  background: rgba(255,255,255,.04); border-radius: 12px 12px 0 0; z-index: 0;
+}
+.slide--asr .bgroup       { position: relative; z-index: 1; max-width: none; }
+/* Groups stretched across the available width left the bars stranded from
+   each other. Every plot shrinks to its content so the columns sit together
+   — and so the tinted band and axis stop with them instead of running on to
+   the panel edge. The plot is then centred in its panel, with the panel
+   label centred over it so the two read as one block. */
+.slide--asr .bench__plot            { width: max-content; max-width: 100%; }
+.slide--asr .bench__panel           { align-items: center; }
+.slide--asr .bench__label           { text-align: center; }
+.slide--asr .bgroup                 { flex: 0 0 300px; }
+.slide--asr .bench--dual .bgroup    { flex: 0 0 316px; }
+/* Three models to a panel leaves the longest names nearly touching at the
+   old width; the panels have the room, so spend it on the gaps. */
+/* Model names stay on one line — the columns give up the width instead,
+   and they sit clear of the bars rather than crowding the axis. */
+.slide--asr .bgroup__name { margin-top: 32px; font-size: 24px; white-space: nowrap; }
+.slide--asr .bench__label { margin-bottom: 26px; color: var(--ink-2); }
+.bar--asr { width: 104px; background: rgba(159,180,207,.42); }
+.bar--asr.is-lowest,
+.bar--asr.is-top { background: var(--blue); }
+.bar--asr.is-lowest .bar__v,
+.bar--asr.is-top .bar__v { color: var(--ink); font-weight: 700; }
+.hint-lower {
+  font-size: var(--t-caption); color: var(--ink-4); letter-spacing: .04em;
+  margin-top: -8px; margin-bottom: 26px;
+}
+
+/* =========================================================================
+   Agent self-improvement slide — same two-series grouped bars as the
+   retrieval slide, tightened and centred to match the ASR slides.
+   Zero baseline is kept: these are 0-100 scores, so a truncated axis would
+   inflate gains of +2 into something they are not. The Δ under each group
+   carries the precision the bar heights deliberately do not exaggerate.
+   ========================================================================= */
+/* Slide 12 uses a ZOOMED y-axis (55-85) rather than 0-100. The gains are
+   +2 to +5 points, which are invisible on a full-height axis. The truncation
+   is legitimate only because it is disclosed: the axis is drawn with ticks
+   and the floor is stated on the slide. --v still carries the true value. */
+/* Zero baseline, never truncated: the gains here are +2 to +5 and the chart
+   must show them at that size. A cut axis would inflate them. */
+.slide--agent .bar { height: calc(var(--v) * 1%); }
+
+/* Slide 19 uses a ZOOMED axis (15-24 CER) for the same reason as slide 12:
+   the spread is ~4 CER points and vanishes on a 0-based axis. Disclosed on
+   the slide. --v carries the true CER value. */
+/* One bar formula for all ASR slides. Each slide declares its own --floor and
+   --k, so a dual-panel slide shares ONE scale across both panels — otherwise a
+   lower CER can render taller than a higher one, which is what happened here. */
+.slide--asr .bar { height: calc((var(--v) - var(--floor, 0)) * var(--k, 1) * 1%); }
+
+.slide--agent .bgroup__bars       { height: 470px; padding-top: 52px; }
+.slide--agent .bench__plot::after { top: 470px; }
+.slide--agent .bench__plot        { width: max-content; max-width: 100%; }
+.slide--agent .bench__panel       { align-items: center; }
+.slide--agent .bgroup             { flex: 0 0 372px; max-width: none; }
+/* Four task groups were reading as one block; the plot has the room, so
+   spend it on the gaps between tasks rather than on wider bars. */
+.slide--agent .bgroup__name       { font-size: 24px; }
+
+
+
+
+/* =========================================================================
+   Legal Expert Agent map (slide 11), third pass.
+
+   Straight orthogonal arrows, no ring. The five runtime steps are drawn as
+   icons rather than labelled rectangles — a magnifier retrieves, a check
+   verifies — so the row reads as a process at a glance instead of as five
+   identical boxes. Only the two real components keep a container.
+
+   Blue      = the per-question path.
+   Dashed    = knowledge supplied from outside that path.
+   Blue icon = where structured / expert knowledge enters (Verify).
+   ========================================================================= */
+.agentmap { width: 100%; height: 100%; display: block; font-family: var(--sans); }
+
+.agentmap .nd-key { fill: rgba(30,136,229,.15); stroke: rgba(30,136,229,.55); stroke-width: 1.5; }
+
+/* Three zones, so it is obvious at a glance which layer each element belongs
+   to: what the system knows, what it does per question, and what the humans
+   contribute. Tints are deliberately close in value — they group, they do not
+   compete with the content sitting on them. */
+.agentmap .zone        { stroke-width: 1; }
+.agentmap .zone-know   { fill: rgba(102,180,240,.06); stroke: rgba(102,180,240,.22); }
+.agentmap .zone-agent  { fill: rgba(255,255,255,.055); stroke: rgba(255,255,255,.16); }
+.agentmap .zone-expert { fill: rgba(159,180,207,.05);  stroke: rgba(159,180,207,.20); }
+.agentmap .zone-user   { fill: rgba(255,255,255,.03);  stroke: rgba(255,255,255,.12); }
+.agentmap .zone-agent  { fill: rgba(255,255,255,.06);  stroke: rgba(255,255,255,.20); }
+.agentmap .t-zone      { font-size: 14px; font-weight: 700; letter-spacing: .2em; text-anchor: start; }
+.agentmap .t-zone-k    { fill: rgba(102,180,240,.85); }
+.agentmap .t-zone-a    { fill: rgba(255,255,255,.70); }
+.agentmap .t-zone-e    { fill: rgba(159,180,207,.85); }
+.agentmap .t-zone-u    { fill: rgba(255,255,255,.55); }
+
+/* The model is not a step — it is what every step runs on, so it is drawn as
+   a substrate under the pipeline rather than as another node in the row. */
+.agentmap .modelbar   { fill: rgba(30,136,229,.12); stroke: rgba(30,136,229,.40); stroke-width: 1.2; }
+.agentmap .t-model    { fill: var(--ink); font-size: 19px; font-weight: 700; text-anchor: start; }
+.agentmap .t-model-sm { fill: var(--ink-3); font-size: 15px; font-weight: 500; text-anchor: start; }
+.agentmap .ln-loop    { stroke: var(--blue-lt); stroke-width: 2; stroke-dasharray: 9 6; fill: none; }
+/* Verification can fail. Amber, the deck's colour for a negative result, so
+   the retry path is legible as "something went wrong" and not as a second
+   happy path. */
+.agentmap .ln-retry   { stroke: var(--amber); stroke-width: 2; stroke-dasharray: 7 5; fill: none; }
+.agentmap .t-retry    { fill: var(--amber); font-size: 14px; font-weight: 700;
+                        letter-spacing: .04em; text-anchor: middle; }
+.agentmap .t-loop     { fill: var(--blue-lt); font-size: 14px; font-weight: 700;
+                        letter-spacing: .06em; text-anchor: middle; }
+
+.agentmap .t       { fill: var(--ink); font-size: 19px; font-weight: 700; text-anchor: middle; }
+.agentmap .t-step  { fill: var(--ink); font-size: 20px; font-weight: 700; text-anchor: middle; }
+.agentmap .t-sm    { fill: var(--ink-3); font-size: 14px; font-weight: 500; text-anchor: middle; }
+.agentmap .t-num   { fill: var(--ink-4); font-size: 13px; font-weight: 700;
+                     font-family: var(--mono); letter-spacing: .12em; text-anchor: middle; }
+.agentmap .t-src   { fill: var(--ink-2); font-size: 16px; font-weight: 500; text-anchor: middle; }
+.agentmap .t-actor { fill: var(--ink); font-size: 18px; font-weight: 700; text-anchor: middle; }
+.agentmap .t-edge  { fill: var(--ink-4); font-size: 13px; font-weight: 500; text-anchor: middle; }
+
+.agentmap .ic       { fill: none; stroke: var(--ink-2); stroke-width: 1.7;
+                      stroke-linecap: round; stroke-linejoin: round; }
+.agentmap .ic-step  { stroke: var(--ink); stroke-width: 1.6; }
+.agentmap .ic-actor { stroke: var(--ink); stroke-width: 1.6; }
+.agentmap .ic-key   { stroke: var(--blue-lt); }
+.agentmap .ic-dotk  { fill: var(--blue-lt); stroke: none; }
+.agentmap .ic-fill  { fill: var(--ink); stroke: none; }
+
+.agentmap .ln-main { stroke: var(--blue-lt); stroke-width: 2.5; fill: none; }
+.agentmap .ln-back { stroke: rgba(102,180,240,.45); stroke-width: 2; fill: none; }
+.agentmap .ln-feed { stroke: var(--ink-4); stroke-width: 1.8; stroke-dasharray: 6 5; fill: none; }
+
+/* Panel caption under the columns rather than over them: the bars and the
+   model names read first, the benchmark name identifies what was just read. */
+.agentmap-none {}
+.bench__label--bottom {
+  margin-bottom: 0; margin-top: 28px; padding-top: 20px;
+  border-top: 1px solid var(--line); text-align: center;
+}
+
+/* Reduction against the first baseline in the panel, printed under the value
+   it belongs to. Blue, because on an error rate a drop is the good direction —
+   amber would read as a regression. Computed from the two printed numbers, so
+   it cannot drift away from them. */
+.agentmap-none2 {}
+.bar__drop {
+  position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%);
+  margin-bottom: 14px;
+  font-size: 19px; font-weight: 700; color: var(--blue-lt);
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+/* stack the value above the reduction so neither sits on the bar */
+.bar--drop .bar__v { margin-bottom: 44px; }
+
+/* =========================================================================
+   Slide 2 — "Hệ thống AI trong doanh nghiệp"
+   Ported from docs/slide/output/ai-system (Task 11) and re-cut from 16:9 to
+   this deck's 2560x1280 canvas. Everything is namespaced `ais-` and scoped to
+   .slide--aisys so it cannot touch another slide.
+
+   The standalone version carried its own state machine. Here the slide runs on
+   the deck's own build engine: seven data-build steps, plus the per-step
+   styling driven by [data-build-now] which keynote.js now publishes.
+   ========================================================================= */
+
+.slide--aisys .ais-fig { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* fade only — the deck's default 14px lift is wrong for a diagram, where a
+   node sliding into place reads as the diagram moving */
+.slide--aisys [data-build] { transform: none; }
+
+/* ---- nodes -------------------------------------------------------------- */
+.ais-box {
+  fill: var(--surface); stroke: var(--line-2); stroke-width: 2;
+  transition: stroke 420ms var(--ease, cubic-bezier(.16,1,.3,1)),
+              fill   420ms var(--ease, cubic-bezier(.16,1,.3,1));
+}
+.ais-label {
+  font-family: var(--sans); font-size: 34px; font-weight: 700;
+  fill: var(--ink); letter-spacing: -.01em;
+  transition: fill 420ms cubic-bezier(.16,1,.3,1);
+}
+.ais-sub    { font-family: var(--sans); font-size: 25px; font-weight: 400; fill: var(--ink-3); }
+.ais-kicker {
+  font-family: var(--mono); font-size: 22px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase; fill: var(--ink-4);
+}
+.ais-examples { font-family: var(--sans); font-size: 25px; fill: var(--ink-4); }
+
+/* containers read as regions, not as nodes */
+.ais-shell {
+  fill: rgba(146,180,224,.035); stroke: var(--line); stroke-width: 2;
+  transition: stroke 420ms cubic-bezier(.16,1,.3,1), fill 420ms cubic-bezier(.16,1,.3,1);
+}
+.ais-shell--agent { fill: rgba(30,136,229,.07); stroke: rgba(102,180,240,.34); }
+/* the one filled element: the model is the core of the system */
+.ais-model .ais-box { fill: rgba(30,136,229,.16); stroke: rgba(102,180,240,.46); }
+
+/* ---- edges -------------------------------------------------------------- */
+.ais-edge {
+  fill: none; stroke: var(--line-2); stroke-width: 2.5;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.ais-edge--soft { stroke: var(--line); stroke-width: 2; }
+
+/* light travelling along the paths the current step introduces, and only those */
+.ais-flow {
+  fill: none; stroke: var(--blue-lt); stroke-width: 3.5; stroke-linecap: round;
+  stroke-dasharray: 26 200; opacity: 0;
+}
+/* The main path — both inputs in, result out — stays live through all three
+   construction stages, so the slide reads as one end-to-end flow rather than
+   three disconnected reveals. Internal flow joins at the agent stage. Both stop
+   at the problem states, where the amber should own the attention. */
+.slide--aisys[data-build-now="0"] .ais-flow--s1,
+.slide--aisys[data-build-now="1"] .ais-flow--s1,
+.slide--aisys[data-build-now="2"] .ais-flow--s1,
+.slide--aisys[data-build-now="2"] .ais-flow--s3 {
+  opacity: .9; animation: ais-flow 2.6s linear infinite;
+}
+@keyframes ais-flow { from { stroke-dashoffset: 226; } to { stroke-dashoffset: 0; } }
+
+/* the plain "AI" mark stands in until the internals exist, then retires */
+.slide--aisys:not([data-build-now="0"]):not([data-build-now="1"]) .ais-mark { opacity: 0; }
+
+/* ---- problem highlighting ----------------------------------------------- */
+/* the component under question: amber, with a slow breathing halo */
+.slide--aisys[data-build-now="3"] #ais-model  .ais-box,
+.slide--aisys[data-build-now="4"] #ais-data .ais-box,
+.slide--aisys[data-build-now="5"] #ais-agent .ais-shell,
+.slide--aisys[data-build-now="6"] #ais-result .ais-box {
+  stroke: var(--amber); stroke-width: 3; fill: rgba(240,162,59,.08);
+}
+.slide--aisys[data-build-now="3"] #ais-model  .ais-label,
+.slide--aisys[data-build-now="4"] #ais-data .ais-label,
+.slide--aisys[data-build-now="6"] #ais-result .ais-label { fill: var(--amber); }
+.slide--aisys[data-build-now="3"] #ais-model  .ais-halo,
+.slide--aisys[data-build-now="4"] #ais-data .ais-halo,
+.slide--aisys[data-build-now="5"] #ais-agent .ais-halo,
+.slide--aisys[data-build-now="6"] #ais-result .ais-halo {
+  opacity: 1; animation: ais-breathe 2.8s ease-in-out infinite;
+}
+.ais-halo { fill: none; stroke: var(--amber); stroke-width: 2; opacity: 0; }
+@keyframes ais-breathe { 0%,100% { opacity: .40; } 50% { opacity: .12; } }
+
+/* questions already raised stay marked, quieter, and stop pulsing — so the
+   last frame reads as four open questions rather than four alarms */
+.slide--aisys[data-build-now="4"] #ais-model  .ais-box,
+.slide--aisys[data-build-now="5"] #ais-model  .ais-box,
+.slide--aisys[data-build-now="6"] #ais-model  .ais-box,
+.slide--aisys[data-build-now="7"] #ais-model  .ais-box,
+.slide--aisys[data-build-now="5"] #ais-data .ais-box,
+.slide--aisys[data-build-now="6"] #ais-data .ais-box,
+.slide--aisys[data-build-now="7"] #ais-data .ais-box,
+.slide--aisys[data-build-now="7"] #ais-result .ais-box {
+  stroke: rgba(240,162,59,.55); fill: rgba(240,162,59,.045);
+}
+.slide--aisys[data-build-now="6"] #ais-agent .ais-shell,
+.slide--aisys[data-build-now="7"] #ais-agent .ais-shell {
+  stroke: rgba(240,162,59,.55); fill: rgba(240,162,59,.045);
+}
+.slide--aisys[data-build-now="4"] #ais-model  .ais-label,
+.slide--aisys[data-build-now="5"] #ais-model  .ais-label,
+.slide--aisys[data-build-now="6"] #ais-model  .ais-label,
+.slide--aisys[data-build-now="7"] #ais-model  .ais-label,
+.slide--aisys[data-build-now="5"] #ais-data .ais-label,
+.slide--aisys[data-build-now="6"] #ais-data .ais-label,
+.slide--aisys[data-build-now="7"] #ais-data .ais-label,
+.slide--aisys[data-build-now="7"] #ais-result .ais-label { fill: rgba(240,162,59,.92); }
+
+/* inline icons, same stroke vocabulary as the agent map on slide 11 */
+.ais-ic { fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ais-ic--key { stroke: var(--blue-lt); }
+.slide--aisys[data-build-now="3"] #ais-model .ais-ic,
+.slide--aisys[data-build-now="4"] #ais-data  .ais-ic { stroke: var(--amber); }
+.slide--aisys[data-build-now="4"] #ais-model .ais-ic,
+.slide--aisys[data-build-now="5"] #ais-model .ais-ic,
+.slide--aisys[data-build-now="6"] #ais-model .ais-ic,
+.slide--aisys[data-build-now="5"] #ais-data  .ais-ic,
+.slide--aisys[data-build-now="6"] #ais-data  .ais-ic { stroke: rgba(240,162,59,.7); }
+
+/* closed / open model sub-groups — same treatment for both, so neither is
+   presented as the better option */
+.ais-grp { fill: rgba(146,180,224,.05); stroke: var(--line); stroke-width: 2;
+  transition: stroke 420ms cubic-bezier(.16,1,.3,1), fill 420ms cubic-bezier(.16,1,.3,1); }
+/* The two groups are indistinguishable until the narrative reaches the Model.
+   From that step on they take different accents — external platforms vs a model
+   you can hold — but stay low-contrast so neither reads as a verdict. */
+.slide--aisys[data-build-now="3"] #ais-grp-closed,
+.slide--aisys[data-build-now="4"] #ais-grp-closed,
+.slide--aisys[data-build-now="5"] #ais-grp-closed,
+.slide--aisys[data-build-now="6"] #ais-grp-closed {
+  stroke: rgba(240,162,59,.5); fill: rgba(240,162,59,.07);
+}
+.slide--aisys[data-build-now="3"] #ais-grp-open,
+.slide--aisys[data-build-now="4"] #ais-grp-open,
+.slide--aisys[data-build-now="5"] #ais-grp-open,
+.slide--aisys[data-build-now="6"] #ais-grp-open {
+  stroke: rgba(102,180,240,.5); fill: rgba(30,136,229,.10);
+}
+.ais-grp__t { font-family: var(--sans); font-size: 26px; font-weight: 500; fill: var(--ink-2); }
+
+/* ---- right-hand problem panel ------------------------------------------
+   A hairline and four text items — no card, no fill, no border box. The whole
+   panel arrives with the first problem, so the right third is clean whitespace
+   for the first three stages. */
+.ais-divider { stroke: var(--line); stroke-width: 2; }
+.ais-p__head {
+  font-family: var(--sans); font-size: 38px; font-weight: 700;
+  fill: var(--ink-2); letter-spacing: -.01em;
+}
+/* default = the finished state: all four equal and readable */
+.ais-p__label {
+  font-family: var(--sans); font-size: 34px; font-weight: 700;
+  fill: rgba(240,162,59,.92); letter-spacing: -.01em;
+  transition: fill 420ms cubic-bezier(.16,1,.3,1);
+}
+.ais-p__desc {
+  font-family: var(--sans); font-size: 28px; font-weight: 400;
+  fill: var(--ink-3);
+  transition: fill 420ms cubic-bezier(.16,1,.3,1);
+}
+/* the item being raised right now carries the strongest emphasis */
+.slide--aisys[data-build-now="3"] #ais-p-model   .ais-p__label,
+.slide--aisys[data-build-now="4"] #ais-p-data  .ais-p__label,
+.slide--aisys[data-build-now="5"] #ais-p-agent  .ais-p__label,
+.slide--aisys[data-build-now="6"] #ais-p-output .ais-p__label { fill: var(--amber); }
+.slide--aisys[data-build-now="3"] #ais-p-model   .ais-p__desc,
+.slide--aisys[data-build-now="4"] #ais-p-data  .ais-p__desc,
+.slide--aisys[data-build-now="5"] #ais-p-agent  .ais-p__desc,
+.slide--aisys[data-build-now="6"] #ais-p-output .ais-p__desc { fill: var(--ink-2); }
+/* Items already raised step back, but only one notch: step 6 is also the final
+   frame, so all four have to stay legible from the back of the room rather than
+   fading to ghosts behind the current one. */
+.slide--aisys[data-build-now="4"] #ais-p-model  .ais-p__label,
+.slide--aisys[data-build-now="5"] #ais-p-model  .ais-p__label,
+.slide--aisys[data-build-now="5"] #ais-p-data .ais-p__label,
+.slide--aisys[data-build-now="6"] #ais-p-model  .ais-p__label,
+.slide--aisys[data-build-now="6"] #ais-p-data .ais-p__label,
+.slide--aisys[data-build-now="6"] #ais-p-agent .ais-p__label { fill: rgba(240,162,59,.62); }
+.slide--aisys[data-build-now="4"] #ais-p-model  .ais-p__desc,
+.slide--aisys[data-build-now="5"] #ais-p-model  .ais-p__desc,
+.slide--aisys[data-build-now="5"] #ais-p-data .ais-p__desc,
+.slide--aisys[data-build-now="6"] #ais-p-model  .ais-p__desc,
+.slide--aisys[data-build-now="6"] #ais-p-data .ais-p__desc,
+.slide--aisys[data-build-now="6"] #ais-p-agent .ais-p__desc { fill: var(--ink-3); opacity: .72; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide--aisys .ais-flow { animation: none !important; opacity: .5; }
+  .slide--aisys .ais-halo { animation: none !important; }
+}
+body.is-static .slide--aisys .ais-flow { opacity: 0; animation: none; }
+body.is-static .slide--aisys .ais-halo { animation: none; }
+
+/* =========================================================================
+   Slide 3 — Speech AI: chủ quyền + chuyên biệt.
+   Answers the two Model-layer problems raised on slide 2 (phụ thuộc,
+   chưa chuyên biệt), one pillar each. Two columns, a lead statement above
+   them, and the business rationale as a quiet closing line.
+   ========================================================================= */
+/* Two narrative blocks side by side: what we do, and why meetings are worth
+   it. Marked by a hairline rule rather than a filled card so they read as
+   statements, not panels. */
+.slide--sov .sov-tops {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 72px; margin: 10px 0 0;
+}
+.slide--sov .sov-top {
+  margin: 0; padding: 4px 0 4px 34px; border-left: 3px solid var(--line-2);
+  font-size: 38px; font-weight: 500; line-height: 1.32; letter-spacing: -.005em;
+  color: var(--ink-2);
+}
+.slide--sov .sov-top--a { border-left-color: var(--blue-lt); }
+.slide--sov .sov-top strong { color: var(--ink); font-weight: 700; }
+.slide--sov .sov-top--a strong { color: var(--blue-lt); }
+
+.slide--sov .sov-cols {
+  margin-top: 56px; flex: 1; min-height: 0; display: grid;
+  grid-template-columns: .8fr 1px 1.2fr; gap: 0 76px; align-content: center;
+}
+.slide--sov .sov-rule { background: var(--line-2); }
+.slide--sov .sov-col  { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
+.slide--sov .sov-kicker {
+  font-size: 30px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase;
+}
+.slide--sov .sov-col--a .sov-kicker { color: var(--blue-lt); }
+.slide--sov .sov-col--b .sov-kicker { color: var(--amber); }
+
+.slide--sov .sov-list { display: flex; flex-direction: column; gap: 18px; }
+.slide--sov .sov-list li {
+  list-style: none; position: relative; padding-left: 34px;
+  font-size: 36px; font-weight: 500; line-height: 1.3; color: var(--ink);
+}
+.slide--sov .sov-list li::before {
+  content: ''; position: absolute; left: 0; top: .55em;
+  width: 12px; height: 12px; border-radius: 3px; background: var(--blue);
+}
+.slide--sov .sov-note { font-size: 28px; color: var(--ink-3); line-height: 1.4; }
+
+.slide--sov .sov-chips { display: flex; flex-wrap: wrap; gap: 12px; max-width: 1300px; }
+.slide--sov .sov-chips .chip {
+  font-size: 27px; padding: 13px 22px; color: var(--ink-2); font-weight: 500;
+  border-color: rgba(240,162,59,.28); background: rgba(240,162,59,.05);
+}
+/* section heading = icon + kicker on one row */
+.slide--sov .sov-head { display: flex; align-items: center; gap: 18px; }
+.slide--sov .sov-ic {
+  width: 44px; height: 44px; flex: none;
+  fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.slide--sov .sov-col--a .sov-ic { stroke: var(--blue-lt); }
+.slide--sov .sov-col--b .sov-ic { stroke: var(--amber); }
+
+
+/* Slide 4 — Speech results. Tighter bar spacing so each 3-bar group reads as
+   one comparison, and a smaller name so the longest vendor label still fits
+   on a single line at the narrower group width. Slide-scoped: 19/20/21 keep
+   their own spacing. */
+.slide--sp4 .bench--dual .bgroup { flex: 0 0 262px; }
+/* Captions were touching at the tighter grouping: give them a little room and
+   a slightly smaller size, and let a long vendor name wrap rather than run
+   into its neighbour. Bars stay close; only the label band breathes. */
+.slide--sp4 .bgroup__name {
+  font-size: 20px; white-space: normal; line-height: 1.25;
+  padding: 0 10px; max-width: 100%;
+}
+
+/* small source label beside a slide title — secondary, never competes */
+.head-cite { margin: 0; font-size: 26px; font-weight: 400; color: var(--ink-4); letter-spacing: .02em; }
+
+/* =========================================================================
+   Merged Knowledge Graph slide: why a graph (left) + does it help (right).
+   Left is one worked example from the corpus, not the full graph figure.
+   ========================================================================= */
+.slide--kg1 .kg1 { flex: 1; min-height: 0; display: grid;
+                   grid-template-columns: 1.32fr 1px 1fr; gap: 0 64px; align-content: center; }
+.slide--kg1 .kg1__rule { background: var(--line-2); }
+.slide--kg1 .kg1__side { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.slide--kg1 .kg1__kicker { font-size: 26px; font-weight: 800; letter-spacing: .18em;
+                           text-transform: uppercase; color: var(--ink-3); }
+.slide--kg1 .kg1__lead { font-size: 30px; line-height: 1.4; color: var(--ink-2); max-width: 950px; }
+
+.kg1doc { display: flex; flex-direction: column; gap: 8px; border-radius: 14px;
+          border: 1px solid var(--line); background: rgba(255,255,255,.04); padding: 22px 26px; }
+.kg1doc__code { font-size: 34px; font-weight: 700; color: var(--ink); letter-spacing: -.01em; }
+.kg1doc__meta { font-size: 22px; color: var(--ink-4); }
+.kg1doc--dead { border-color: rgba(240,162,59,.40); background: rgba(240,162,59,.07); }
+.kg1doc--dead .kg1doc__meta { color: var(--amber); }
+.kg1doc--live { border-color: rgba(30,136,229,.55); background: rgba(30,136,229,.12); }
+.kg1doc--live .kg1doc__meta { color: var(--blue-lt); }
+.kg1rel { display: flex; align-items: center; gap: 14px; padding-left: 6px; }
+.kg1rel__arrow { font-family: var(--mono); font-size: 30px; color: var(--blue-lt); }
+.kg1rel__t { font-size: 24px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+             color: var(--blue-lt); }
+.kg1art { display: flex; align-items: baseline; gap: 16px; font-size: 26px; color: var(--ink-3); }
+.kg1art b { color: var(--ink); font-weight: 700; }
+.slide--kg1 .bgroup__bars { height: 520px; padding-top: 46px; background: rgba(255,255,255,.04);
+                            border-radius: 12px 12px 0 0; margin: 0 16px; }
+.slide--kg1 .bench__plot::after { top: 520px; }
+.slide--kg1 .bgroup { flex: 0 0 258px; max-width: none; }
+/* Narrow columns on a tall plot: the gaps between the three tasks are small,
+   so the eye needs height — not mass — to read them. */
+.slide--kg1 .bar--base,
+.slide--kg1 .bar--kg { width: 54px; }
+.slide--kg1 .bgroup__name { margin-top: 26px; font-size: 22px; }
+.slide--kg1 .bench__legend { margin-top: 26px; padding-top: 20px; }
+/* Sentence case: this caption is a phrase, not a short all-caps label. */
+.slide--kg1 .bench__label--bottom { text-transform: none; letter-spacing: .02em; }
+
+/* ---- graph-introduction slide (copied from the AI-system slide) ---------- */
+.kg-group  { fill: rgba(146,180,224,.035); stroke: var(--line-2); stroke-width: 2; stroke-dasharray: 10 9; }
+.kg-box    { fill: rgba(30,136,229,.18); stroke: var(--blue-lt); stroke-width: 3; }
+.kg-node   { fill: var(--blue-lt); }
+.kg-link   { stroke: var(--blue-lt); stroke-width: 2; fill: none; opacity: .75; }
+/* the graph -> Thực thi connection is the point of the slide, so it brightens
+   on its own step rather than sitting at hairline weight like the others */
+.slide--aisys[data-build-now="3"] .kg-edge { stroke: var(--blue-lt); stroke-width: 3.5; }
+.slide--aisys[data-build-now="3"] .ais-flow--kg { opacity: .95; animation: ais-flow 2.2s linear infinite; }
+
+/* the two knowledge hops on the graph slide stay lit: raw sources -> graph,
+   graph -> execution. Everything else on that slide is static. */
+.slide--kg1 .ais-flow--kgpath { opacity: .9; animation: ais-flow 2.6s linear infinite; }
+
+/* ---- verification slide (extends the Knowledge Graph system slide) ------- */
+.slide--vfy .ais-fig { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vfy-box    { fill: rgba(240,162,59,.15); stroke: var(--amber); stroke-width: 3; }
+.vfy-expert { fill: rgba(240,162,59,.07); stroke: rgba(240,162,59,.55); stroke-width: 2.5; }
+.vfy-ic     { fill: none; stroke: var(--amber); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* The whole architecture is visible on arrival, so the processing path is
+   carried by moving light rather than by heavier arrows. */
+.slide--vfy .vfy-flow { opacity: .85; animation: ais-flow 2.8s linear infinite; }
+.slide--vfy .vfy-flow--kg { stroke: var(--blue-lt); }
+.slide--vfy .vfy-flow--x  { stroke: var(--amber); }
+
+/* =========================================================================
+   Agent evaluation loop (left) + capability gains (right).
+   Left is a five-step vertical flow; the updated component is the only
+   highlighted box inside the agent, because only one is updated.
+   ========================================================================= */
+.slide--loop .loop { flex: 1; min-height: 0; display: grid;
+                     grid-template-columns: 1.16fr 1px 0.94fr; gap: 0 56px; align-content: center; }
+.slide--loop .loop__rule { background: var(--line-2); }
+.slide--loop .loop__side { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.slide--loop .loop__note { font-size: 24px; line-height: 1.45; color: var(--ink-4); max-width: 1000px; }
+
+.lpbox { border: 1px solid var(--line); background: rgba(255,255,255,.05);
+         border-radius: 14px; padding: 18px 24px; font-size: 27px; font-weight: 700; color: var(--ink); }
+.lpbox__sub { display: block; font-size: 20px; font-weight: 500; color: var(--ink-3); margin-top: 6px; }
+.lpbox--agent { padding-bottom: 20px; }
+.lparrow { color: var(--blue-lt); font-family: var(--mono); font-size: 26px; padding-left: 26px; line-height: 1; }
+.lpcomp { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.lpcomp span { border: 1px solid var(--line); border-radius: 999px; padding: 8px 18px;
+               font-size: 20px; font-weight: 500; color: var(--ink-3); }
+.lpcomp .is-upd { border-color: rgba(30,136,229,.65); background: rgba(30,136,229,.16);
+                  color: var(--ink); font-weight: 700; }
+/* narrower, taller cards: more vertical room to read the before/after gap */
+.slide--loop .bgroup__bars { height: 680px; padding-top: 48px; margin: 0 26px; gap: 18px; }
+.slide--loop .bench__plot::after { top: 680px; }
+/* Narrow columns on a tall plot: the four gains are 2-5 points, so the eye
+   needs height rather than mass to read them. */
+.slide--loop .bar--base,
+.slide--loop .bar--kg { width: 54px; }
+.slide--loop .bgroup { flex: 0 0 214px; max-width: none; }
+.slide--loop .bgroup__name { margin-top: 24px; font-size: 20px; white-space: normal; line-height: 1.25; }
+/* Caption sits directly under the chart and carries the divider; the legend
+   then hangs well below it so the two don't read as one block. */
+.slide--loop .bench__legend { margin-top: 44px; padding-top: 0; border-top: none; }
+
+/* Feedback-loop figure: reuses slide 07's .ais-* architecture language.
+   Only the evaluation module and the return path are new. */
+.loopfig { width: 100%; max-width: 100%; height: auto; display: block; }
+.loopfig .ev-box  { fill: rgba(30,136,229,.12); stroke: rgba(30,136,229,.55); stroke-width: 1.6; }
+.loopfig .ev-chip { fill: rgba(255,255,255,.06); stroke: var(--line); stroke-width: 1.2; }
+.loopfig .ev-t    { fill: var(--ink-2); font-size: 21px; font-weight: 500; text-anchor: middle; }
+.loopfig .fb-path { stroke: var(--blue-lt); stroke-width: 2.6; fill: none; stroke-dasharray: 9 6; }
+.loopfig .fb-t    { fill: var(--blue-lt); font-size: 22px; font-weight: 700;
+                    letter-spacing: .08em; text-anchor: middle; }
+
+/* Feedback slide: only two new pieces on top of slide 07's architecture —
+   the evaluation module and a restrained return edge in the same line
+   language as .ais-edge. */
+.fbk-box   { fill: rgba(30,136,229,.12); stroke: rgba(30,136,229,.50); stroke-width: 1.8; }
+.fbk-edge  { stroke: rgba(102,180,240,.55); stroke-width: 2.2; fill: none; }
+.fbk-label { fill: var(--ink-2); font-size: 34px; font-weight: 500; letter-spacing: .04em; text-anchor: middle; }
+.slide--loop .ais-fig { width: 100%; height: auto; }
+.loopfig, .slide--loop .fbk-ic { }
+.fbk-ic { fill: none; stroke: var(--ink-2); stroke-width: 2.2;
+          stroke-linecap: round; stroke-linejoin: round; }
+
+/* Loop slide: the same animated dash as slide 07, switched on per build step
+   so the flow walks Agent -> Kết quả -> Đánh giá -> back into Lập kế hoạch. */
+.slide--loop .vfy-flow { opacity: .85; animation: ais-flow 2.8s linear infinite; }
+.slide--loop .fbk-flow { stroke: var(--blue-lt); stroke-width: 3.5; fill: none;
+  stroke-dasharray: 26 200; opacity: .9; animation: ais-flow 3.4s linear infinite; }
+
+/* Slide 6: the Legal Knowledge Graph is the point of the slide, so it carries
+   the deck's amber emphasis rather than sitting in the same blue as the
+   ordinary knowledge boxes around it. */
+.slide--kg1 .kg-box  { fill: rgba(240,162,59,.15); stroke: var(--amber); stroke-width: 3; }
+.slide--kg1 .kg-node { fill: var(--amber); }
+.slide--kg1 .kg-link { stroke: var(--amber); }
+.slide--loop .bench__cap { margin-top: 24px; padding-top: 20px;
+                           border-top: 1px solid var(--line);
+                           font-size: 21px; color: var(--ink-4);
+                           letter-spacing: .04em; text-align: center; }
+
+/* panel captions read as a sentence, not a shout */
+.slide--result .bench__label--bottom { text-transform: none; letter-spacing: .04em; }
+
+/* Slide 5 — model lineup above the chart: training chain, then the two
+   larger comparison models. Same box language as the deck's other figures. */
+.mline { display: flex; align-items: flex-start; gap: 30px; margin: 2px 0 18px; flex-wrap: wrap; }
+.mline__item { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.mline__box { border: 1px solid var(--line); background: rgba(255,255,255,.05);
+              border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+.mline__box--sm  { width: 104px; height: 70px; }
+.mline__box--mid { width: 300px; height: 96px; margin-top: -13px; gap: 16px; border-color: rgba(30,136,229,.55);
+                   background: rgba(30,136,229,.14); font-size: 24px; font-weight: 700; color: var(--ink); }
+.mline__box--out { width: 104px; height: 70px; border-color: rgba(30,136,229,.55); background: rgba(30,136,229,.14); }
+.mline__box--lg  { width: 150px; height: 96px; }
+.mline__t  { font-size: 23px; font-weight: 700; color: var(--ink); text-align: center; white-space: nowrap; }
+.mline__ar { align-self: center; margin-top: 22px; font-family: var(--mono); font-size: 30px; color: var(--blue-lt); }
+.mline__gap { width: 1px; align-self: stretch; background: var(--line-2); margin: 0 14px; }
+.mline__cmp { display: flex; flex-direction: column; gap: 10px; }
+.mline__cmpk { font-size: 19px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+               color: var(--ink-4); }
+.slide--result .mline + .result-area { margin-top: 0; }
+
+/* the lineup costs vertical room: keep the panel caption clear of the legend */
+.slide--result .bench--dual .bench__label--bottom { margin-top: 18px; padding-top: 14px; }
+.slide--result .bench__legend { margin-top: 14px; padding-top: 14px; }
+
+/* size label inside the box; the name stays underneath */
+.mline__box { font-size: 30px; font-weight: 800; color: var(--ink-2); letter-spacing: -.01em; }
+.mline__box--mid { font-size: 24px; font-weight: 700; }
+.mline__box--out { color: var(--ink); }
+/* the trained model is the blue bar in the chart below — say so visually */
+.mline__item--ft .mline__box--out { border-color: var(--blue); background: var(--blue);   /* = .bar--ft / .bar--asr.is-lowest */
+                                    box-shadow: 0 0 0 3px rgba(30,136,229,.18); }
+.mline__item--ft .mline__t { color: var(--ink); font-weight: 800; }
+/* A bright star on the fine-tuned model's box (slides 4 and 5), for as long
+   as the slide is up: a many-pointed sparkle (4 long rays, 4 diagonal rays,
+   8 short glints — one path drawn at three scales) rides the rounded border (CSS
+   offset-path along the box outline) and twinkles as it goes — a soft white
+   core, a light-blue halo and a slow pulse in size and rotation. */
+.mline__item--ft .mline__box--out { position: relative; }
+.mline__sun {
+  position: absolute; inset: -2px; pointer-events: none; z-index: 1;
+}
+.mline__star {
+  position: absolute; left: 0; top: 0; width: 34px; height: 34px;
+  offset-path: inset(0 round 16px); offset-anchor: center; offset-rotate: 0deg;
+  animation: mline-star-orbit 7s linear infinite;
+}
+/* the glow the star sits in */
+.mline__star::before {
+  content: ''; position: absolute; inset: -10px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.85) 0%,
+                                      rgba(170,215,255,.45) 22%,
+                                      rgba(102,180,240,.18) 45%,
+                                      rgba(102,180,240,0) 70%);
+  animation: mline-star-glow 1.6s ease-in-out infinite;
+}
+.mline__star svg {
+  position: relative; display: block; width: 100%; height: 100%; fill: #fff;
+  filter: drop-shadow(0 0 2px #fff)
+          drop-shadow(0 0 7px rgba(170,215,255,1))
+          drop-shadow(0 0 16px rgba(30,136,229,.9));
+  animation: mline-star-twinkle 1.6s ease-in-out infinite;
+}
+@keyframes mline-star-orbit   { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+@keyframes mline-star-twinkle { 0%, 100% { transform: scale(.7)  rotate(0deg);  opacity: .85; }
+                                50%      { transform: scale(1.1) rotate(22.5deg); opacity: 1; } }
+@keyframes mline-star-glow    { 0%, 100% { transform: scale(.8); opacity: .7; }
+                                50%      { transform: scale(1.15); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .mline__sun { display: none; } }
+@media print { .mline__sun { display: none; } }
+/* comparison baselines: light yellow at 32B, stronger at 70B, and bigger */
+.mline__box--32 { width: 132px; height: 88px; border-color: rgba(240,162,59,.40);
+                  background: rgba(240,162,59,.17); color: #F6CE92; }
+.mline__box--70 { width: 196px; height: 88px; border-color: rgba(240,162,59,.85);
+                  background: rgba(240,162,59,.22); color: #F0A23B; font-size: 36px; }
+/* running flow between the training steps, same dash engine as the agent flows */
+.mline__flow { width: 74px; height: 22px; align-self: flex-start; margin-top: 24px; overflow: visible; }
+.mline__flow .ln { stroke: var(--line-2); stroke-width: 2; fill: none; }
+.mline__flow .fl { stroke: var(--blue-lt); stroke-width: 3; fill: none;
+                   stroke-dasharray: 14 60; stroke-linecap: round;
+                   animation: ais-flow 1.9s linear infinite; }
+
+.mline__ico { width: 46px; height: 46px; flex: none; color: var(--blue-lt); }
+.mline__ico .nd { fill: currentColor; }
+.mline__ico .ln2 { stroke: currentColor; stroke-width: 1.3; opacity: .55; }
+
+/* comparison bars carry the same amber as their boxes in the lineup above */
+.slide--result .bar--32b { background: rgba(240,162,59,.42); }
+.slide--result .bar--70b { background: rgba(240,162,59,.78); }
+
+/* Slide 4 model line: the comparison set is not sorted by parameter count the
+   way slide 05's is, so every comparison box is the same size and carries the
+   deck's amber "this is a baseline" accent. */
+.mline__box--cmp { width: 132px; height: 70px; border-color: rgba(240,162,59,.55);
+                   background: rgba(240,162,59,.10); color: var(--ink); }
+.mline__lock { width: 34px; height: 34px; fill: none; stroke: var(--amber);
+               stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.mline__lock .pin { fill: var(--amber); stroke: none; }
+.mline__sub { font-size: 19px; font-weight: 500; color: var(--ink-4);
+              letter-spacing: .02em; margin-top: -4px; white-space: nowrap; }
+
+/* Slide 2, data problem: the question is about every knowledge source the
+   system draws on, not only the files that were uploaded. Kho tri thức and Web
+   take the same amber as File dữ liệu — border and label only, no halo, so the
+   uploaded-file box stays the anchor of the state. */
+.slide--aisys[data-build-now="4"] .ais-src {
+  stroke: var(--amber); stroke-width: 3; fill: rgba(240,162,59,.08);
+}
+.slide--aisys[data-build-now="4"] .ais-src__t { fill: var(--amber); }
+.slide--aisys[data-build-now="5"] .ais-src,
+.slide--aisys[data-build-now="6"] .ais-src,
+.slide--aisys[data-build-now="7"] .ais-src {
+  stroke: rgba(240,162,59,.55); fill: rgba(240,162,59,.045);
+}
+.slide--aisys[data-build-now="5"] .ais-src__t,
+.slide--aisys[data-build-now="6"] .ais-src__t,
+.slide--aisys[data-build-now="7"] .ais-src__t { fill: rgba(240,162,59,.92); }
+
+/* Slide 4: the two baselines are not the same kind of thing — PhoWhisper-Large
+   is the open base model (neutral, like the 7B box on slide 05), ElevenLabs
+   Scribe v2 is the commercial API, so it carries the amber accent alone. */
+.mline__box--base { border-color: var(--line); background: rgba(255,255,255,.05); }
+.mline__box--api  { border-color: rgba(240,162,59,.85); background: rgba(240,162,59,.22); }
+.slide--sp4 .bar--api { background: rgba(240,162,59,.78); }
+
+/* Slide 4 build: step 0 shows the model line (fine-tune + compared models)
+   and no chart; step 1 brings in the two task labels and the two comparison
+   columns of each task at once, with the plot band and axis; step 2 grows our
+   column from the axis upwards. */
+.slide--sp4 .bench__plot::before,
+.slide--sp4 .bench__plot::after { transition: opacity 420ms cubic-bezier(.16,1,.3,1); }
+.slide--sp4[data-build-now="0"] .bench__plot::before,
+.slide--sp4[data-build-now="0"] .bench__plot::after { opacity: 0; }
+
+/* our column: the group itself does not slide in — the bar grows instead,
+   and its value lands once the bar has reached full height */
+.slide--sp4 .bgroup--ours[data-build] { transform: none; }
+.slide--sp4 .bgroup--ours .bar {
+  transition: height 1800ms cubic-bezier(.33,0,.2,1);
+}
+.slide--sp4 .bgroup--ours:not(.is-revealed) .bar { height: 0; min-height: 0; }
+.slide--sp4 .bgroup--ours .bar__v { transition: opacity 400ms ease 1500ms; }
+.slide--sp4 .bgroup--ours:not(.is-revealed) .bar__v { opacity: 0; transition: none; }
+/* Slide 5 build — same sequence as slide 4. Step 0: model line only.
+   Step 1: benchmark labels, the four task groups and their 7B / 32B / 70B
+   columns. Step 2: the fine-tuned column of every task grows from the axis. */
+.slide--lg5 .bench__plot::after { transition: opacity 420ms cubic-bezier(.16,1,.3,1); }
+.slide--lg5[data-build-now="0"] .bench__plot::after { opacity: 0; }
+.slide--lg5 .bar--ft[data-build] {
+  opacity: 1; transform: none;
+  transition: height 1800ms cubic-bezier(.33,0,.2,1);
+}
+.slide--lg5 .bar--ft .bar__v { transition: opacity 400ms ease 1500ms; }
+@media screen {
+  .slide--lg5 .bar--ft:not(.is-revealed) { height: 0; min-height: 0; }
+  .slide--lg5 .bar--ft:not(.is-revealed) .bar__v { opacity: 0; transition: none; }
+}
+@media print { .slide--lg5 .bench__plot::after { opacity: 1 !important; } }
+
+@media print {
+  .slide--sp4 .bench__plot::before, .slide--sp4 .bench__plot::after { opacity: 1 !important; }
+  .slide--sp4 .bgroup--ours .bar { height: calc((var(--v) - var(--floor, 0)) * var(--k, 1) * 1%) !important; }
+  .slide--sp4 .bgroup--ours .bar__v { opacity: 1 !important; }
+}
+
+/* =========================================================================
+   Slide 10 — closing. Two columns: what the enterprise gets, what we build
+   next. The right column carries the same four component icons slide 02 used
+   to pose the problems, so the deck closes the loop it opened.
+   ========================================================================= */
+.slide--fin .conclusion-title { font-size: 76px; max-width: 2000px; }
+/* The closing block is short; let it sit centred in the canvas rather than
+   stretching, so the takeaway rises off the footer instead of hugging it. */
+.slide--fin .conclusion-block { gap: 60px; flex: 0 1 auto; }
+
+.fin {
+  display: grid; grid-template-columns: 1fr 1px 1fr;
+  gap: 0 72px; align-items: start;
+}
+.fin__rule { align-self: stretch; background: var(--line-2); }
+.fin__col { min-width: 0; display: flex; flex-direction: column; gap: 30px; }
+
+.fin__head {
+  font-size: 32px; font-weight: 700; letter-spacing: .10em;
+  text-transform: uppercase; color: var(--amber);
+}
+.fin__head--b { color: var(--blue-lt); }
+
+.fin__list { list-style: none; display: flex; flex-direction: column; gap: 26px; }
+.fin__li {
+  position: relative; padding-left: 46px;
+  font-size: 40px; font-weight: 500; line-height: 1.28;
+  letter-spacing: -.01em; color: var(--ink);
+}
+/* left column: a short amber dash instead of a bullet */
+.fin__col:not(.fin__col--next) .fin__li::before {
+  content: ''; position: absolute; left: 0; top: 22px;
+  width: 26px; height: 3px; background: var(--amber); opacity: .85;
+}
+/* right column: the slide-02 component icons, aligned on the same left edge */
+.fin__li--ic { display: flex; align-items: flex-start; gap: 22px; padding-left: 0; }
+.fin__ic {
+  width: 44px; height: 44px; flex: none; margin-top: 4px;
+  fill: none; stroke: var(--blue-lt); stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.fin__ic .nd { fill: var(--blue-lt); stroke: none; }
+.fin__ic .lk { stroke: var(--blue-lt); stroke-width: 1.6; opacity: .6; fill: none; }
+
+/* the last line of the talk: one notch larger than the deck's other takeaways */
+.takeaway--fin {
+  margin-top: 0; font-size: 46px; line-height: 1.35; max-width: 2300px;
+  color: var(--ink-2); padding-top: 44px;
+}
+.takeaway--fin strong { color: var(--blue-lt); font-weight: 700; }
+
+/* Title slide: let the three zones — summit line, title, speaker — sit further
+   apart than the block's uniform gap allows. */
+.slide--title .eyebrow    { margin-bottom: 34px; }
+.slide--title .title-rule { margin-top: 44px; }
+.slide--title .speaker    { margin-top: 24px; }
+
+/* right column: label + one supporting line, so the four directions stay
+   scannable without turning into sentences */
+.fin__li--ic .fin__txt { display: flex; flex-direction: column; gap: 6px; }
+.fin__li--ic .fin__lb  { font-weight: 700; }
+.fin__sub { font-size: 30px; font-weight: 400; line-height: 1.3; color: var(--ink-3); }
+
+/* =========================================================================
+   Growing result column (slides 6, 8, 9) — the same move as slides 4 and 5.
+   A .bar--grow column carries data-build="2": the comparison columns arrive
+   first, then on the next click this column rises from the axis and its value
+   lands once it is at full height. Screen only, so print and PDF always show
+   every column at its true height.
+   ========================================================================= */
+.slide .bar--grow[data-build] {
+  opacity: 1; transform: none;
+  transition: height 1800ms cubic-bezier(.33,0,.2,1);
+}
+.slide .bar--grow .bar__v { transition: opacity 400ms ease 1500ms; }
+@media screen {
+  .slide .bar--grow:not(.is-revealed) { height: 0; min-height: 0; }
+  .slide .bar--grow:not(.is-revealed) .bar__v { opacity: 0; transition: none; }
+}

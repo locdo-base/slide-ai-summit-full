@@ -1,0 +1,87 @@
+/* The resources page — #/resources. Its own scroll container, since the body never
+   scrolls; the deck's palette tokens, the peek's card idiom. */
+
+.gallery {
+  position: fixed; inset: 0; overflow-y: auto; scrollbar-width: thin;
+  background: var(--navy-900); color: var(--white);
+  font-family: var(--font-body); font-size: 14px; line-height: 1.4;
+}
+.gallery-inner { width: min(1720px, calc(100vw - 96px)); margin: 0 auto; padding: 48px 0 64px; }
+
+.gallery-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; margin-bottom: 40px; }
+.gallery-head .brand { --brand-mark: 30px; --brand-word: 21px; margin-top: 6px; }
+.gallery-back { display: inline-block; margin-bottom: 18px; font-size: 13px; color: var(--dim); text-decoration: none; }
+.gallery-back:hover { color: var(--blue-200); }
+.gallery-head h1 { margin: 0 0 10px; font-family: var(--font-display); font-weight: 500; font-size: 40px; letter-spacing: -0.02em; }
+.gallery-head .sub { margin: 0; max-width: 760px; font-size: 15px; color: var(--muted); }
+.gallery-head .sub b { color: var(--white); font-weight: 600; }
+
+.gallery-group { margin-bottom: 44px; }
+.gallery-group h2 {
+  display: flex; align-items: baseline; gap: 12px; margin: 0 0 16px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-display); font-weight: 500; font-size: 22px; letter-spacing: -0.01em;
+}
+.gallery-group h2 em { font-style: normal; font-family: var(--font-body); font-size: 12px; color: var(--dim); }
+
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px; }
+
+.gallery-card {
+  display: grid; gap: 10px; padding: 14px 14px 12px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--blue-300) 14%, transparent); border-radius: 12px;
+  background: color-mix(in srgb, var(--blue-300) 4%, transparent);
+  transition: border-color 0.15s var(--ease-out), background 0.15s var(--ease-out), transform 0.2s var(--ease-out);
+}
+.gallery-card:hover { border-color: var(--line-strong); background: color-mix(in srgb, var(--blue-400) 9%, transparent); transform: translateY(-2px); }
+.gallery-card header { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.gallery-card header b { font-size: 14px; font-weight: 600; color: var(--white); white-space: nowrap; }
+.gallery-card header code { margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: var(--dim); }
+.gallery-card p { margin: 0; font-size: 12.5px; color: var(--muted); }
+.gallery-card footer { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 11.5px; color: var(--dim); }
+.gallery-card footer .id { font-family: ui-monospace, Consolas, monospace; }
+.gallery-card footer a { color: var(--blue-300); text-decoration: none; white-space: nowrap; }
+.gallery-card footer a:hover { color: var(--blue-200); text-decoration: underline; text-underline-offset: 3px; }
+
+/* The chip: W01, A03 … */
+.gallery .tag {
+  flex: none; padding: 2px 7px; border-radius: 5px;
+  font-family: ui-monospace, Consolas, monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--blue-200); background: color-mix(in srgb, var(--blue-500) 22%, transparent);
+}
+
+/* Thumbnail: the real window, scaled to fit whole. The fit box sits at its
+   natural width, centred absolutely, and transform-scaled from its centre. */
+.gallery-thumb {
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+  border-radius: 8px; background: var(--navy-950); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue-300) 12%, transparent);
+}
+.gallery-thumb-fit { position: absolute; left: 50%; top: 50%; transform-origin: center center; transition: opacity 0.2s; pointer-events: none; }
+/* Off the stage the window has no window behind it, so the deep stage shadow
+   comes down to a card's worth. */
+.gallery-thumb .mk-window { box-shadow: 0 0 0 1px rgba(3, 10, 31, 0.6); }
+
+.gallery-foot { margin-top: 12px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--dim); }
+.gallery-foot code { color: var(--muted); }
+
+/* ── 1:1 viewer ─────────────────────────────────────────────────────────── */
+.gallery-viewer {
+  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column;
+  background: color-mix(in srgb, var(--navy-950) 92%, transparent);
+  animation: gallery-in 0.2s var(--ease-out) both;
+}
+@keyframes gallery-in { from { opacity: 0; } to { opacity: 1; } }
+.gallery-viewer-bar {
+  flex: none; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 20px;
+  background: var(--navy-950); border-bottom: 1px solid var(--line);
+  font-size: 13px; color: var(--muted);
+}
+.gallery-viewer-bar b { color: var(--white); font-weight: 600; white-space: nowrap; }
+.gallery-viewer-bar .note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--dim); }
+.gallery-viewer-bar .spacer { flex: 1; }
+.gallery-viewer-bar a { color: var(--blue-300); text-decoration: none; white-space: nowrap; }
+.gallery-viewer-bar a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.gallery-viewer-bar .num { font-variant-numeric: tabular-nums; color: var(--dim); white-space: nowrap; }
+.gallery-viewer-bar button[disabled] { opacity: 0.35; pointer-events: none; }
+.gallery-viewer-body { flex: 1; min-height: 0; overflow: auto; padding: 40px 40px 56px; scrollbar-width: thin; }
+.gallery-viewer-frame { width: max-content; margin: 0 auto; }
+.gallery-viewer-scale { margin: 18px auto 0; width: max-content; font-size: 12px; color: var(--dim); }

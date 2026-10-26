@@ -1,0 +1,11 @@
+name: base-keynotes
+services:
+  base-keynotes:
+    image: asia-southeast1-docker.pkg.dev/true-rework-platform/registry/base-keynotes:stable
+    container_name: base-keynotes
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5801:80
+    restart: unless-stopped

@@ -1,0 +1,26 @@
+:root{
+/* Stage geometry (2:1, from the reference keynote) */
+--stage-w:2560px;
+--stage-h:1280px;
+--stage-pad-x:140px;
+--stage-pad-y:70px;
+
+/* Spacing scale, in stage design pixels */
+--space-1:8px;
+--space-2:16px;
+--space-3:24px;
+--space-4:36px;
+--space-5:48px;
+--space-6:64px;
+--space-7:96px;
+--space-8:120px;
+--space-9:180px;
+
+--gap-card:24px;          /* inside a glass card */
+--gap-grid:36px;          /* between cards in a 4-up grid */
+--gap-section:120px;      /* minimum air between major blocks */
+--card-pad:40px 36px;
+
+--grid-cols:12; /* @kind other */
+--dot-grid-step:48px;
+}

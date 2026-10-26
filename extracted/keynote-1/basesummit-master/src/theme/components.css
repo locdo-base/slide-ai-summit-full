@@ -1,0 +1,484 @@
+/* Per-component styles for the figures that are HTML rather than SVG. */
+
+/* Split layout headlines sit in a 720px column — a size down from stack. */
+.frame-split .h1 { font-size: 66px; }
+.frame-split .lead { font-size: 33px; }
+.frame-stack .h1 { font-size: 76px; }
+
+/* Title slide */
+.title-field { position: absolute; inset: 0; }
+.title-veil {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(60% 55% at 76% 50%, color-mix(in srgb, var(--blue-500) 22%, transparent), transparent 70%),
+    linear-gradient(90deg, var(--navy-900) 0%, color-mix(in srgb, var(--navy-900) 55%, transparent) 42%, color-mix(in srgb, var(--navy-900) 0%, transparent) 70%);
+  pointer-events: none;
+}
+.title-words { position: absolute; z-index: 2; left: var(--frame-x); top: 50%; transform: translateY(-50%); display: grid; row-gap: 40px; max-width: 1300px; }
+.title-words .kicker { font-size: var(--t-small); color: var(--muted); }
+.title-words .display { font-size: 136px; }
+.title-words .trio { display: flex; gap: 56px; font-family: var(--font-display); font-size: 48px; font-weight: 500; color: var(--blue-200); }
+.title-words .trio span { position: relative; }
+.title-words.wide { max-width: 1600px; }   /* "Intelligence Architecture" at 136px on one line */
+
+/* The lead and its replacement share one cell, so swapping never moves layout */
+.lead-stack { display: grid; }
+.lead-stack > * { grid-area: 1 / 1; }
+
+/* Three-column statements (intro + closing) */
+.cols3 { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 72px; align-self: start; width: 100%; }
+.cols3 .col { display: grid; row-gap: 22px; align-content: start; padding-top: 28px; border-top: 1px solid var(--line); }
+.cols3 .h2 { font-size: 56px; }
+.cols3 p { margin: 0; font-size: 30px; line-height: 1.38; color: var(--blue-100); text-wrap: pretty; }
+.cols3 .who { display: flex; gap: 28px; align-items: center; font-size: 24px; color: var(--muted); margin-top: 6px; }
+.cols3 .who span { display: inline-flex; align-items: center; gap: 10px; }
+
+/* Activity → Output */
+.a2o { display: grid; grid-template-columns: 470px 280px 1fr; column-gap: 40px; align-items: center; width: 1720px; height: 460px; padding-top: 40px; }
+.stream { position: relative; overflow: hidden; mask-image: linear-gradient(180deg, transparent 0, #000 18%, #000 82%, transparent 100%); }
+.stream ul { list-style: none; margin: 0; padding: 0; animation: stream-up 22s linear infinite; }
+.stream li { font-size: 24px; line-height: 1.2; padding: 12px 0; color: var(--blue-100); white-space: nowrap; border-bottom: 1px solid color-mix(in srgb, var(--blue-300) 8%, transparent); }
+@keyframes stream-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+.stream-label { position: absolute; left: 0; top: -40px; font-size: 20px; color: var(--dim); }
+
+.measures { display: grid; row-gap: 12px; align-content: center; }
+.measure { display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: 32px; padding: 8px 0 10px; border-bottom: 1px solid var(--line); }
+.measure-label { font-size: 27px; color: var(--blue-100); }
+.measure-value { font-size: 50px; font-weight: 500; letter-spacing: -0.02em; text-align: right; }
+.measure-sub { grid-column: 1 / -1; font-size: 20px; color: var(--dim); margin-top: -6px; }
+
+.address { display: grid; grid-template-columns: auto 1fr; column-gap: 20px; row-gap: 6px; font-size: 22px; margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--line-strong); }
+.address b { font-weight: 500; color: var(--dim); }
+.address span { color: var(--blue-100); }
+
+.rollup { display: grid; row-gap: 18px; align-content: center; }
+.rollup-row { display: grid; grid-template-columns: 176px 1fr 150px; align-items: center; column-gap: 20px; font-size: 24px; }
+.rollup-row .bar { height: 12px; border-radius: 6px; background: color-mix(in srgb, var(--blue-300) 12%, transparent); overflow: hidden; }
+.rollup-row .bar > i { display: block; height: 100%; background: var(--blue-400); border-radius: 6px; }
+.rollup-row .val { text-align: right; color: var(--blue-100); }
+.rollup-row.goal .bar > i { background: var(--cyan-300); }
+
+/* Rule split: search modes */
+.modes { display: flex; gap: 14px; }
+.modes span { padding: 8px 18px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 21px; color: var(--blue-100); }
+
+/* Product screenshot frame */
+.shot { border: 1px solid var(--line-strong); border-radius: 12px; overflow: hidden; background: var(--navy-800); box-shadow: 0 30px 80px color-mix(in srgb, var(--navy-950) 60%, transparent), 0 0 0 1px color-mix(in srgb, var(--blue-300) 8%, transparent); }
+.shot img { display: block; width: 100%; height: auto; }
+/* A window drawn inside a shot keeps only the shot's edge: its own border,
+   corner radius and rings would otherwise double the stroke, and at a zoomed
+   14px radius inside a 12px one the corners never meet. */
+.shot .mk-window { border: 0; border-radius: 0; box-shadow: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stream ul { animation: none; }
+}
+
+/* Five kinds of agent — one column each */
+.kinds { display: grid; grid-template-columns: repeat(5, 1fr); column-gap: 40px; align-self: start; width: 100%; }
+.kinds .kind { display: grid; row-gap: 14px; align-content: start; padding-top: 22px; border-top: 1px solid var(--line); }
+.kinds svg { display: block; margin-bottom: 6px; }
+.kinds .h2 { font-size: 34px; }
+.kinds p { margin: 0; font-size: 23px; line-height: 1.35; color: var(--blue-100); text-wrap: pretty; }
+.kinds p.bound { color: var(--amber-300); }
+.kinds p.bound b { font-weight: 500; color: var(--dim); margin-right: 8px; }
+
+/* Agents in ops — three scenes over three statements */
+.cols3.ops .col { row-gap: 16px; }
+.cols3.ops .col svg { display: block; margin-bottom: 6px; }
+.cols3.ops .h2 { font-size: 44px; }
+.cols3.ops p { font-size: 27px; }
+.cols3.two { grid-template-columns: repeat(2, 1fr); }
+
+/* ── Intelligence Architecture ─────────────────────────────────────────── */
+
+/* Title: the question and the answer swap in over the title words — one size,
+   each behind its mark in a ring; the thanks sit in a glass pill centred at
+   the foot — the reveal owns the transform, so the row spans the stage and
+   centres the pill itself. */
+.title-words.qa { max-width: 1600px; row-gap: 32px; }
+.qa-row { display: grid; grid-template-columns: 56px 1fr; column-gap: 28px; align-items: start; font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; }
+.qa-q, .qa-a { font-size: 72px; line-height: 1.1; }
+.qa-q { color: var(--blue-100); }
+.qa-row > span:last-child { text-wrap: balance; }
+.qa-mark { box-sizing: border-box; width: 56px; height: 56px; margin-top: 12px; border-radius: 50%; border: 2px solid var(--line-strong); display: grid; place-items: center; font-size: 24px; line-height: 1; letter-spacing: 0; color: var(--blue-200); }
+.qa-a em { font-style: normal; }
+.qa-thanks { position: absolute; z-index: 2; left: 0; right: 0; bottom: var(--frame-bottom); display: flex; justify-content: center; gap: 24px; pointer-events: none; }
+.qa-thanks span {
+  padding: 16px 48px; border-radius: 999px;
+  background: color-mix(in srgb, var(--white) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--white) 11%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--navy-950) 45%, transparent), inset 0 1px 0 color-mix(in srgb, var(--white) 10%, transparent);
+  font-family: var(--font-display); font-size: 36px; font-weight: 500; letter-spacing: -0.01em; color: var(--white);
+}
+:root[data-ratio='3x1'] .title-words.qa { row-gap: 22px; }
+:root[data-ratio='3x1'] .qa-q, :root[data-ratio='3x1'] .qa-a { font-size: 54px; }
+:root[data-ratio='3x1'] .qa-row { grid-template-columns: 44px 1fr; column-gap: 22px; }
+:root[data-ratio='3x1'] .qa-mark { width: 44px; height: 44px; margin-top: 8px; font-size: 20px; }
+:root[data-ratio='3x1'] .qa-thanks span { font-size: 28px; padding: 12px 38px; }
+
+/* Introduction: three numbered topics */
+/* One line each: the longest, Operation Intelligence, may run into the gutter but not into the next column. */
+.cols3.topics { width: 1640px; }   /* the fit box shrink-wraps once nothing wraps; keep the frame's width */
+.cols3.topics .h2 { font-size: 42px; white-space: nowrap; }
+.topic-n, .claim-n { font-family: var(--font-display); font-size: 24px; font-weight: 500; letter-spacing: .1em; color: var(--dim); }
+
+/* Two assertions, each over the line it rewrites */
+.claims { display: grid; row-gap: 40px; align-self: center; width: 1640px; }
+.claim { display: grid; grid-template-columns: 96px 1fr; column-gap: 28px; padding-top: 30px; border-top: 1px solid var(--line); }
+.claim-n { padding-top: 14px; }
+.claim-text { font-family: var(--font-display); font-weight: 500; font-size: 74px; letter-spacing: -0.02em; line-height: 1.06; text-wrap: balance; }
+.claim-text em { font-style: normal; color: var(--cyan-300); }
+.claim-src { margin-top: 16px; font-size: 27px; color: var(--muted); }
+.claim-src b { font-weight: 500; color: var(--dim); margin-right: 16px; }
+.claim-src s { text-decoration-thickness: 2px; text-decoration-color: color-mix(in srgb, var(--amber-300) 75%, transparent); }
+
+/* Model + Context — the two words to remember, each over its assertion */
+/* A fixed width: the fit box shrink-wraps, so a percentage would collapse to the text. */
+.duo { display: grid; grid-template-columns: 1fr 1fr; column-gap: 72px; align-self: center; width: 1640px; }
+.duo .col { display: grid; row-gap: 14px; align-content: start; padding-top: 32px; border-top: 1px solid var(--line); }
+.duo .word { font-family: var(--font-display); font-weight: 500; font-size: 112px; letter-spacing: -0.02em; line-height: 1; }
+.duo .gloss { font-size: 44px; color: var(--blue-100); }
+.duo .def { margin: 10px 0 0; font-size: 32px; line-height: 1.38; color: var(--blue-100); text-wrap: pretty; }
+.duo .echo { margin-top: 14px; font-size: 27px; color: var(--muted); }
+.duo .echo em { font-style: normal; color: var(--cyan-300); }
+
+/* The history of large systems: a timeline over the three principles */
+.history { display: grid; row-gap: 40px; width: 1640px; }
+.principles { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 56px; }
+.principle { display: grid; row-gap: 18px; align-content: start; padding-top: 22px; border-top: 1px solid var(--line); }
+.principle .h2 { font-size: 44px; }
+.principle ul { list-style: none; margin: 0; padding: 0; display: grid; row-gap: 10px; }
+.principle li { display: flex; align-items: baseline; gap: 14px; font-size: 26px; color: var(--blue-100); }
+.principle li::before { content: ''; flex: none; align-self: center; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-400); }
+.principle li i { font-style: normal; font-size: 23px; color: var(--muted); }
+
+/* Service galaxy — the landing's architecture hero on the stage. The canvases
+   fill the box; the labels and the sun anchor sit on top as DOM. */
+/* Centred at 70% of the stage width and on its vertical middle; the box is
+   sized from the stage height by the slide, so it grows with 16:9 and shrinks
+   with 3:1. */
+.galaxy-stage { position: absolute; left: 70%; top: 50%; transform: translate(-50%, -50%); }
+.galaxy { position: relative; isolation: isolate; pointer-events: auto; }
+.galaxy canvas { position: absolute; inset: 0; }
+.galaxy-main { mix-blend-mode: screen; }
+.galaxy-spark { pointer-events: none; }
+.galaxy-label {
+  position: absolute; left: 0; top: 0; pointer-events: none; will-change: transform; white-space: nowrap;
+  font-size: 18px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--white) 78%, transparent);
+}
+.galaxy-sun { position: absolute; left: 50%; top: 50%; z-index: 1; transform: translate(-50%, -50%); pointer-events: none; }
+.galaxy-sun-core { position: relative; display: grid; place-items: center; will-change: transform; }
+/* The mark alone — the word beneath is the sun's own, not the wordmark. */
+.galaxy-sun-core .brand { --brand-mark: 48px; color: var(--white); filter: drop-shadow(0 4px 14px rgba(122, 168, 239, 0.45)); }
+.galaxy-sun-core .brand b { display: none; }
+.galaxy-sun-word {
+  position: absolute; top: 100%; margin-top: 18px; white-space: nowrap;
+  font-size: 18px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--white) 78%, transparent);
+}
+
+/* Statement slide — the centre layout: one line, big, in the middle of the
+   stage, with its one-line definition beneath. */
+.frame-center .frame-text { max-width: 1400px; row-gap: 36px; justify-items: center; }
+.frame-center .h1 { font-size: 100px; }
+.frame-center .lead { font-size: 40px; max-width: 1240px; color: var(--muted); }
+:root[data-ratio='3x1'] .frame-center .h1 { font-size: 78px; }
+:root[data-ratio='3x1'] .frame-center .lead { font-size: 31px; }
+
+/* Two product screens side by side — drawn windows at their zoom, cropped to
+   one height — captions beneath, and the one word they share pinned over the
+   seam */
+.shots { position: relative; display: flex; justify-content: center; align-items: flex-start; gap: 40px; width: 1640px; }
+.shot-fig { margin: 0; display: grid; row-gap: 14px; justify-items: start; }
+.shot-fig .shot { height: 492px; }   /* the screens' own height at this zoom */
+.shot-fig figcaption { font-size: 24px; color: var(--muted); }
+.shot-fig figcaption span { color: var(--dim); margin-left: 12px; }
+/* On arrival the pair sits full size under the headline; when the lead lands
+   it scales down to make way, and the pill floats over it, centred — the
+   reveal owns the transform, so the overlay spans the wrap and centres the
+   pill itself. */
+.shots-wrap { position: relative; width: 1640px; }
+.shots { transform-origin: center center; transition: transform .6s var(--ease-out); }
+.shots.small { transform: scale(.86); }
+.shots-key { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; pointer-events: none; }
+.shots-pill {
+  padding: 14px 40px; border-radius: 999px;
+  background: var(--navy-900); border: 1.5px solid var(--blue-400);
+  box-shadow: 0 20px 60px color-mix(in srgb, var(--navy-950) 70%, transparent);
+  font-family: var(--font-display); font-size: 40px; font-weight: 500; letter-spacing: -0.01em; white-space: nowrap;
+}
+
+/* Concept rows — Model and Context, each the word, its gloss and its
+   properties. `old` reads as dashed chips (what feature-driven software leaves
+   you with); `new` as summed cards, each a part of the architecture. */
+.concept-rows { display: grid; row-gap: 32px; width: 1640px; align-self: center; }
+.concept-row { display: grid; grid-template-columns: 300px 1fr; column-gap: 40px; align-items: center; padding-top: 26px; border-top: 1px solid var(--line); }
+.concept-word b { display: block; font-family: var(--font-display); font-size: 60px; font-weight: 500; letter-spacing: -0.02em; line-height: 1; }
+.concept-word i { display: block; margin-top: 10px; font-style: normal; font-size: 27px; color: var(--muted); }
+.concept-items { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.concept-items li { display: grid; row-gap: 3px; padding: 14px 24px; border: 1px solid var(--line-strong); border-radius: 14px; font-size: 28px; line-height: 1.2; color: var(--blue-100); }
+.concept-items li small { font-size: 21px; color: var(--muted); }
+.concept-rows.old .concept-items li { border-style: dashed; color: var(--muted); }
+.concept-rows.new .concept-items li { background: var(--navy-800); border-color: color-mix(in srgb, var(--blue-400) 55%, transparent); }
+.concept-items li.plus, .concept-rows.new .concept-items li.plus { padding: 0 2px; border: 0; background: none; font-family: var(--font-display); font-size: 40px; color: var(--dim); }
+.concept-note { grid-column: 2; margin-top: 4px; font-size: 24px; color: var(--dim); }
+
+/* ── Launching Timeline ─────────────────────────────────────────────────── */
+
+/* The new-brands page: the one slide whose body is a white sheet — the app
+   marks are drawn for a light surface and would sink into the navy. The
+   header keeps the deck's ground, lit from the top right like the title
+   veil, with the headline a size down and the text column widened so it
+   holds one line — the grid beneath needs the height. The sheet is painted
+   behind the figure cell and bleeds to the stage edges and the bottom, so
+   it reads as the page body rather than a panel; painting it with a
+   pseudo-element (not a bleeding margin) keeps the cell's own box honest,
+   so the fit box still scales the grid to a shorter stage. The cell itself
+   runs 40px past the text column and 60px into the bottom margin — the
+   grid is 1680 wide and needs the room to sit at 1 : 1. */
+.frame:has(> .frame-body > .frame-figure.paper) {
+  background: radial-gradient(56% 130% at 84% 0%, color-mix(in srgb, var(--blue-500) 28%, transparent), transparent 70%);
+}
+.frame:has(> .frame-body > .frame-figure.paper) .frame-text { max-width: 1680px; }
+.frame:has(> .frame-body > .frame-figure.paper) .h1 { font-size: 56px; white-space: nowrap; }
+.frame-figure.paper { position: relative; isolation: isolate; place-items: start start; margin: 0 -40px -60px 0; }
+.frame-figure.paper::before {
+  content: ''; position: absolute; z-index: -1;
+  left: calc(-1 * var(--frame-x)); width: var(--stage-w); top: 0; bottom: calc(-1 * var(--frame-bottom));
+  background: #fff;
+}
+.frame-figure.paper .frame-fit { padding: 22px 0 8px; transform-origin: top left; }
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.paper) .h1 { font-size: 46px; }
+/* 3:1 — the 60px overhang would put the last row of apps under the stage edge. */
+:root[data-ratio='3x1'] .frame-figure.paper { margin-bottom: -30px; }
+/* 3:1 — under a full-width headline and lead the 560px-tall timeline would
+   shrink to half size; the words take a column beside it instead. */
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.launch-tl) > .frame-body { grid-template-columns: 500px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); column-gap: 40px; }
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.launch-tl) .frame-text { align-content: center; row-gap: 22px; }
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.launch-tl) .lead { font-size: 26px; }
+
+/* The Agentic OS statement (launch slide 2): an eyebrow, the brand line and
+   the platform's name big across the stage in the centre layout, the name's
+   colour drifting through the deck's blues and the agent's cyan. The fit box
+   scales the block to a shorter stage. The name's padding keeps its
+   descenders inside the box the gradient is clipped to — line-height 1 would
+   otherwise cut them off. */
+.frame:has(> .frame-body > .frame-figure > .frame-fit > .os-statement) {
+  background: radial-gradient(46% 64% at 50% 60%, color-mix(in srgb, var(--blue-500) 24%, transparent), transparent 70%);
+}
+.os-statement { display: grid; justify-items: center; row-gap: 26px; text-align: center; }
+.os-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 27px; font-weight: 500; color: var(--muted); }
+.os-eyebrow svg { width: 20px; height: 20px; color: var(--dim); }
+.os-of { font-family: var(--font-display); font-size: 64px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.04; color: var(--blue-100); }
+/* The small hand-written line sits in the footer, bottom right — in the
+   frame's bottom margin, level with where "End of keynote" goes. */
+@font-face { font-family: 'Caveat Sub'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('../keynotes/agent/assets/caveat-sub.woff2') format('woff2'); }
+.os-runs { position: absolute; right: 0; bottom: calc(-1 * var(--frame-bottom) / 2 + 6px); font-family: 'Caveat Sub', cursive; font-size: 40px; font-weight: 700; line-height: 1; color: var(--cyan-300); white-space: nowrap; }
+.os-name {
+  margin: 0; max-width: 1640px; padding: 0 .04em .1em;
+  font-family: var(--font-display); font-size: 150px; font-weight: 600; letter-spacing: -0.035em; line-height: 0.98; text-wrap: balance;
+  /* Two colour cycles across the doubled image, so the visible half always
+     holds a cyan and a white highlight wherever the drift is. */
+  background: linear-gradient(100deg,
+    var(--blue-300) 0%, var(--cyan-300) 11%, var(--white) 23%, var(--blue-200) 31%, var(--blue-400) 41%,
+    var(--blue-300) 50%, var(--cyan-300) 61%, var(--white) 73%, var(--blue-200) 81%, var(--blue-400) 91%, var(--blue-300) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 36px color-mix(in srgb, var(--blue-500) 42%, transparent));
+  animation: os-drift 8s linear infinite;
+}
+@keyframes os-drift { from { background-position: 200% 50%; } to { background-position: 0% 50%; } }
+@media (prefers-reduced-motion: reduce) { .os-name { animation: none; } }
+
+/* One more thing (Launching Timeline): the tease alone, centred on the dark
+   stage; the words and the demo are whole frames layered over it, so the
+   three cross-fade. */
+.omt, .omt-reveal { position: absolute; inset: 0; }
+.omt-words { position: absolute; inset: 0; display: grid; place-items: center; }
+.omt-words .display { font-size: 136px; letter-spacing: -0.03em; }
+:root[data-ratio='3x1'] .omt-words .display { font-size: 104px; }
+.omt-words .display.omt-ask { max-width: 1500px; font-size: 96px; line-height: 1.12; text-align: center; text-wrap: balance; }
+:root[data-ratio='3x1'] .omt-words .display.omt-ask { max-width: 2200px; font-size: 80px; }
+
+/* The words before the demo: then and now, side by side. */
+.omt-intro { display: grid; grid-template-columns: 1fr 1fr; column-gap: 56px; width: 1640px; }
+.omt-intro > div { display: grid; row-gap: 14px; align-content: start; padding: 34px 38px; border-radius: 20px; border: 1px solid var(--line-strong); }
+/* "Then" is the quieter panel: a faint fill and a hairline, where "now" is lit. */
+.omt-intro .was { background: color-mix(in srgb, var(--navy-800) 45%, transparent); border-color: var(--line); }
+.omt-intro .now { background: var(--navy-800); border-color: color-mix(in srgb, var(--blue-400) 55%, transparent); }
+.omt-intro .k { font-family: var(--font-display); font-weight: 500; font-size: 24px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.omt-intro .now .k { color: var(--cyan-300); }
+.omt-intro p { margin: 0; font-size: 34px; line-height: 1.32; color: var(--blue-100); text-wrap: pretty; }
+.omt-intro .was p { color: var(--muted); }
+
+/* The demo (fx/ScenePlayer), laid out like the screen slides: the scene list
+   is a walk in the text column, and the scene plays where the product screen
+   goes — the AI Studio window at its screen size, running off the stage's
+   right and bottom edges. The scenes that are not the Studio window (the
+   hand-offs, the two supports) stack down the column instead of across. */
+.studio .screen { top: 40px; }
+.studio .sd-window { zoom: 1.3; width: 1080px; height: 720px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.studio .beyond { width: 1000px; justify-items: start; padding-top: 0; }
+.studio .beyond .chain { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
+.studio .beyond .node { grid-template-columns: 60px minmax(0, 1fr); column-gap: 24px; row-gap: 4px; padding: 24px 30px; }
+.studio .beyond .node .ic { grid-row: span 2; margin: 0; }
+.studio .beyond .arrow { justify-content: flex-start; padding-left: 48px; transform: rotate(90deg); transform-origin: 60px 50%; height: 44px; }
+.studio .supports { width: 1000px; grid-template-columns: minmax(0, 1fr); row-gap: 28px; padding-top: 0; }
+.studio .supports .mk-window { min-height: 0; }
+.studio .scene-ctrl { right: 0; bottom: 24px; }
+.scene-walk .walk-track i { transition: width .1s linear; }
+@keyframes swap-in { from { opacity: 0; transform: translateY(10px); } }
+.swap { display: inline-block; animation: swap-in .5s var(--ease-out) both; }
+
+/* The player's bar: bottom-right under the scene, glass, fades when the
+   mouse rests. Clicks on it never reach the stage. */
+.scene-ctrl {
+  position: absolute; right: 0; bottom: -46px; z-index: 5;
+  display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 14px;
+  background: color-mix(in srgb, var(--navy-950) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--white) 15%, transparent);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity .35s; pointer-events: auto;
+}
+.scene-ctrl.on { opacity: 1; }
+.scene-ctrl button { width: 40px; height: 40px; border: 0; border-radius: 9px; background: transparent; color: var(--white); display: grid; place-items: center; cursor: pointer; }
+.scene-ctrl button:hover { background: color-mix(in srgb, var(--white) 12%, transparent); }
+.scene-ctrl button.main { background: color-mix(in srgb, var(--white) 10%, transparent); }
+.scene-ctrl button:disabled { opacity: .35; cursor: default; background: transparent; }
+.scene-ctrl .lbl { padding: 0 10px 0 6px; font-size: 18px; color: color-mix(in srgb, var(--white) 85%, transparent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Studio → Base.vn → Claude Code: three hand-offs in a row, drawn in turn. */
+.beyond { display: grid; row-gap: 40px; justify-items: center; width: 100%; padding-top: 24px; }
+.beyond .chain { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; column-gap: 22px; width: 100%; }
+.beyond .node { display: grid; justify-items: start; row-gap: 8px; padding: 28px 30px; border-radius: 20px; background: var(--navy-800); border: 1px solid var(--line-strong); min-width: 0; }
+.beyond .node .ic { width: 60px; height: 60px; border-radius: 16px; display: grid; place-items: center; color: #fff; margin-bottom: 6px; }
+.beyond .node.violet .ic { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+.beyond .node.blue .ic { background: linear-gradient(135deg, var(--blue-400), var(--blue-500)); }
+.beyond .node.cyan .ic { background: linear-gradient(135deg, #67E8F9, #0891B2); }
+.beyond .node b { font-family: var(--font-display); font-weight: 500; font-size: 34px; letter-spacing: -0.02em; line-height: 1.1; }
+.beyond .node > span:last-child { font-size: 23px; color: var(--blue-100); text-wrap: pretty; }
+.beyond .arrow { display: flex; align-items: center; color: var(--blue-300); }
+.beyond .arrow i { display: block; width: 44px; height: 2px; background: var(--blue-300); transform-origin: left; }
+.beyond-note { margin: 0; font-size: 28px; color: var(--muted); text-align: center; max-width: 1100px; text-wrap: balance; }
+
+/* Intelligence 1.0 (launch slide 8): the agent's task list as it ships — a
+   real screenshot in the product-shot frame, top-aligned in the figure cell
+   and running off the bottom of the stage like the drawn product windows. */
+/* Intelligence 1.0: the words in the left column, the agent's task list drawn
+   at its true size from the figure cell's left edge, running off the stage. */
+/* `:has` looks at every descendant, and a slide can hold other slides as
+   thumbnails (AI Studio's Slides scene) — so each frame rule matches only its
+   own figure, never one nested inside it. */
+.frame:has(> .frame-body > .frame-figure.agent-tasks) > .frame-body { grid-template-columns: 600px 1fr; column-gap: 60px; }
+/* The window stands on the stage's bottom edge and runs a little past it, at
+   every ratio: pinned to the cell's bottom, not aligned in it. */
+.frame-figure.agent-tasks .frame-fit { position: relative; height: 100%; }
+.agent-tasks .shot { position: absolute; left: 0; bottom: calc(-1 * var(--frame-bottom) - 50px); width: 1144px; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }   /* 1040 × 1.1 */
+/* 3:1 — pinned to the foot, the window is taller than the stage and its top
+   rises past the brand row; pin it to the top and let it run off the foot. */
+:root[data-ratio='3x1'] .agent-tasks .shot { top: 28px; bottom: auto; }
+
+/* End of keynote — a small mark bottom right of a keynote's last slide, so the
+   presenter knows the next click leaves the deck. Set in the frame's bottom
+   margin, clear of the progress strip along the stage's foot. */
+.frame-end {
+  position: absolute; right: var(--frame-x); bottom: calc(var(--frame-bottom) / 2); transform: translateY(50%);
+  font-size: var(--t-micro); letter-spacing: 0.04em; color: var(--dim); pointer-events: none;
+}
+
+/* Screen slides (ui/ScreenSlide — intelligence slides 13–19): the words in the
+   left column, the product screen at its true size from the figure cell's top
+   left, running off the stage's bottom edge — and off the right one when it is
+   wider than the column. A second screen enters on a click, stepped down and
+   right over the first. */
+.frame:has(> .frame-body > .frame-figure.screens) > .frame-body { grid-template-columns: 600px 1fr; column-gap: 60px; }
+.frame-figure.screens .frame-fit { position: relative; height: 100%; }
+.screens .screen { position: absolute; left: 0; top: 60px; }
+/* Tall enough to run off the bottom at every ratio, even when the app drawn
+   inside it is short. */
+.screens .mk-window { min-height: 960px; }
+.screens .shot { border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+/* Apps drawn at a fixed size for a small frame (the HRM register, the
+   Salesforce board, the request card) stretch to fill the wide window. */
+.screens .mk-window > .hrm, .screens .mk-window > .sf { width: auto; height: auto; min-height: 900px; }
+.screens .mk-window > .mk-pane { width: auto !important; border: 0; border-radius: 0; }
+/* The Requests rows stop where the stage does, so status, people and dates all show. */
+.screens .mk-pf-req { width: 1075px; }
+.screens .screen-2 { left: 160px; top: 210px; }
+/* 3:1 — the words take the left half; the window takes the right half, from
+   the stage's top edge to its bottom one, running off the right. The figure
+   cell and its fit box stop being positioned, so the window is placed
+   against the frame — the whole stage — not the cell. */
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.screens) > .frame-body { grid-template-columns: 790px 1fr; column-gap: 60px; }
+:root[data-ratio='3x1'] .frame-figure.screens,
+:root[data-ratio='3x1'] .frame-figure.screens .frame-fit { position: static; }
+:root[data-ratio='3x1'] .screens .screen { left: 960px; top: 28px; }
+:root[data-ratio='3x1'] .screens .screen-2 { left: 1080px; top: 90px; }
+:root[data-ratio='3x1'] .screens .screen-1 .shot { height: calc(var(--stage-h) - 28px); }
+/* 3:1 — Ask AI (agent slide 15): the chat must show whole, composer and all.
+   The window stops at the stage's right edge (960 at its 0.95 zoom) so the
+   right-aligned questions show, and the chat is cut to end on the stage's
+   bottom edge. */
+:root[data-ratio='3x1'] .screens .mk-window:has(.mk-ak) { width: calc(960px / 0.95) !important; }
+:root[data-ratio='3x1'] .screens .mk-ak { height: 494px; }
+:root[data-ratio='3x1'] .screens .mk-window:has(.mk-ak) .mk-rw-main { flex: 1; width: auto; min-width: 0; }
+/* 3:1 — the same half-stage window on the two slides that place their own:
+   Intelligence 1.0's task list (agent slide 26) runs off the right like the
+   screens; the copilot walk (agent slide 5) is drawn at 960 wide instead, so
+   the Copilot panel at its right stays whole. */
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.agent-tasks) > .frame-body,
+:root[data-ratio='3x1'] .frame:has(> .frame-body > .frame-figure.copilot-fig) > .frame-body { grid-template-columns: 790px 1fr; column-gap: 60px; }
+:root[data-ratio='3x1'] .frame-figure.agent-tasks,
+:root[data-ratio='3x1'] .frame-figure.agent-tasks .frame-fit,
+:root[data-ratio='3x1'] .frame-figure.copilot-fig,
+:root[data-ratio='3x1'] .frame-figure.copilot-fig .frame-fit { position: static; }
+:root[data-ratio='3x1'] .agent-tasks .shot { left: 960px; }
+:root[data-ratio='3x1'] .copilot-fig .mk-place { left: 960px !important; top: 28px !important; width: 960px !important; }
+:root[data-ratio='3x1'] .copilot-fig .mk-window { zoom: 0.7164 !important; }   /* 960 / 1340 */
+.screens .screen-2 .shot { box-shadow: 0 -24px 90px color-mix(in srgb, var(--navy-950) 70%, transparent), 0 0 0 1px color-mix(in srgb, var(--blue-300) 12%, transparent); }
+
+/* Intelligence 2.0 (launch slide 9): four glass boxes in a row over a soft
+   blue–cyan bloom, so the translucency has something to show — each a glyph,
+   a title and one line, its number top right. The bloom is a blurred
+   pseudo-element behind the row; the row isolates so it stays behind the
+   boxes and above everything else. */
+.i2-boxes { position: relative; isolation: isolate; display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 28px; width: 1640px; align-self: start; }
+.i2-boxes::before {
+  content: ''; position: absolute; inset: -80px -60px; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 60% at 18% 30%, color-mix(in srgb, var(--blue-500) 55%, transparent), transparent 70%),
+    radial-gradient(34% 55% at 82% 75%, color-mix(in srgb, var(--cyan-300) 30%, transparent), transparent 70%);
+  filter: blur(40px);
+}
+.i2-boxes > div { display: grid; }
+.i2-box {
+  position: relative; display: grid; row-gap: 20px; align-content: start; padding: 38px 34px 42px; min-height: 400px;
+  border-radius: 26px; border: 1px solid color-mix(in srgb, var(--blue-300) 30%, transparent);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--blue-300) 16%, transparent), color-mix(in srgb, var(--navy-800) 36%, transparent) 62%);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 30px 80px color-mix(in srgb, var(--navy-950) 45%, transparent), inset 0 1px 0 color-mix(in srgb, var(--white) 20%, transparent);
+}
+.i2-box svg { width: 52px; height: 52px; color: var(--cyan-300); margin-bottom: 8px; }
+.i2-box h3 { margin: 0; font-family: var(--font-display); font-size: 33px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.12; text-wrap: balance; }
+.i2-box p { margin: 0; font-size: 24px; line-height: 1.4; color: var(--muted); text-wrap: pretty; }
+.i2-box .i2-n { position: absolute; top: 34px; right: 34px; font-size: 20px; color: var(--dim); }
+:root[data-ratio='3x1'] .i2-box { min-height: 0; padding: 26px 26px 30px; row-gap: 14px; }
+:root[data-ratio='3x1'] .i2-box h3 { font-size: 27px; }
+:root[data-ratio='3x1'] .i2-box p { font-size: 21px; }
+
+/* Re-architect Software (intelligence slide 7): a stop slide — the headline
+   and three words with their glosses in the three-column statement layout,
+   the words a size up and numbered, the glosses muted. */
+.cols3.stop { width: 1640px; }
+.cols3.stop .col { row-gap: 14px; padding-top: 24px; }
+.cols3.stop .stop-n { font-size: 20px; letter-spacing: .06em; color: var(--dim); }
+.cols3.stop .h2 { font-size: 84px; }
+.cols3.stop p { font-size: 32px; color: var(--muted); }
+:root[data-ratio='3x1'] .cols3.stop .h2 { font-size: 64px; }
+:root[data-ratio='3x1'] .cols3.stop p { font-size: 27px; }
+
+/* Inline highlight inside a lead line */
+.lead .hl { font-style: normal; color: var(--cyan-300); font-weight: 600; }

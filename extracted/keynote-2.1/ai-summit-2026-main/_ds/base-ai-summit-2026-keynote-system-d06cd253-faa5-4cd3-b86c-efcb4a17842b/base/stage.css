@@ -1,0 +1,20 @@
+/* Stage primitives for Base AI Summit keynotes.
+   Author at 2560 x 1280 and scale the .stage with one transform:
+   scale = min(vw / 2560, vh / 1280). */
+*{box-sizing:border-box}
+html,body,#app{margin:0;width:100%;height:100%}
+body{background:var(--surface-stage);color:var(--text-title);font-family:var(--font-display);-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-decoration:none}
+a:hover{color:var(--link-hover)}
+.stage-viewport{position:relative;width:100vw;height:100vh;overflow:hidden;display:grid;place-items:center;background:var(--surface-stage)}
+.stage{position:absolute;top:0;left:0;width:var(--stage-w);height:var(--stage-h);overflow:hidden;transform-origin:top left;background:var(--bg-radial-mesh),var(--bg-gradient)}
+.stage::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:var(--dot-grid);background-size:var(--dot-grid-step) var(--dot-grid-step);opacity:var(--dot-grid-opacity)}
+.slide{position:absolute;inset:0;padding:var(--stage-pad-y) var(--stage-pad-x);isolation:isolate}
+.slide-content{position:relative;z-index:1;width:100%;height:100%}
+.grid-four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap-grid)}
+.grid-3-9{display:grid;grid-template-columns:3fr 9fr;gap:var(--gap-grid)}
+.grid-5-7{display:grid;grid-template-columns:5fr 7fr;gap:var(--gap-grid)}
+.slide-enter{animation:rise-in var(--dur-slide) var(--ease-stage) both}
+.reveal{animation:rise-in var(--dur-reveal) var(--ease-stage) both}
+@keyframes rise-in{from{opacity:0;transform:translateY(var(--rise-distance))}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}

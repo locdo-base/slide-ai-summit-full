@@ -1,0 +1,156 @@
+/* Services belt (intelligence, after the New Base.vn): the rework landing
+   page's act 01. Three lanes of white service cards slide alternate ways
+   across the whole stage width, one service held open at the right. The
+   figure cell is widened to the stage edges and the fit box stretched, so
+   nothing is scaled by the fit: the belt is drawn at the reference's pixels
+   and zoomed as a whole (fx/ServiceBelt.tsx). The lanes overrun the cell's
+   bottom and fade out there, so the list reads as continuing past the stage. */
+/* This one slide is on a white ground, like the landing page it comes from.
+   The frame fills the stage, so painting it paints the slide; the theme slots
+   the chrome reads (brand, crumbs, headline, and the belt's own fades through
+   `--navy-900`) are rebound to ink so nothing else needs to know. */
+.frame:has(> .frame-body > .frame-figure.belt-fig) {
+  background: #fff;
+  color: var(--white);   /* the headline inherits colour; without this it keeps the body's */
+  --navy-900: #fff;
+  --white: #0a0d14;
+  --muted: #4e5768;
+  --dim: #858ea0;
+  --line-strong: #dfe3eb;
+}
+/* the brand in the structural blue, not ink, on the white ground */
+.frame:has(> .frame-body > .frame-figure.belt-fig) .brand { color: var(--blue-500); }
+.frame:has(> .frame-body > .frame-figure.belt-fig) .frame-text { max-width: 1640px; }
+.frame-figure.belt-fig { margin: 0 calc(-1 * var(--frame-x)) calc(-1 * var(--frame-bottom)); }
+.frame-figure.belt-fig .frame-fit { position: relative; justify-self: stretch; align-self: stretch; place-items: stretch; }
+.svbelt {
+  position: absolute; inset: 0; overflow: hidden;
+  --sv-white: #fff; --sv-paper: #fbfbfd;
+  --sv-ink: #0a0d14; --sv-ink2: #4e5768; --sv-ink3: #858ea0; --sv-ink4: #b3bac7; --sv-ink5: #cbd1db;
+  --sv-line: #e8ebf1; --sv-line2: #dfe3eb; --sv-hair: #f1f3f8;
+  --sv-accent: #1b49f0;
+  --f-sales: #6435d4; --f-sales-bg: #f5f1fe; --f-sales-br: #e3d9fb;
+  --f-mkt: #bb2079; --f-mkt-bg: #fdeef6; --f-mkt-br: #f7d4e7;
+  --f-work: #0a6e80; --f-work-bg: #e9f5f8; --f-work-br: #c6e4ea;
+  --f-people: #99610a; --f-people-bg: #fdf4e5; --f-people-br: #f5e0bc;
+  --f-it: #1f6f4a; --f-it-bg: #e9f5ef; --f-it-br: #c8e4d6;
+  --sv-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-body); color: var(--sv-ink); line-height: 1.35;
+}
+.svbelt svg { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* the belt: lanes from the top of the cell, faded at the stage's sides */
+.svb-lanes {
+  position: absolute; left: 0; right: 0; top: 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.svb-lane { display: flex; gap: 14px; width: max-content; margin-bottom: 14px; }
+.svb-lane.a { animation: svb-left 110s linear infinite; }
+.svb-lane.b { animation: svb-right 126s linear infinite; }
+.svb-lane.c { animation: svb-left 118s linear infinite; }
+@keyframes svb-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes svb-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+/* the bottom of the belt sinks into the ground */
+.svb-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 170px; pointer-events: none; background: linear-gradient(180deg, transparent, var(--navy-900)); }
+
+/* one service, always the same anatomy */
+.svb-card {
+  width: 332px; flex: none;
+  border: 1px solid var(--sv-line); background: var(--sv-white); border-radius: 14px;
+  padding: 13px 15px 12px;
+  box-shadow: 0 1px 2px rgba(10, 13, 20, 0.03), 0 14px 30px -24px rgba(10, 13, 20, 0.25);
+}
+.svb-top { display: flex; align-items: center; gap: 8px; }
+.svb-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+.svb-nm { font-size: 13px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.svb-app {
+  margin-left: auto; font-size: 7.4px; font-weight: 600; letter-spacing: 0.11em; text-transform: uppercase;
+  border-radius: 999px; padding: 2px 7px; border: 1px solid; white-space: nowrap;
+}
+.svb-card.sales .svb-dot { background: var(--f-sales); }
+.svb-card.sales .svb-app { background: var(--f-sales-bg); border-color: var(--f-sales-br); color: var(--f-sales); }
+.svb-card.mkt .svb-dot { background: var(--f-mkt); }
+.svb-card.mkt .svb-app { background: var(--f-mkt-bg); border-color: var(--f-mkt-br); color: var(--f-mkt); }
+.svb-card.work .svb-dot { background: var(--f-work); }
+.svb-card.work .svb-app { background: var(--f-work-bg); border-color: var(--f-work-br); color: var(--f-work); }
+.svb-card.people .svb-dot { background: var(--f-people); }
+.svb-card.people .svb-app { background: var(--f-people-bg); border-color: var(--f-people-br); color: var(--f-people); }
+.svb-card.it .svb-dot { background: var(--f-it); }
+.svb-card.it .svb-app { background: var(--f-it-bg); border-color: var(--f-it-br); color: var(--f-it); }
+
+.svb-row { border-top: 1px solid var(--sv-hair); margin-top: 10px; padding-top: 9px; }
+.svb-lb { display: block; font-size: 7.4px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sv-ink4); margin-bottom: 6px; }
+.svb-io { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.svb-io span { font-size: 11.8px; font-weight: 600; letter-spacing: -0.012em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; }
+.svb-io span.out { color: var(--sv-accent); }
+.svb-io svg { width: 13px; height: 13px; stroke: var(--sv-ink4); stroke-width: 1.9; flex: none; align-self: center; }
+.svb-stgw { display: flex; align-items: flex-start; gap: 9px; }
+.svb-rail { position: relative; display: flex; align-items: flex-start; flex: 1; min-width: 0; }
+.svb-rail::before { content: ''; position: absolute; top: 3px; height: 1px; background: var(--sv-line2); left: var(--e); right: var(--e); }
+.svb-st { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; }
+.svb-st u { width: 7px; height: 7px; border-radius: 50%; background: var(--sv-white); border: 1.5px solid var(--sv-ink5); display: block; position: relative; z-index: 1; }
+.svb-st:first-child u { border-color: var(--sv-accent); background: var(--sv-accent); }
+.svb-st i { font-style: normal; font-size: 8px; color: var(--sv-ink3); letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.svb-more { font-size: 7.6px; color: var(--sv-ink4); flex: none; line-height: 8px; }
+.svb-rule { display: flex; align-items: flex-start; gap: 7px; min-width: 0; }
+.svb-rule svg { width: 11px; height: 11px; stroke: var(--sv-ink4); stroke-width: 1.9; flex: none; margin-top: 1px; }
+.svb-rule p { margin: 0; font-size: 10.8px; line-height: 1.35; color: var(--sv-ink2); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.svb-rule em { font-style: normal; font-size: 8.4px; color: var(--sv-ink4); margin-left: 5px; white-space: nowrap; }
+.svb-opr { display: flex; align-items: center; gap: 9px; }
+.svb-ops { display: flex; align-items: center; }
+.svb-ops span { width: 21px; height: 21px; border-radius: 50%; display: grid; place-items: center; font-size: 8px; font-weight: 700; color: #fff; margin-left: -6px; border: 2px solid var(--sv-white); flex: none; }
+.svb-ops span:first-child { margin-left: 0; }
+.svb-ops span.ag { border-radius: 7px; background: #2a3342; }
+.svb-ops span.ag svg { width: 10px; height: 10px; fill: #fff; stroke: none; }
+.svb-who { font-size: 10.4px; color: var(--sv-ink3); white-space: nowrap; }
+
+/* one service, held open beside the belt — a dark well behind it dims the
+   cards passing underneath, as the reference's white one does on its page */
+.svb-well {
+  position: absolute; right: 30px; top: 50%; width: 760px; height: 760px; transform: translateY(-50%);
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--navy-900) 90%, transparent), color-mix(in srgb, var(--navy-900) 66%, transparent) 46%, color-mix(in srgb, var(--navy-900) 30%, transparent) 70%, transparent 100%);
+}
+/* pinned to the belt's top edge, not centred: centred, its foot would run
+   past the stage's bottom */
+.svb-spotwrap { position: absolute; top: 4px; }
+.svb-spot {
+  width: 376px; background: var(--sv-white); border: 1px solid var(--sv-line2); border-radius: 16px; overflow: hidden;
+  box-shadow: 0 2px 6px rgba(10, 13, 20, 0.05), 0 30px 60px -28px rgba(10, 13, 20, 0.34), 0 80px 110px -80px rgba(10, 13, 20, 0.5);
+}
+.svb-stop { display: flex; align-items: center; gap: 8px; padding: 10px 14px 9px; border-bottom: 1px solid var(--sv-hair); background: var(--sv-paper); }
+.svb-stop .now { font-size: 8px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--sv-ink4); }
+.svb-stop .cnt { margin-left: auto; font-size: 8px; color: var(--sv-ink4); letter-spacing: 0.08em; font-variant-numeric: tabular-nums; }
+.svb-bar { height: 1.5px; background: var(--sv-hair); position: relative; }
+.svb-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--sv-accent); display: block; }
+.svb-bar i.run { animation: svb-fill var(--dwell, 6000ms) linear forwards; }
+@keyframes svb-fill { from { width: 0; } to { width: 100%; } }
+.svb-in { padding: 15px 17px 17px; animation: svb-in 0.5s var(--sv-ease) both; }
+@keyframes svb-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+.svb-head { display: flex; align-items: flex-start; gap: 11px; }
+.svb-head .ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+.svb-head .ico svg { width: 16px; height: 16px; stroke-width: 1.8; }
+.svb-head h3 { margin: 0; font-family: var(--font-body); font-size: 16.5px; font-weight: 700; letter-spacing: -0.024em; line-height: 1.12; }
+.svb-head .handle { display: block; margin-top: 3px; font-size: 9.4px; color: var(--sv-ink4); }
+.svb-blk { padding-top: 15px; margin-top: 14px; border-top: 1px solid var(--sv-hair); }
+.svb-h { display: flex; align-items: center; gap: 6px; font-size: 8px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 9px; }
+.svb-h u { width: 4px; height: 4px; border-radius: 50%; display: block; flex: none; }
+.svb-in .goal { font-size: 13.4px; line-height: 1.46; font-weight: 500; color: var(--sv-ink); letter-spacing: -0.012em; margin: 0; }
+.svb-obj { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.svb-obj div { display: flex; align-items: center; gap: 7px; border: 1px solid var(--sv-line); border-radius: 7px; padding: 5px 8px; min-width: 0; }
+.svb-obj b { font-size: 10.2px; font-weight: 500; color: var(--sv-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.svb-obj i { font-style: normal; margin-left: auto; font-size: 7.6px; letter-spacing: 0.06em; padding: 1px 5px; border-radius: 4px; border: 1px solid; flex: none; }
+.svb-prule { display: flex; gap: 9px; margin-bottom: 7px; }
+.svb-prule:last-child { margin-bottom: 0; }
+.svb-prule i { font-style: normal; font-size: 8px; letter-spacing: 0.05em; flex: none; padding: 2px 5px; border-radius: 4px; border: 1px solid; margin-top: 1px; }
+.svb-prule p { margin: 0; font-size: 11.6px; line-height: 1.42; color: var(--sv-ink2); }
+.svb-agent { display: flex; gap: 10px; align-items: flex-start; }
+.svb-agent .ic { width: 27px; height: 27px; border-radius: 8px; background: #2a3342; display: grid; place-items: center; flex: none; }
+.svb-agent .ic svg { width: 12px; height: 12px; fill: #fff; stroke: none; }
+.svb-agent b { display: block; font-size: 12.2px; font-weight: 700; letter-spacing: -0.016em; color: var(--sv-ink); }
+.svb-agent p { margin: 3px 0 0; font-size: 11.2px; line-height: 1.42; color: var(--sv-ink3); }
+@media (prefers-reduced-motion: reduce) {
+  .svb-lane { animation: none !important; }
+  .svb-in { animation: none; }
+}

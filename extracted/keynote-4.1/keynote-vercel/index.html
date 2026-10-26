@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xây dựng AI chuyên biệt cho doanh nghiệp — keynote (working)</title>
+<link rel="stylesheet" href="assets/keynote.css?v=star2">
+</head>
+<body>
+
+<!--
+  WORKING KEYNOTE DECK.
+
+  Forked from the Task 04 skeleton (docs/slide/output/04-outline/), which stays
+  frozen as the clean baseline. Structure still comes verbatim from
+  Keynote 2-v1.pptx; visual language follows the sibling summit keynote.
+
+  23 slides. The PPTX's final two slides — "References: speech" and
+  "References: vietlegal bench" — were author drafting notes and are removed
+  from this working deck only; they remain in the PPTX and in the skeleton.
+
+  Six slides still carry an "updating" badge (4, 11, 14, 16, 18, 22); the badge
+  is hidden in static and print. Everything else is authored content. Press B
+  for blueprint outlines, N for developer notes, S for a clean static frame.
+-->
+
+<div id="stage-wrap">
+<div id="stage">
+
+<!-- ===================================================================== -->
+<section class="slide slide--title"
+  data-slide="1"
+  data-type="title"
+  data-source="Keynote 2-v1.pptx"
+  data-speaker-notes="Tiêu đề + phụ đề lấy nguyên từ PPTX. Dòng diễn giả: TS. Triệu Hải Long.">
+  <!-- PPTX slide 1 — centred title + subtitle. No body content. -->
+      <div class="title-block">
+        <div class="eyebrow">Enterprise AI Summit 2026</div>
+        <h1 class="display">Xây dựng AI chuyên biệt cho doanh nghiệp</h1>
+        <p class="subtitle">Từ mô hình đến Expert Agent</p>
+        <div class="title-rule"></div>
+        <div class="speaker">
+          <span class="speaker__name">TS. Triệu Hải Long</span>
+          <span class="speaker__role">Chuyên gia AI cao cấp Đại học Cambridge</span>
+        </div>
+      </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--diagram slide--aisys"
+  data-slide="2"
+  data-type="diagram"
+  data-source="references/agent/current-ai.drawio"
+  data-speaker-notes="Bức tranh chung trước khi vào phần của chúng tôi. Không có tiêu đề — vào thẳng hình. Vào slide: hai nguồn đầu vào — file dữ liệu và câu hỏi — đi vào hệ thống AI, trả kết quả. Click 1: hiện Model bên trong hệ thống. Click 2: mở thành AI Agent — lập kế hoạch, thực thi, dùng kho tri thức, web, công cụ. Click 3-6: bốn vấn đề, mỗi lần tô sáng một thành phần bên trái và hiện một dòng bên phải — dữ liệu, model, agent, kết quả. Sau click 6 cả bốn cùng nằm trên bảng bên phải. Dừng ở đó rồi chuyển slide.">
+  <!-- Ported from docs/slide/output/ai-system (Task 11), re-cut to 2560x1280 and
+       recomposed as left diagram / right problem panel. Logical source:
+       references/agent/current-ai.drawio (pages "figure 1", "figure-2-data-model",
+       "figure-3-agent"); entities and edges preserved, layout and labels new.
+       Runs on the deck's build engine: 7 steps, per-step styling via [data-build-now]. -->
+      <svg class="ais-fig" viewBox="0 0 2560 1280" preserveAspectRatio="xMidYMid meet" aria-labelledby="aistitle">
+        <title id="aistitle">Từ AI trả lời câu hỏi đến AI Agent, và bốn vấn đề còn bỏ ngỏ</title>
+        <defs>
+          <marker id="ais-ah" viewBox="0 0 12 12" refX="10" refY="6"
+                  markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M1 1 L11 6 L1 11" fill="none" stroke="context-stroke"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- ================= LEFT · the system ================= -->
+
+        <!-- arrival: question in, result out -->
+        <g id="ais-user">
+          <circle cx="150" cy="769" r="24" fill="none" stroke="#9FB4CF" stroke-width="3"/>
+          <path d="M102 859 a48 48 0 0 1 96 0" fill="none" stroke="#9FB4CF" stroke-width="3" stroke-linecap="round"/>
+          <text class="ais-sub" x="150" y="716" text-anchor="middle">Người dùng</text>
+        </g>
+
+        <g id="ais-question">
+          <rect class="ais-box" x="320" y="850" width="360" height="110" rx="55"/>
+          <text class="ais-label" x="500" y="914" text-anchor="middle">Câu hỏi / Yêu cầu</text>
+          <text class="ais-examples" x="320" y="1005">Hỏi đáp · Tóm tắt · Soạn email</text>
+        </g>
+
+        <g id="ais-ai">
+          <rect class="ais-shell" x="780" y="430" width="660" height="590" rx="34"/>
+          <text class="ais-kicker" x="1110" y="1000" text-anchor="middle">Hệ thống AI</text>
+        </g>
+        <g class="ais-mark">
+          <text class="ais-label" x="1110" y="740" text-anchor="middle"
+                font-size="118" font-weight="800" style="fill:#66B4F0;opacity:.62">AI</text>
+        </g>
+
+        <g id="ais-result">
+          <rect class="ais-box" x="1500" y="650" width="200" height="110" rx="55"/>
+          <text class="ais-label" x="1600" y="714" text-anchor="middle">Kết quả</text>
+          <rect class="ais-halo" x="1484" y="634" width="232" height="142" rx="71"/>
+        </g>
+
+        <path class="ais-edge" d="M680 905 H764" marker-end="url(#ais-ah)"/>
+        <path class="ais-edge" d="M1440 705 H1484" marker-end="url(#ais-ah)"/>
+        <path class="ais-flow ais-flow--s1" d="M680 905 H764"/>
+        <path class="ais-flow ais-flow--s1" d="M1440 705 H1484"/>
+        <path class="ais-edge ais-edge--soft" d="M1600 760 V1075 H150 V932" marker-end="url(#ais-ah)"/>
+        <path class="ais-flow ais-flow--s1" d="M1600 760 V1075 H150 V932"/>
+
+        <!-- step 1: enterprise data + model -->
+        <g id="ais-data">
+          <rect class="ais-box" x="320" y="650" width="360" height="110" rx="18"/>
+          <g class="ais-ic" transform="translate(368,705) scale(1.02)">
+            <path d="M-14,-14 h8 l5,5 v3" opacity=".5"/>
+            <path d="M-9,-11 h10 l6,6 v18 h-16 z"/>
+            <path d="M1,-11 v6 h6"/>
+            <path d="M-5.5,1 h9 M-5.5,6 h6"/>
+          </g>
+          <text class="ais-label" x="404" y="700">File dữ liệu</text>
+          <text class="ais-sub"   x="404" y="736">DOCX · PDF · XLSX</text>
+          <rect class="ais-halo" x="304" y="634" width="392" height="142" rx="26"/>
+        </g>
+        <g>
+          <path class="ais-edge ais-edge--soft" d="M202 800 H255 V705 H304" marker-end="url(#ais-ah)"/>
+          <path class="ais-edge ais-edge--soft" d="M202 838 H255 V905 H304" marker-end="url(#ais-ah)"/>
+          <!-- both inputs come from the user side; same running light as the rest -->
+          <path class="ais-flow ais-flow--s1" d="M202 800 H255 V705 H304"/>
+          <path class="ais-flow ais-flow--s1" d="M202 838 H255 V905 H304"/>
+          <path class="ais-edge" d="M680 705 H764" marker-end="url(#ais-ah)"/>
+          <path class="ais-flow ais-flow--s1" d="M680 705 H764"/>
+        </g>
+        <g id="ais-model" class="ais-model" data-build="1">
+          <rect class="ais-box" x="810" y="840" width="600" height="132" rx="20"/>
+          <!-- header row -->
+          <g class="ais-ic ais-ic--key" transform="translate(1046,878) scale(1.55)">
+            <rect x="-8.5" y="-8.5" width="17" height="17" rx="3"/>
+            <rect x="-3.5" y="-3.5" width="7" height="7" rx="1.5"/>
+            <path d="M-4,-8.5 V-12 M4,-8.5 V-12 M-4,8.5 V12 M4,8.5 V12 M-8.5,-4 H-12 M-8.5,4 H-12 M8.5,-4 H12 M8.5,4 H12"/>
+          </g>
+          <text class="ais-label" x="1080" y="890">Model</text>
+
+          <!-- two groups. Identical until the Model problem state, where they take on
+               different accents — see keynote.css -->
+          <rect class="ais-grp" id="ais-grp-closed" x="870" y="906" width="230" height="54" rx="14"/>
+          <text class="ais-grp__t" x="985" y="941" text-anchor="middle">GPT · Claude</text>
+          <rect class="ais-grp" id="ais-grp-open" x="1120" y="906" width="230" height="54" rx="14"/>
+          <text class="ais-grp__t" x="1235" y="941" text-anchor="middle">Llama</text>
+          <rect class="ais-halo" x="794" y="824" width="632" height="164" rx="28"/>
+        </g>
+
+        <!-- step 2: the agent -->
+        <g id="ais-agent" data-build="2">
+          <rect class="ais-shell ais-shell--agent" x="820" y="500" width="580" height="260" rx="26"/>
+          <text class="ais-kicker" x="854" y="546" style="fill:#66B4F0">AI Agent</text>
+          <rect class="ais-halo" x="804" y="484" width="612" height="292" rx="34"/>
+        </g>
+        <g data-build="2">
+          <rect class="ais-box" x="845" y="570" width="260" height="110" rx="18"/>
+          <text class="ais-label" x="975" y="634" text-anchor="middle" font-size="30">Lập kế hoạch</text>
+          <rect class="ais-box" x="1155" y="570" width="220" height="110" rx="18"/>
+          <text class="ais-label" x="1265" y="634" text-anchor="middle" font-size="30">Thực thi</text>
+          <path class="ais-edge" d="M1105 625 H1151" marker-end="url(#ais-ah)"/>
+          <path class="ais-edge" d="M1265 680 V720 H975 V686" marker-end="url(#ais-ah)"/>
+          <path class="ais-flow ais-flow--s3" d="M1105 625 H1151"/>
+          <path class="ais-flow ais-flow--s3" d="M1265 680 V720 H975 V686"/>
+          <path class="ais-edge" d="M1110 840 V766" marker-end="url(#ais-ah)"/>
+          <path class="ais-flow ais-flow--s3" d="M1110 840 V766"/>
+        </g>
+        <g data-build="2">
+          <rect class="ais-box ais-src" x="800" y="248" width="250" height="124" rx="16"/>
+          <g class="ais-ic" transform="translate(925,291) scale(1.8)">
+            <rect x="-7" y="-12" width="18" height="24" rx="2.5"/>
+            <path d="M-11.5,-7.5 h4.5 M-11.5,-1.5 h4.5 M-11.5,4.5 h4.5"/>
+            <path d="M-2,-6 h8 M-2,-1 h8 M-2,4 h5"/>
+          </g>
+          <text class="ais-label ais-src__t" x="925" y="349" font-size="28" text-anchor="middle">Kho tri thức</text>
+
+          <rect class="ais-box ais-src" x="1080" y="248" width="180" height="124" rx="16"/>
+          <g class="ais-ic" transform="translate(1170,291) scale(1.8)">
+            <circle cx="0" cy="0" r="11"/>
+            <ellipse cx="0" cy="0" rx="4.6" ry="11"/>
+            <path d="M-11,0 H11"/>
+            <path d="M-9.4,-5.5 Q0,-2.6 9.4,-5.5"/>
+            <path d="M-9.4,5.5 Q0,2.6 9.4,5.5"/>
+          </g>
+          <text class="ais-label ais-src__t" x="1170" y="349" font-size="28" text-anchor="middle">Web</text>
+
+          <rect class="ais-box" x="1290" y="248" width="210" height="124" rx="16"/>
+          <g class="ais-ic" transform="translate(1395,291) scale(1.8)">
+            <path d="M4.6,-10.6 a7.4,7.4 0 0 0 -9.2,9.2 l-8.4,8.4 a2.5,2.5 0 0 0 0,3.5 l1.5,1.5 a2.5,2.5 0 0 0 3.5,0 l8.4,-8.4 a7.4,7.4 0 0 0 9.2,-9.2 l-4.7,4.7 -3.6,-1 -1,-3.6 z"/>
+          </g>
+          <text class="ais-label" x="1395" y="349" font-size="28" text-anchor="middle">Công cụ</text>
+          <path class="ais-edge" d="M925 372 C925 456 1040 510 1196 562" marker-end="url(#ais-ah)"/>
+          <path class="ais-edge" d="M1170 372 C1170 446 1210 512 1263 562" marker-end="url(#ais-ah)"/>
+          <path class="ais-edge" d="M1395 372 C1395 446 1360 512 1332 562" marker-end="url(#ais-ah)"/>
+          <path class="ais-flow ais-flow--s3" d="M925 372 C925 456 1040 510 1196 562"/>
+          <path class="ais-flow ais-flow--s3" d="M1170 372 C1170 446 1210 512 1263 562"/>
+          <path class="ais-flow ais-flow--s3" d="M1395 372 C1395 446 1360 512 1332 562"/>
+        </g>
+
+        <!-- ================= RIGHT · what we are questioning =================
+             One hairline divides the two zones. Nothing here exists until the
+             problem states begin, so the right third is deliberate whitespace
+             for the first three stages. -->
+        <g id="ais-panel" data-build="3">
+          <path class="ais-divider" d="M1780 260 V1030"/>
+          <text class="ais-p__head" x="1860" y="330">Vấn đề nằm ở đâu?</text>
+        </g>
+
+        <g id="ais-p-model" data-build="3">
+          <text class="ais-p__label" x="1860" y="450">Model</text>
+          <text class="ais-p__desc"  x="1860" y="496">Phụ thuộc · Chưa chuyên biệt</text>
+        </g>
+        <g id="ais-p-data" data-build="4">
+          <text class="ais-p__label" x="1860" y="600">Dữ liệu</text>
+          <text class="ais-p__desc"  x="1860" y="646">Nhiễu, rời rạc, chưa chuẩn hoá</text>
+        </g>
+        <g id="ais-p-agent" data-build="5">
+          <text class="ais-p__label" x="1860" y="750">Agent</text>
+          <text class="ais-p__desc"  x="1860" y="796">Vì sao chọn hành động này?</text>
+          <text class="ais-p__desc"  x="1860" y="834">Căn cứ vào đâu?</text>
+        </g>
+        <g id="ais-p-output" data-build="6">
+          <text class="ais-p__label" x="1860" y="938">Kết quả</text>
+          <text class="ais-p__desc"  x="1860" y="984">Ai kiểm chứng kết quả đúng hay sai?</text>
+        </g>
+      </svg>
+
+      <div class="slide__foot"><span>Enterprise AI Summit 2026</span><span class="num">02</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--text slide--sov"
+  data-slide="3"
+  data-type="text"
+  data-source="author-supplied"
+  data-speaker-notes="Nối từ slide 2: tầng Model có hai vấn đề — phụ thuộc và chưa chuyên biệt. Vào slide: nói việc chúng tôi làm, rồi vì sao cuộc họp đáng để làm chủ. Click 1: Chủ quyền. Click 2: Chuyên biệt. KHÔNG nói cách huấn luyện, không số benchmark — slide sau.">
+  <!-- Answers the two Model-layer problems from slide 2: phụ thuộc -> chủ quyền,
+       chưa chuyên biệt -> chuyên biệt. Two build steps, one pillar each.
+       WHY / WHAT / PURPOSE only; no method, no pipeline, no metrics. -->
+      <header class="slide-head">
+        <h2 class="slide-title">Speech AI: Chủ quyền và chuyên biệt</h2>
+      </header>
+
+      <div class="sov-tops">
+        <p class="sov-top sov-top--a">Tự huấn luyện mô hình <strong>Speech-to-Text</strong> cho cuộc họp tiếng Việt</p>
+        <p class="sov-top sov-top--b">Cuộc họp là nơi nhiều <strong>quyết định, cam kết và tri thức vận hành</strong> của doanh nghiệp được tạo ra.</p>
+      </div>
+
+      <div class="sov-cols">
+        <div class="sov-col sov-col--a" data-build="1">
+          <div class="sov-head">
+            <svg class="sov-ic" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.5 L20.5 6 v6.2c0 5.2-3.6 8.8-8.5 10.3C7.1 21 3.5 17.4 3.5 12.2V6z"/>
+              <path d="M8.4 12.2 l2.6 2.6 4.6-5.2"/>
+            </svg>
+            <span class="sov-kicker">Chủ quyền</span>
+          </div>
+          <ul class="sov-list">
+            <li>Làm chủ model</li>
+            <li>Làm chủ dữ liệu cuộc họp</li>
+          </ul>
+        </div>
+
+        <div class="sov-rule" data-build="2"></div>
+
+        <div class="sov-col sov-col--b" data-build="2">
+          <div class="sov-head">
+            <svg class="sov-ic" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="5.3" r="2.5"/>
+              <path d="M7.7 12.5a4.3 4.3 0 0 1 8.6 0"/>
+              <circle cx="4.2" cy="8" r="2.1"/>
+              <path d="M0.9 14.1a3.3 3.3 0 0 1 3.3-3.3"/>
+              <circle cx="19.8" cy="8" r="2.1"/>
+              <path d="M23.1 14.1a3.3 3.3 0 0 0-3.3-3.3"/>
+              <rect x="2.4" y="16.8" width="19.2" height="3" rx="1.5"/>
+            </svg>
+            <span class="sov-kicker">Chuyên biệt</span>
+          </div>
+          <p class="sov-note">Cho cuộc họp tiếng Việt</p>
+          <div class="sov-chips">
+            <span class="chip">Nhiều người nói / chồng lấn</span>
+            <span class="chip">Khác biệt phát âm / vùng miền</span>
+            <span class="chip">Thuật ngữ / tiếng Anh</span>
+          </div>
+        </div>
+      </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--result slide--asr slide--sp4"
+  data-slide="4"
+  data-type="result"
+  data-source="Keynote 2-v1.pptx"
+  data-speaker-notes="CER, thấp hơn là tốt hơn. Vào slide: dòng fine-tune (Whisper, huấn luyện, ra Meeting AI Model) và các model so sánh (PhoWhisper-Large, ElevenLabs Scribe v2); chưa có biểu đồ. Click 1: hiện cùng lúc tên hai task (Meeting, ViMedCSS) và hai cột so sánh của mỗi task — PhoWhisper-large và ElevenLabs Scribe v2 (Meeting), PhoWhisper-large và ViMedCSS-AG (ViMedCSS). Click 2: cột Meeting AI Model mọc dần từ dưới lên ở cả hai task — 5,77 so với 15,92 (giảm 64%) và 18,25 so với 22,65. Chiều cao cột chuẩn hoá trong từng panel — con số in trên cột là giá trị thật.">
+  <!-- Merged Speech results. Values, labels and the reduction badge carried over
+       verbatim from the former slides 21 and 23. Bar heights are normalised
+       WITHIN each panel, so the two panels are not comparable to each other. -->
+      <header class="slide-head">
+        <h2 class="slide-title">Kết quả benchmark huấn luyện mô hình Speech AI</h2>
+      </header>
+      <!-- Same model-line language as slide 05: base model, training, result,
+           then the set it is compared against. PhoWhisper-Large is both the
+           starting point and one of the baselines; ElevenLabs Scribe v2 is a
+           commercial API, marked with the padlock. -->
+      <div class="mline">
+        <div class="mline__item">
+          <div class="mline__box mline__box--sm"></div>
+          <span class="mline__t">Whisper</span>
+        </div>
+        <svg class="mline__flow" viewBox="0 0 74 22" aria-hidden="true"><defs><marker id="ml-ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round"/></marker></defs><path class="ln" d="M2 11 H64" marker-end="url(#ml-ah4)"/><path class="fl" d="M2 11 H64"/></svg>
+        <div class="mline__item">
+          <div class="mline__box mline__box--mid"><svg class="mline__ico" viewBox="0 0 34 34" aria-hidden="true"><g class="ln2" fill="none"><path d="M6 17 L17 7 M6 17 L17 17 M6 17 L17 27 M17 7 L28 12 M17 7 L28 22 M17 17 L28 12 M17 17 L28 22 M17 27 L28 12 M17 27 L28 22"/></g><g class="nd"><circle cx="6" cy="17" r="3"/><circle cx="17" cy="7" r="2.6"/><circle cx="17" cy="17" r="2.6"/><circle cx="17" cy="27" r="2.6"/><circle cx="28" cy="12" r="3"/><circle cx="28" cy="22" r="3"/></g></svg><span>Huấn luyện model</span></div>
+        </div>
+        <svg class="mline__flow" viewBox="0 0 74 22" aria-hidden="true"><defs><marker id="ml-ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round"/></marker></defs><path class="ln" d="M2 11 H64" marker-end="url(#ml-ah4)"/><path class="fl" d="M2 11 H64"/></svg>
+        <div class="mline__item mline__item--ft">
+          <div class="mline__box mline__box--out"><span class="mline__sun" aria-hidden="true"><b class="mline__star"><svg viewBox="-12 -12 24 24"><path d="M0 -12 C1 -3 3 -1 12 0 C3 1 1 3 0 12 C-1 3 -3 1 -12 0 C-3 -1 -1 -3 0 -12 Z"/><path d="M0 -12 C1 -3 3 -1 12 0 C3 1 1 3 0 12 C-1 3 -3 1 -12 0 C-3 -1 -1 -3 0 -12 Z" transform="rotate(45) scale(.62)" opacity=".95"/><path d="M0 -12 C1 -3 3 -1 12 0 C3 1 1 3 0 12 C-1 3 -3 1 -12 0 C-3 -1 -1 -3 0 -12 Z" transform="rotate(22.5) scale(.3)" opacity=".85"/><path d="M0 -12 C1 -3 3 -1 12 0 C3 1 1 3 0 12 C-1 3 -3 1 -12 0 C-3 -1 -1 -3 0 -12 Z" transform="rotate(67.5) scale(.3)" opacity=".85"/></svg></b></span></div>
+          <span class="mline__t">Meeting AI Model</span>
+        </div>
+
+        <div class="mline__gap"></div>
+        <div class="mline__cmp"><span class="mline__cmpk">So sánh</span></div>
+        <div class="mline__item">
+          <div class="mline__box mline__box--cmp mline__box--base">1.5B</div>
+          <span class="mline__t">PhoWhisper-Large</span>
+        </div>
+        <div class="mline__item">
+          <div class="mline__box mline__box--cmp mline__box--api"><svg class="mline__lock" viewBox="0 0 34 34" aria-hidden="true"><rect x="7.5" y="15" width="19" height="13" rx="3"/><path d="M12 15 v-4.5 a5 5 0 0 1 10 0 V15"/><circle cx="17" cy="21.5" r="1.9" class="pin"/></svg></div>
+          <span class="mline__t">ElevenLabs Scribe v2</span>
+          <span class="mline__sub">Model thương mại</span>
+        </div>
+      </div>
+      <div class="result-area">
+        <div class="bench bench--dual">
+          <section class="bench__panel">
+            <div class="bench__plot">
+            <div class="bgroup" data-build="1">
+              <div class="bgroup__bars"><div class="bar bar--asr" style="--v:88.0"><span class="bar__v">15.92</span></div></div>
+              <div class="bgroup__name">PhoWhisper-large</div>
+            </div>
+            <div class="bgroup" data-build="1">
+              <div class="bgroup__bars"><div class="bar bar--asr bar--api" style="--v:35.6"><span class="bar__v">6.44</span></div></div>
+              <div class="bgroup__name">ElevenLabs Scribe v2</div>
+            </div>
+            <div class="bgroup bgroup--ours" data-build="2">
+              <div class="bgroup__bars"><div class="bar bar--asr is-lowest" style="--v:31.9"><span class="bar__v">5.77</span></div></div>
+              <div class="bgroup__name">Meeting AI Model</div>
+            </div>
+            </div>
+            <h3 class="bench__label bench__label--bottom" data-build="1">Meeting</h3>
+          </section>
+          <div class="bench__div" data-build="1"></div>
+          <section class="bench__panel">
+            <div class="bench__plot">
+            <div class="bgroup" data-build="1">
+              <div class="bgroup__bars"><div class="bar bar--asr" style="--v:88.0"><span class="bar__v">22.65</span></div></div>
+              <div class="bgroup__name">PhoWhisper-large</div>
+            </div>
+            <div class="bgroup" data-build="1">
+              <div class="bgroup__bars"><div class="bar bar--asr" style="--v:83.5"><span class="bar__v">21.48</span></div></div>
+              <div class="bgroup__name">ViMedCSS-AG</div>
+            </div>
+            <div class="bgroup bgroup--ours" data-build="2">
+              <div class="bgroup__bars"><div class="bar bar--asr is-lowest" style="--v:70.9"><span class="bar__v">18.25</span></div></div>
+              <div class="bgroup__name">Meeting AI Model</div>
+            </div>
+            </div>
+            <h3 class="bench__label bench__label--bottom" data-build="1">ViMedCSS (LREC, 2026)</h3>
+          </section>
+        </div>
+      </div>
+      <div class="slide__foot"><span>Enterprise AI Summit 2026</span><span class="num">04</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--result slide--lg5"
+  data-slide="5"
+  data-type="result"
+  data-source="Keynote 2-v1.pptx"
+  data-speaker-notes="Vào slide: Qwen2.5 7B được huấn luyện thành Legal AI Model 7B, so sánh với hai model lớn hơn là Qwen2.5 32B và 70B; chưa có biểu đồ. Click 1: hiện cùng lúc tên hai bộ đánh giá, bốn task và các cột 7B, 32B, 70B. Trái (VietLegal) — model nhận ra văn bản nói về chủ đề gì và người dùng muốn gì; phải (năng lực sản phẩm) — model hiểu khái niệm pháp lý và dữ kiện của tình huống. Click 2: cột Legal AI Model mọc dần từ dưới lên ở cả bốn task. Khoảng cách lớn nhất ở Khái niệm: 74,4 so với 31,7 của 70B.">
+  <!-- Merged from the former slides 7 and 8. Topic and Intent come from the
+       VietLegal public benchmark; Concept and Facts from the product benchmark.
+       Every value is carried over verbatim; the other tasks were dropped. -->
+      <header class="slide-head">
+        <h2 class="slide-title">Kết quả huấn luyện mô hình Legal AI</h2>
+      </header>
+      <div class="mline">
+        <div class="mline__item">
+          <div class="mline__box mline__box--sm">7B</div>
+          <span class="mline__t">Qwen2.5 7B</span>
+        </div>
+        <svg class="mline__flow" viewBox="0 0 74 22" aria-hidden="true"><defs><marker id="ml-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round"/></marker></defs><path class="ln" d="M2 11 H64" marker-end="url(#ml-ah)"/><path class="fl" d="M2 11 H64"/></svg>
+        <div class="mline__item">
+          <div class="mline__box mline__box--mid"><svg class="mline__ico" viewBox="0 0 34 34" aria-hidden="true"><g class="ln2" fill="none"><path d="M6 17 L17 7 M6 17 L17 17 M6 17 L17 27 M17 7 L28 12 M17 7 L28 22 M17 17 L28 12 M17 17 L28 22 M17 27 L28 12 M17 27 L28 22"/></g><g class="nd"><circle cx="6" cy="17" r="3"/><circle cx="17" cy="7" r="2.6"/><circle cx="17" cy="17" r="2.6"/><circle cx="17" cy="27" r="2.6"/><circle cx="28" cy="12" r="3"/><circle cx="28" cy="22" r="3"/></g></svg><span>Huấn luyện model</span></div>
+        </div>
+        <svg class="mline__flow" viewBox="0 0 74 22" aria-hidden="true"><defs><marker id="ml-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round"/></marker></defs><path class="ln" d="M2 11 H64" marker-end="url(#ml-ah)"/><path class="fl" d="M2 11 H64"/></svg>
+        <div class="mline__item mline__item--ft">
+          <div class="mline__box mline__box--out">7B<span class="mline__sun" aria-hidden="true"><b class="mline__star"><svg viewBox="-12 -12 24 24"><path d="M0 -12 C1 -3 3 -1 12 0 C3 1 1 3 0 12 C-1 3 -3 1 -12 0 C-3 -1 -1 -3 0 -12 Z"/><path d="M0 -12 C1 -3 3 -1 12 0 C3 1 1 3 0 12 C-1 3 -3 1 -12 0 C-3 -1 -1 -3 0 -12 Z" transform="rotate(45) scale(.62)" opacity=".95"/><path d="M0 -12 C1 -3 3 -1 12 0 C3 1 1 3 0 12 C-1 3 -3 1 -12 0 C-3 -1 -1 -3 0 -12 Z" transform="rotate(22.5) scale(.3)" opacity=".85"/><path d="M0 -12 C1 -3 3 -1 12 0 C3 1 1 3 0 12 C-1 3 -3 1 -12 0 C-3 -1 -1 -3 0 -12 Z" transform="rotate(67.5) scale(.3)" opacity=".85"/></svg></b></span></div>
+          <span class="mline__t">Legal AI Model</span>
+        </div>
+
+        <div class="mline__gap"></div>
+        <div class="mline__cmp"><span class="mline__cmpk">So sánh</span></div>
+        <div class="mline__item">
+          <div class="mline__box mline__box--32">32B</div>
+          <span class="mline__t">Qwen2.5:32B</span>
+        </div>
+        <div class="mline__item">
+          <div class="mline__box mline__box--70">70B</div>
+          <span class="mline__t">Qwen2.5:70B</span>
+        </div>
+      </div>
+      <div class="result-area">
+        <div class="bench bench--dual">
+          <section class="bench__panel">
+            <div class="bench__plot">
+        <div class="bgroup" data-build="1">
+          <div class="bgroup__bars"><div class="bar bar--7b" style="--v:62.91"><span class="bar__v">62.91</span></div><div class="bar bar--32b" style="--v:65.45"><span class="bar__v">65.45</span></div><div class="bar bar--70b" style="--v:69.55"><span class="bar__v">69.55</span></div><div class="bar bar--ft" data-build="2" style="--v:70.64"><span class="bar__v">70.64</span></div></div>
+          <div class="bgroup__name">Chủ đề</div>
+        </div>
+        <div class="bgroup" data-build="1">
+          <div class="bgroup__bars"><div class="bar bar--7b" style="--v:61.72"><span class="bar__v">61.72</span></div><div class="bar bar--32b" style="--v:50.50"><span class="bar__v">50.50</span></div><div class="bar bar--70b" style="--v:51.90"><span class="bar__v">51.90</span></div><div class="bar bar--ft" data-build="2" style="--v:62.5"><span class="bar__v">62.5</span></div></div>
+          <div class="bgroup__name">Ý định</div>
+        </div>
+            </div>
+            <h3 class="bench__label bench__label--bottom" data-build="1">Đánh giá trên VietLegal, 2026</h3>
+          </section>
+          <div class="bench__div" data-build="1"></div>
+          <section class="bench__panel">
+            <div class="bench__plot">
+        <div class="bgroup" data-build="1">
+          <div class="bgroup__bars"><div class="bar bar--7b" style="--v:18.9"><span class="bar__v">18.9</span></div><div class="bar bar--32b" style="--v:29.4"><span class="bar__v">29.4</span></div><div class="bar bar--70b" style="--v:31.7"><span class="bar__v">31.7</span></div><div class="bar bar--ft" data-build="2" style="--v:74.4"><span class="bar__v">74.4</span></div></div>
+          <div class="bgroup__name">Khái niệm</div>
+        </div>
+        <div class="bgroup" data-build="1">
+          <div class="bgroup__bars"><div class="bar bar--7b" style="--v:35.6"><span class="bar__v">35.6</span></div><div class="bar bar--32b" style="--v:47.2"><span class="bar__v">47.2</span></div><div class="bar bar--70b" style="--v:50.6"><span class="bar__v">50.6</span></div><div class="bar bar--ft" data-build="2" style="--v:86.7"><span class="bar__v">86.7</span></div></div>
+          <div class="bgroup__name">Dữ kiện</div>
+        </div>
+            </div>
+            <h3 class="bench__label bench__label--bottom" data-build="1">Đánh giá trên năng lực sản phẩm</h3>
+          </section>
+        </div>
+        </div>
+      <div class="slide__foot"><span>Enterprise AI Summit 2026</span><span class="num">05</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--kg1"
+  data-slide="6"
+  data-type="comparison"
+  data-source="Keynote 2-v1.pptx + corpus"
+  data-speaker-notes="Một slide, hai vế. Trái: ba nguồn tri thức được tổ chức lại thành Legal Knowledge Graph, và graph đi thẳng vào Thực thi. Click 1: biểu đồ kết quả với cột truy vấn thông thường. Click 2: cột truy vấn qua Knowledge Graph mọc dần từ dưới lên — tốt hơn rõ ở ba nhóm phụ thuộc quan hệ và thời gian. Recall@10, cỡ mẫu nhỏ (8/5/5 truy vấn).">
+  <!-- Merge of the graph-introduction slide and the GraphRAG benchmark slide.
+       Left: the idea, reduced to nguồn tri thức -> graph -> thực thi.
+       Right: the three graph-dependent groups, values unchanged. -->
+      <header class="slide-head">
+        <h2 class="slide-title">Hiểu dữ liệu chuyên sâu hơn</h2>
+      </header>
+
+      <div class="kg1">
+        <div class="kg1__side">
+          
+          <svg viewBox="0 0 1240 900" width="1240" height="900" preserveAspectRatio="xMidYMid meet" style="width:100%;max-width:100%;height:auto;display:block" aria-labelledby="kgm">
+            <title id="kgm">Nguồn tri thức đi qua Legal Knowledge Graph rồi vào Thực thi của hệ thống AI</title>
+            <defs>
+              <marker id="kgm-ah" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M1 1 L11 6 L1 11" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+            </defs>
+
+            <!-- nguồn tri thức -->
+            <rect class="kg-group" x="200" y="10" width="1030" height="142" rx="18"/>
+            <text class="ais-kicker" x="226" y="46" style="font-size:19px">Nguồn tri thức</text>
+            <rect class="ais-box" x="224" y="60" width="316" height="72" rx="14"/>
+            <text class="ais-label" x="382" y="104" text-anchor="middle" style="font-size:26px">File dữ liệu</text>
+            <rect class="ais-box" x="560" y="60" width="310" height="72" rx="14"/>
+            <text class="ais-label" x="715" y="104" text-anchor="middle" style="font-size:26px">Kho tri thức</text>
+            <rect class="ais-box" x="890" y="60" width="316" height="72" rx="14"/>
+            <text class="ais-label" x="1048" y="104" text-anchor="middle" style="font-size:26px">Web</text>
+
+            <path class="ais-edge kg-edge" d="M715 152 V194" marker-end="url(#kgm-ah)"/>
+            <path class="ais-flow ais-flow--kgpath" d="M715 152 V194"/>
+
+            <!-- the graph layer -->
+            <rect class="kg-box" x="420" y="200" width="610" height="132" rx="20"/>
+            <g transform="translate(492,266)">
+              <path class="kg-link" d="M0,-30 L-34,-2 M0,-30 L34,-2 M-34,-2 L-16,30 M34,-2 L16,30 M-16,30 L16,30 M0,-30 L0,4 M-34,-2 L16,30 M34,-2 L-16,30"/>
+              <circle class="kg-node" cx="0" cy="-30" r="7"/>
+              <circle class="kg-node" cx="-34" cy="-2" r="7"/>
+              <circle class="kg-node" cx="34" cy="-2" r="7"/>
+              <circle class="kg-node" cx="-16" cy="30" r="7"/>
+              <circle class="kg-node" cx="16" cy="30" r="7"/>
+              <circle class="kg-node" cx="0" cy="4" r="5.5"/>
+            </g>
+            <text class="ais-label" x="566" y="258" style="font-size:34px;fill:#F0A23B">Legal Knowledge Graph</text>
+            <text class="ais-sub"   x="566" y="296" style="font-size:24px">Tri thức có cấu trúc</text>
+
+            <path class="ais-edge kg-edge" d="M760 332 C760 392 810 428 846 462" marker-end="url(#kgm-ah)"/>
+            <path class="ais-flow ais-flow--kgpath" d="M760 332 C760 392 810 428 846 462"/>
+
+            <!-- the familiar system -->
+            <text class="ais-sub" x="55" y="498" text-anchor="middle" style="font-size:20px">Người dùng</text>
+            <circle cx="55" cy="556" r="21" fill="none" stroke="#9FB4CF" stroke-width="2.5"/>
+            <path d="M14 614 a41 41 0 0 1 82 0" fill="none" stroke="#9FB4CF" stroke-width="2.5" stroke-linecap="round"/>
+
+            <rect class="ais-box" x="140" y="545" width="242" height="76" rx="38"/>
+            <text class="ais-label" x="261" y="591" text-anchor="middle" style="font-size:23px">Câu hỏi / Yêu cầu</text>
+            <path class="ais-edge" d="M382 583 H400" marker-end="url(#kgm-ah)"/>
+
+            <rect class="ais-shell" x="404" y="390" width="600" height="442" rx="24"/>
+            <text class="ais-kicker" x="704" y="812" text-anchor="middle" style="font-size:18px">Hệ thống AI</text>
+
+            <rect class="ais-shell ais-shell--agent" x="434" y="420" width="540" height="164" rx="18"/>
+            <text class="ais-kicker" x="458" y="452" style="fill:#66B4F0;font-size:17px">AI Agent</text>
+            <rect class="ais-box" x="456" y="470" width="238" height="70" rx="14"/>
+            <text class="ais-label" x="575" y="513" text-anchor="middle" style="font-size:24px">Lập kế hoạch</text>
+            <rect class="ais-box" x="734" y="470" width="220" height="70" rx="14"/>
+            <text class="ais-label" x="844" y="513" text-anchor="middle" style="font-size:24px">Thực thi</text>
+            <path class="ais-edge" d="M694 505 H730" marker-end="url(#kgm-ah)"/>
+            <path class="ais-edge" d="M844 540 V562 H575 V546" marker-end="url(#kgm-ah)"/>
+
+            <rect class="ais-box" x="564" y="640" width="280" height="88" rx="16"/>
+            <g class="ais-ic ais-ic--key" transform="translate(657,684) scale(1.15)">
+              <rect x="-8.5" y="-8.5" width="17" height="17" rx="3"/>
+              <rect x="-3.5" y="-3.5" width="7" height="7" rx="1.5"/>
+              <path d="M-4,-8.5 V-12 M4,-8.5 V-12 M-4,8.5 V12 M4,8.5 V12 M-8.5,-4 H-12 M-8.5,4 H-12 M8.5,-4 H12 M8.5,4 H12"/>
+            </g>
+            <text class="ais-label" x="685" y="694" style="font-size:26px">Model</text>
+            <path class="ais-edge" d="M704 640 V590" marker-end="url(#kgm-ah)"/>
+
+            <rect class="ais-box" x="1034" y="600" width="196" height="76" rx="38"/>
+            <text class="ais-label" x="1132" y="646" text-anchor="middle" style="font-size:25px">Kết quả</text>
+            <path class="ais-edge" d="M1004 638 H1030" marker-end="url(#kgm-ah)"/>
+            <path class="ais-edge ais-edge--soft" d="M1132 676 V862 H55 V648" marker-end="url(#kgm-ah)"/>
+          </svg>
+        </div>
+
+        <div class="kg1__rule" data-build="1"></div>
+
+        <div class="kg1__side" data-build="1">
+          <div class="bench bench--single">
+            <section class="bench__panel">
+              <div class="bench__plot">
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--base" style="--v:76.9"><span class="bar__v">68.8</span></div><div class="bar bar--kg bar--grow" data-build="2" style="--v:88.0"><span class="bar__v">78.7</span></div></div>
+              <div class="bgroup__name">Tra cứu<br>dẫn chiếu</div>
+            </div>
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--base" style="--v:48.3"><span class="bar__v">43.2</span></div><div class="bar bar--kg bar--grow" data-build="2" style="--v:59.9"><span class="bar__v">53.6</span></div></div>
+              <div class="bgroup__name">Tra cứu hiệu lực<br>theo thời gian</div>
+            </div>
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--base" style="--v:44.7"><span class="bar__v">40.0</span></div><div class="bar bar--kg bar--grow" data-build="2" style="--v:67.1"><span class="bar__v">60.0</span></div></div>
+              <div class="bgroup__name">Tra cứu<br>sửa đổi / bãi bỏ</div>
+            </div>
+              </div>
+            </section>
+            <h3 class="bench__label bench__label--bottom">Truy vấn thông qua đồ thị tri thức so với truy vấn thông thường</h3>
+            <div class="bench__legend">
+              <span class="lg"><span class="sw sw--base"></span>Truy vấn thông thường</span>
+              <span class="lg"><span class="sw sw--kg"></span>Legal Graph</span>
+            </div>
+          </div>
+        </div>
+      </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--diagram slide--vfy"
+  data-slide="7"
+  data-type="diagram"
+  data-source="author-supplied"
+  data-speaker-notes="Toàn bộ kiến trúc hiện ngay. Đọc theo luồng sáng: lập kế hoạch → thực thi → xác thực → kết quả. Graph cấp căn cứ cho thực thi; tri thức chuyên gia cấp điều kiện cho xác thực; xác thực có thể quay lại lập kế hoạch. Nhấn: kết quả chỉ trả ra sau khi đã kiểm chứng.">
+  <!-- Extends the Knowledge Graph system slide with a verification step inside
+       the agent, fed by expert knowledge. Same component vocabulary. -->
+      <header class="slide-head">
+        <h2 class="slide-title">Kiểm chứng bởi tri thức chuyên gia</h2>
+      </header>
+
+      <svg class="ais-fig" viewBox="0 0 2560 1280" preserveAspectRatio="xMidYMid meet" aria-labelledby="vfyt">
+        <title id="vfyt">Model và agent; graph cấp căn cứ cho Thực thi, tri thức chuyên gia cấp điều kiện cho Xác thực</title>
+        <defs>
+          <marker id="vfy-ah" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M1 1 L11 6 L1 11" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <rect class="kg-box" x="760" y="280" width="580" height="132" rx="20"/>
+        <g transform="translate(826,346) scale(.9)">
+          <path class="kg-link" d="M0,-30 L-34,-2 M0,-30 L34,-2 M-34,-2 L-16,30 M34,-2 L16,30 M-16,30 L16,30 M0,-30 L0,4"/>
+          <circle class="kg-node" cx="0" cy="-30" r="7"/><circle class="kg-node" cx="-34" cy="-2" r="7"/>
+          <circle class="kg-node" cx="34" cy="-2" r="7"/><circle class="kg-node" cx="-16" cy="30" r="7"/>
+          <circle class="kg-node" cx="16" cy="30" r="7"/><circle class="kg-node" cx="0" cy="4" r="5.5"/>
+        </g>
+        <text class="ais-label" x="892" y="338" style="font-size:31px">Legal Knowledge Graph</text>
+        <text class="ais-sub"   x="892" y="374" style="font-size:23px">Tri thức có cấu trúc</text>
+
+        <rect class="vfy-expert" x="1480" y="280" width="640" height="132" rx="20"/>
+        <g class="vfy-ic" transform="translate(1562,346) scale(1.65)">
+          <path d="M0,-10 C-4.6,-13.6 -11.6,-13.6 -16.5,-11 v18.6 c4.9,-2.6 11.9,-2.6 16.5,1 4.6,-3.6 11.6,-3.6 16.5,-1 v-18.6 c-4.9,-2.6 -11.9,-2.6 -16.5,1 z"/>
+          <path d="M0,-10 V9.6"/>
+        </g>
+        <text class="ais-label" x="1622" y="338" style="font-size:31px">Tri thức chuyên gia</text>
+        <text class="ais-sub"   x="1622" y="374" style="font-size:23px">Điều kiện kiểm chứng</text>
+
+        <rect class="ais-shell" x="200" y="560" width="1410" height="530" rx="30"/>
+        <text class="ais-kicker" x="905" y="1070" text-anchor="middle" style="font-size:21px">Hệ thống AI</text>
+        <rect class="ais-shell ais-shell--agent" x="240" y="600" width="1330" height="300" rx="26"/>
+        <text class="ais-kicker" x="272" y="644" style="fill:#66B4F0;font-size:21px">AI Agent</text>
+
+        <rect class="ais-box" x="280" y="680" width="370" height="130" rx="18"/>
+        <text class="ais-label" x="465" y="758" text-anchor="middle" style="font-size:31px">Lập kế hoạch</text>
+        <rect class="ais-box" x="710" y="680" width="370" height="130" rx="18"/>
+        <text class="ais-label" x="895" y="758" text-anchor="middle" style="font-size:31px">Thực thi</text>
+        <!-- same box and type scale as Thực thi; only the colour differs -->
+        <rect class="vfy-box" x="1140" y="680" width="370" height="130" rx="18"/>
+        <g class="vfy-ic" transform="translate(1200,745) scale(1.15)">
+          <circle cx="0" cy="0" r="12"/><path d="M-5.5,0 l4,4 l7.5,-8.5"/>
+        </g>
+        <text class="ais-label" x="1246" y="758" style="font-size:31px;fill:#F0A23B">Xác thực</text>
+
+        <rect class="ais-box" x="560" y="940" width="690" height="110" rx="20"/>
+        <g class="ais-ic ais-ic--key" transform="translate(800,988) scale(1.25)">
+          <rect x="-8.5" y="-8.5" width="17" height="17" rx="3"/><rect x="-3.5" y="-3.5" width="7" height="7" rx="1.5"/>
+          <path d="M-4,-8.5 V-12 M4,-8.5 V-12 M-4,8.5 V12 M4,8.5 V12 M-8.5,-4 H-12 M-8.5,4 H-12 M8.5,-4 H12 M8.5,4 H12"/>
+        </g>
+        <text class="ais-label" x="838" y="1000" style="font-size:29px">Model</text>
+
+        <rect class="ais-box" x="1720" y="680" width="360" height="130" rx="65"/>
+        <text class="ais-label" x="1900" y="758" text-anchor="middle" style="font-size:31px">Kết quả</text>
+
+        <path class="ais-edge" d="M650 745 H706" marker-end="url(#vfy-ah)"/>
+        <path class="ais-edge" d="M1080 745 H1136" marker-end="url(#vfy-ah)"/>
+        <path class="ais-edge" d="M1510 745 H1716" marker-end="url(#vfy-ah)"/>
+        <path class="ais-edge" d="M905 940 V906" marker-end="url(#vfy-ah)"/>
+        <path class="ais-edge" d="M1050 412 C1050 520 960 600 900 672" marker-end="url(#vfy-ah)"/>
+        <path class="ais-edge" d="M1800 412 C1800 520 1500 610 1400 672" marker-end="url(#vfy-ah)"/>
+        <!-- verification can send the task back to planning -->
+        <path class="ais-edge" d="M1325 810 V862 H465 V816" marker-end="url(#vfy-ah)"/>
+        <text class="ais-sub" x="895" y="888" text-anchor="middle" style="font-size:21px">chưa đạt · lập lại kế hoạch</text>
+
+        <path class="ais-flow vfy-flow" d="M650 745 H706"/>
+        <path class="ais-flow vfy-flow" d="M1080 745 H1136"/>
+        <path class="ais-flow vfy-flow" d="M1510 745 H1716"/>
+        <path class="ais-flow vfy-flow vfy-flow--kg" d="M1050 412 C1050 520 960 600 900 672"/>
+        <path class="ais-flow vfy-flow vfy-flow--x" d="M1800 412 C1800 520 1500 610 1400 672"/>
+        <path class="ais-flow vfy-flow vfy-flow--x" d="M1325 810 V862 H465 V816"/>
+      </svg>
+
+      <div class="slide__foot"><span>Enterprise AI Summit 2026</span><span class="num">07</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--result slide--agent slide--loop"
+  data-slide="8"
+  data-type="result"
+  data-source="Keynote 2-v1.pptx"
+  data-speaker-notes="Cùng kiến trúc slide trước, thêm một vòng: agent trả Kết quả, Kết quả được Đánh giá — chuyên gia, người dùng hoặc tự động — và phản hồi quay lại agent. Click 1: biểu đồ bốn năng lực với cột trước phản hồi. Click 2: cột sau phản hồi mọc dần từ dưới lên — cả bốn năng lực đều tăng sau khi cập nhật. Trục dọc bắt đầu từ 0.">
+  <!-- Left is slide 07's architecture reused verbatim (same shells, boxes,
+       radii, strokes, type sizes and edge language); the only additions are
+       the evaluation module and the return edge. -->
+      <header class="slide-head">
+        <h2 class="slide-title">Agent cải thiện qua vòng phản hồi</h2>
+      </header>
+
+      <div class="loop">
+        <div class="loop__side">
+<svg class="ais-fig" viewBox="150 540 2000 700" preserveAspectRatio="xMidYMid meet" aria-labelledby="fbkt">
+            <title id="fbkt">Agent trả kết quả, kết quả được đánh giá, phản hồi quay lại agent</title>
+            <defs>
+              <marker id="fbk-ah" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                <path d="M1 1 L11 6 L1 11" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </marker>
+            </defs>
+
+            <!-- identical construction to slide 07 -->
+            <rect class="ais-shell" x="200" y="560" width="1410" height="590" rx="30"/>
+            <text class="ais-kicker" x="905" y="1126" text-anchor="middle" style="font-size:21px">Hệ thống AI</text>
+            <rect class="ais-shell ais-shell--agent" x="240" y="600" width="1330" height="300" rx="26"/>
+            <text class="ais-kicker" x="272" y="650" style="fill:#66B4F0;font-size:30px">AI Agent</text>
+
+            <rect class="ais-box" x="280" y="680" width="370" height="130" rx="18"/>
+            <text class="ais-label" x="465" y="758" text-anchor="middle" style="font-size:36px">Lập kế hoạch</text>
+            <rect class="ais-box" x="710" y="680" width="370" height="130" rx="18"/>
+            <text class="ais-label" x="895" y="758" text-anchor="middle" style="font-size:36px">Thực thi</text>
+            <rect class="ais-box" x="1140" y="680" width="370" height="130" rx="18"/>
+            <text class="ais-label" x="1325" y="758" text-anchor="middle" style="font-size:36px">Xác thực</text>
+
+            <rect class="ais-box" x="560" y="968" width="690" height="110" rx="20"/>
+            <g class="ais-ic ais-ic--key" transform="translate(800,1016) scale(1.25)">
+              <rect x="-8.5" y="-8.5" width="17" height="17" rx="3"/><rect x="-3.5" y="-3.5" width="7" height="7" rx="1.5"/>
+              <path d="M-4,-8.5 V-12 M4,-8.5 V-12 M-4,8.5 V12 M4,8.5 V12 M-8.5,-4 H-12 M-8.5,4 H-12 M8.5,-4 H12 M8.5,4 H12"/>
+            </g>
+            <text class="ais-label" x="838" y="1028" style="font-size:34px">Model</text>
+
+            <path class="ais-edge" d="M650 745 H706" marker-end="url(#fbk-ah)"/>
+            <path class="ais-edge" d="M1080 745 H1136" marker-end="url(#fbk-ah)"/>
+            <path class="ais-edge" d="M905 968 V906" marker-end="url(#fbk-ah)"/>
+            <path class="ais-flow vfy-flow" d="M650 745 H706"/>
+            <path class="ais-flow vfy-flow" d="M1080 745 H1136"/>
+
+            <!-- result: same rounded external module as slide 07 -->
+            <g>
+              <path class="ais-edge" d="M1510 745 H1696" marker-end="url(#fbk-ah)"/>
+              <path class="ais-flow vfy-flow" d="M1510 745 H1696"/>
+              <rect class="ais-box" x="1700" y="680" width="360" height="130" rx="65"/>
+              <text class="ais-label" x="1880" y="758" text-anchor="middle" style="font-size:36px">Kết quả</text>
+            </g>
+
+            <!-- evaluation: one module, sources as a quiet sub-line -->
+            <g>
+              <path class="ais-edge" d="M1880 810 V872" marker-end="url(#fbk-ah)"/>
+              <path class="ais-flow vfy-flow" d="M1880 810 V872"/>
+              <rect class="vfy-box" x="1660" y="878" width="440" height="200" rx="20"/>
+              <g class="vfy-ic" transform="translate(1746,936) scale(1.5)">
+                <circle cx="0" cy="0" r="11"/><path d="M-5,0 l3.6,3.6 l6.9,-7.8"/>
+              </g>
+              <text class="ais-label" x="1790" y="948" style="font-size:36px;fill:#F0A23B">Đánh giá</text>
+              <g class="fbk-ic" transform="translate(1780,1020) scale(1.6)">
+                <circle cx="0" cy="-6" r="6"/><path d="M-10,11 a10,9 0 0 1 20,0"/>
+              </g>
+              <g class="fbk-ic" transform="translate(1880,1020) scale(1.35)">
+                <rect x="-9" y="-9" width="18" height="18" rx="3"/><rect x="-3.6" y="-3.6" width="7.2" height="7.2" rx="1.6"/>
+                <path d="M-4,-9 V-13 M4,-9 V-13 M-4,9 V13 M4,9 V13 M-9,-4 H-13 M-9,4 H-13 M9,-4 H13 M9,4 H13"/>
+              </g>
+              <g class="fbk-ic" transform="translate(1980,1020) scale(1.5)">
+                <rect x="-8" y="-11" width="16" height="22" rx="2.5"/>
+                <path d="M-3,-11 v-3 h6 v3"/><path d="M-4,0 l2.6,2.6 l5.4,-6"/>
+              </g>
+            </g>
+
+            <!-- feedback: thin, muted, same curve language as the other edges -->
+            <g>
+              <path class="fbk-edge" marker-end="url(#fbk-ah)"
+                    d="M1880 1078 V1204 H160 V745 H274"/>
+              <path class="fbk-flow" d="M1880 1078 V1204 H160 V745 H274"/>
+              <text class="fbk-label" x="1010" y="1238">Phản hồi / cập nhật</text>
+            </g>
+          </svg>
+        </div>
+        <div class="loop__rule" data-build="1"></div>
+        <div class="loop__side" data-build="1">
+          <div class="bench bench--single">
+            <section class="bench__panel">
+              <div class="bench__plot">
+              <div class="bgroup">
+                <div class="bgroup__bars"><div class="bar bar--base" style="--v:66.5"><span class="bar__v">66.5</span></div><div class="bar bar--kg bar--grow" data-build="2" style="--v:68.5"><span class="bar__v">68.5</span></div></div>
+                <div class="bgroup__name">Nhận diện<br>thực thể pháp lý</div>
+              </div>
+              <div class="bgroup">
+                <div class="bgroup__bars"><div class="bar bar--base" style="--v:76"><span class="bar__v">76</span></div><div class="bar bar--kg bar--grow" data-build="2" style="--v:78"><span class="bar__v">78</span></div></div>
+                <div class="bgroup__name">Truy hồi<br>khái niệm pháp lý</div>
+              </div>
+              <div class="bgroup">
+                <div class="bgroup__bars"><div class="bar bar--base" style="--v:62"><span class="bar__v">62</span></div><div class="bar bar--kg bar--grow" data-build="2" style="--v:67"><span class="bar__v">67</span></div></div>
+                <div class="bgroup__name">Dự đoán<br>điều / khoản</div>
+              </div>
+              <div class="bgroup">
+                <div class="bgroup__bars"><div class="bar bar--base" style="--v:68"><span class="bar__v">68</span></div><div class="bar bar--kg bar--grow" data-build="2" style="--v:71"><span class="bar__v">71</span></div></div>
+                <div class="bgroup__name">Suy luận<br>đa điều</div>
+              </div>
+              </div>
+            </section>
+            <p class="bench__cap">Đánh giá trên VietLegal, 2026</p>
+            <div class="bench__legend">
+              <span class="lg"><span class="sw sw--base"></span>Trước cập nhật</span>
+              <span class="lg"><span class="sw sw--kg"></span>Sau cập nhật</span>
+            </div>
+          </div>
+        </div>
+      </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--result slide--e2e"
+  data-slide="9"
+  data-type="result"
+  data-source="author-supplied"
+  data-speaker-notes="Vào slide: chưa có biểu đồ. Click 1: hai biểu đồ với ChatGPT, Gemini, Claude. Click 2: cột Our Legal Agent mọc dần từ dưới lên ở cả hai. Thang 0-100, đơn vị %. Dẫn ở cả hai chiều. Citation: 57,3 so với 41,8 của ChatGPT — hơn khoảng 15 điểm. Answer Correctness: 73 so với 67 của ChatGPT, 57 của Claude, 41 của Gemini. Nhấn Citation trước: đó là chỗ agent chuyên biệt tạo khác biệt lớn nhất.">
+  <!-- End-to-end comparison. Values supplied by the author and supersede the
+       PPTX draft (ChatGPT 0.40/0.70, ours 0.90/0.80, Gemini and Claude unmeasured).
+       All four systems now carry measured values on both dimensions, so the
+       "chưa đo" placeholders are gone. Ours leads on both dimensions; the
+       margin is much wider on Citation than on Answer Correctness. -->
+      <header class="slide-head">
+        <h2 class="slide-title">So sánh với các hệ thống AI hàng đầu</h2>
+      </header>
+      <div class="result-area">
+        <div class="bench bench--dual">
+          <section class="bench__panel" data-build="1">
+            <div class="bench__plot">
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--sys" style="--v:41.8"><span class="bar__v">41.8</span></div></div>
+              <div class="bgroup__logo"><img src="assets/logos/chatgpt.webp" alt="ChatGPT" class="logo logo--invert"></div>
+              <div class="bgroup__name">ChatGPT</div>
+            </div>
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--sys" style="--v:33.3"><span class="bar__v">33.3</span></div></div>
+              <div class="bgroup__logo"><img src="assets/logos/gemini.webp" alt="Gemini" class="logo"></div>
+              <div class="bgroup__name">Gemini</div>
+            </div>
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--sys" style="--v:36.2"><span class="bar__v">36.2</span></div></div>
+              <div class="bgroup__logo"><img src="assets/logos/claude.webp" alt="Claude" class="logo"></div>
+              <div class="bgroup__name">Claude</div>
+            </div>
+            <div class="bgroup bgroup--ours">
+              <div class="bgroup__bars"><div class="bar bar--ours bar--grow" data-build="2" style="--v:57.3"><span class="bar__v">57.3</span></div></div>
+              <div class="bgroup__logo"></div>
+              <div class="bgroup__name" data-build="2">Our Legal Agent</div>
+            </div>
+            </div>
+            <h3 class="bench__label bench__label--bottom">Trích dẫn / căn cứ</h3>
+          </section>
+          <div class="bench__div" data-build="1"></div>
+          <section class="bench__panel" data-build="1">
+            <div class="bench__plot">
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--sys" style="--v:67"><span class="bar__v">67</span></div></div>
+              <div class="bgroup__logo"><img src="assets/logos/chatgpt.webp" alt="ChatGPT" class="logo logo--invert"></div>
+              <div class="bgroup__name">ChatGPT</div>
+            </div>
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--sys" style="--v:41"><span class="bar__v">41</span></div></div>
+              <div class="bgroup__logo"><img src="assets/logos/gemini.webp" alt="Gemini" class="logo"></div>
+              <div class="bgroup__name">Gemini</div>
+            </div>
+            <div class="bgroup">
+              <div class="bgroup__bars"><div class="bar bar--sys" style="--v:57"><span class="bar__v">57</span></div></div>
+              <div class="bgroup__logo"><img src="assets/logos/claude.webp" alt="Claude" class="logo"></div>
+              <div class="bgroup__name">Claude</div>
+            </div>
+            <div class="bgroup bgroup--ours">
+              <div class="bgroup__bars"><div class="bar bar--ours bar--grow" data-build="2" style="--v:73"><span class="bar__v">73</span></div></div>
+              <div class="bgroup__logo"></div>
+              <div class="bgroup__name" data-build="2">Our Legal Agent</div>
+            </div>
+            </div>
+            <h3 class="bench__label bench__label--bottom">Trả lời chính xác</h3>
+          </section>
+        </div>
+      </div>
+      <div class="slide__foot"><span>Enterprise AI Summit 2026</span><span class="num">09</span></div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="slide slide--conclusion slide--fin"
+  data-slide="10"
+  data-type="conclusion"
+  data-source="author-supplied"
+  data-speaker-notes="Slide kết. Vào slide: cột trái — giá trị hướng tới. Click 1: cột phải — hướng phát triển tiếp theo. Bốn dòng bên phải lặp lại đúng bốn vấn đề của slide 02: model, dữ liệu, kiểm chứng, agent. Dừng ở tiêu đề.">
+  <!-- Closing slide. Answers the two questions slide 02 left open: what the
+       enterprise gets, and what we build next. The four icons on the right are
+       the same vocabulary as slide 02 — model, tri thức, kiểm chứng, agent —
+       so the deck closes on the problems it opened with. -->
+      <div class="conclusion-block">
+        <h2 class="conclusion-title">Hướng tới AI hiệu quả, tin cậy và tự chủ</h2>
+
+        <div class="fin">
+          <section class="fin__col">
+            <h3 class="fin__head">Giá trị cho doanh nghiệp</h3>
+            <ul class="fin__list">
+            <li class="fin__li">Hiểu sâu dữ liệu &amp; nghiệp vụ</li>
+            <li class="fin__li">Kết quả tin cậy hơn trong thực tế</li>
+            <li class="fin__li">AI hiểu doanh nghiệp hơn</li>
+            <li class="fin__li">Từng bước làm chủ mô hình &amp; dữ liệu</li>
+            </ul>
+          </section>
+
+          <div class="fin__rule" data-build="1"></div>
+
+          <section class="fin__col fin__col--next" data-build="1">
+            <h3 class="fin__head fin__head--b">Định hướng tiếp theo</h3>
+            <ul class="fin__list">
+            <li class="fin__li fin__li--ic"><svg class="fin__ic" viewBox="0 0 34 34" aria-hidden="true"><rect x="10" y="10" width="14" height="14" rx="2.5"/><rect x="14.5" y="14.5" width="5" height="5" rx="1.2"/><path d="M14 10 V6 M20 10 V6 M14 24 V28 M20 24 V28 M10 14 H6 M10 20 H6 M24 14 H28 M24 20 H28"/></svg><span class="fin__txt"><span class="fin__lb">Huấn luyện model chuyên biệt</span><span class="fin__sub">Nâng chất lượng và mở rộng lĩnh vực</span></span></li>
+            <li class="fin__li fin__li--ic"><svg class="fin__ic" viewBox="0 0 34 34" aria-hidden="true"><g class="lk"><path d="M6 17 L17 7 M6 17 L17 17 M6 17 L17 27 M17 7 L28 12 M17 7 L28 22 M17 17 L28 12 M17 17 L28 22 M17 27 L28 12 M17 27 L28 22"/></g><g class="nd"><circle cx="6" cy="17" r="3"/><circle cx="17" cy="7" r="2.6"/><circle cx="17" cy="17" r="2.6"/><circle cx="17" cy="27" r="2.6"/><circle cx="28" cy="12" r="3"/><circle cx="28" cy="22" r="3"/></g></svg><span class="fin__txt"><span class="fin__lb">Hiểu dữ liệu chuyên sâu hơn</span><span class="fin__sub">Loại dữ liệu và nghiệp vụ</span></span></li>
+            <li class="fin__li fin__li--ic"><svg class="fin__ic" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 11 C13 8 6.5 8 3.5 10.2 v14.2 c3 -2.2 9.5 -2.2 13.5 0.8 4 -3 10.5 -3 13.5 -0.8 V10.2 C27.5 8 21 8 17 11 z" transform="translate(0,1)"/><path d="M17 12 V26" transform="translate(0,1)"/></svg><span class="fin__txt"><span class="fin__lb">Kết quả tin cậy hơn</span><span class="fin__sub">Tích hợp sâu hơn tri thức chuyên gia và kiểm chứng</span></span></li>
+            <li class="fin__li fin__li--ic"><svg class="fin__ic" viewBox="0 0 34 34" aria-hidden="true"><path d="M27 17 a10 10 0 1 1 -3.4 -7.5"/><path d="M27 6 V10.5 H22.5"/><path d="M13 17.5 l3 3 l5.5 -6.5"/></svg><span class="fin__txt"><span class="fin__lb">Agent tự cải thiện</span><span class="fin__sub">Hoàn thiện vòng đánh giá và phản hồi</span></span></li>
+            </ul>
+          </section>
+        </div>
+
+      </div>
+      <div class="slide__foot"><span>Enterprise AI Summit 2026</span><span class="num">10</span></div>
+</section>
+
+
+
+</div><!-- /#stage -->
+</div><!-- /#stage-wrap -->
+
+<div id="notes"></div>
+<div id="hud">
+  <span id="hud-num"></span>
+  <span><kbd>&larr;</kbd><kbd>&rarr;</kbd></span>
+  <span><kbd>B</kbd> blueprint</span>
+  <span><kbd>N</kbd> notes</span>
+  <span><kbd>S</kbd> static</span>
+</div>
+
+<script src="assets/keynote.js?v=2e45ec6a"></script>
+</body>
+</html>

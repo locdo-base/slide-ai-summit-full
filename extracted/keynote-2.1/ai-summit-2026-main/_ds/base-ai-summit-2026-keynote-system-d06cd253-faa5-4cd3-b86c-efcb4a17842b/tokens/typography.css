@@ -1,0 +1,36 @@
+:root{
+--font-display:'Afacad',Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+--font-body:var(--font-display);
+
+/* Design pixels measured on the 2560 x 1280 stage, before stage scaling. */
+--fs-h1-cover:220px;
+--fs-h2-statement:120px;
+--fs-h2-statement-min:88px;
+--fs-h2-statement-max:150px;
+--fs-h3-section:64px;
+--fs-eyebrow:32px;
+--fs-card-heading:40px;
+--fs-card-body:28px;
+--fs-metric:104px;
+--fs-label:24px;
+
+--lh-cover:1; /* @kind other */
+--lh-statement:1.04; /* @kind other */
+--lh-heading:1.15; /* @kind other */
+--lh-body:1.42; /* @kind other */
+
+--ls-cover:-7.7px; /* @kind other */
+--ls-statement:-3px; /* @kind other */
+--ls-eyebrow:4.5px; /* @kind other */
+
+--fw-regular:400; /* @kind other */
+--fw-medium:500; /* @kind other */
+--fw-semibold:600; /* @kind other */
+--fw-bold:700; /* @kind other */
+--fw-black:800; /* @kind other */
+
+--text-cover:var(--fw-black) var(--fs-h1-cover)/var(--lh-cover) var(--font-display);
+--text-statement:var(--fw-black) var(--fs-h2-statement)/var(--lh-statement) var(--font-display);
+--text-card-title:var(--fw-bold) var(--fs-card-heading)/var(--lh-heading) var(--font-display);
+--text-card-body:var(--fw-regular) var(--fs-card-body)/var(--lh-body) var(--font-body);
+}

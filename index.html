@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLIDES ENTERPRISE AI SUMMIT 2026</title>
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: 'Plus Jakarta Sans', 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      --bg-canvas: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #edf2f7;
+      --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+      --card-hover-shadow: 0 16px 32px -4px rgba(27, 89, 248, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+      --primary-blue: #185aff;
+      --primary-blue-hover: #1249d6;
+      --primary-blue-active: #0e3bb0;
+      --text-title: #0f172a;
+      --text-desc: #2563eb;
+      --grid-line: rgba(59, 130, 246, 0.05);
+      --dot-color: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-canvas);
+      font-family: var(--font-main);
+      color: var(--text-title);
+      position: relative;
+      overflow-x: hidden;
+      padding: 30px 28px 60px;
+    }
+
+    /* Ambient Tech Grid Background with Intersecting Dots */
+    .blueprint-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: 
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-size: 52px 52px;
+      opacity: 0.9;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 10% 15%, rgba(219, 234, 254, 0.5) 0%, transparent 45%),
+        radial-gradient(circle at 90% 50%, rgba(224, 231, 255, 0.4) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(238, 242, 255, 0.6) 0%, transparent 50%);
+    }
+
+    .grid-dots {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+      background-size: 156px 156px;
+      opacity: 0.35;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1220px;
+      margin: 0 auto;
+      transition: filter 0.35s ease, opacity 0.35s ease;
+    }
+
+    .container.blurred {
+      filter: blur(14px);
+      pointer-events: none;
+      opacity: 0.2;
+      user-select: none;
+    }
+
+    /* User Session Bar */
+    .session-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .session-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 9999px;
+      padding: 6px 14px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .session-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+    }
+
+    .session-email {
+      color: #1e293b;
+      font-weight: 700;
+    }
+
+    .btn-logout {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-logout:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #b91c1c;
+    }
+
+    /* Header Section */
+    .header-section {
+      text-align: center;
+      margin-bottom: 34px;
+      padding-top: 4px;
+    }
+
+    .main-title {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #0f172a;
+      display: inline-block;
+      position: relative;
+    }
+
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 20px;
+        letter-spacing: 0.02em;
+      }
+      .header-section {
+        margin-bottom: 24px;
+      }
+      .session-bar {
+        justify-content: center;
+      }
+    }
+
+    /* Grid Layout */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 900px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      body {
+        padding: 24px 16px 40px;
+      }
+    }
+
+    /* Keynote Card */
+    .keynote-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      padding: 30px 34px 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .keynote-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-hover-shadow);
+      border-color: #cbd5e1;
+    }
+
+    /* Top Row in Card */
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .keynote-badge {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #2563eb;
+    }
+
+    .keynote-badge.dark {
+      color: #334155;
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+
+    .tag-pill svg {
+      width: 13.5px;
+      height: 13.5px;
+      flex-shrink: 0;
+    }
+
+    /* Tag styles per category */
+    .tag-pill.blue {
+      background: #ebf3ff;
+      color: #1d4ed8;
+      border-color: #dbeafe;
+    }
+
+    .tag-pill.crm {
+      background: #eff4ff;
+      color: #2563eb;
+      border-color: #dbeafe;
+    }
+
+    .tag-pill.purple {
+      background: #faf5ff;
+      color: #8b5cf6;
+      border-color: #ede9fe;
+    }
+
+    .tag-pill.green {
+      background: #ecfdf5;
+      color: #059669;
+      border-color: #a7f3d0;
+    }
+
+    .tag-pill.amber {
+      background: #fff8e6;
+      color: #c25e00;
+      border-color: #fde68a;
+    }
+
+    .tag-pill.rose {
+      background: #fff1f3;
+      color: #e11d48;
+      border-color: #fecdd3;
+    }
+
+    .tag-pill.agent {
+      background: #fdf2f8;
+      color: #db2777;
+      border-color: #fbcfe8;
+    }
+
+    /* Card Content */
+    .card-body {
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      letter-spacing: -0.015em;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-desc);
+      line-height: 1.55;
+    }
+
+    /* Primary Action Button */
+    .btn-open {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13.5px 20px;
+      background: var(--primary-blue);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(24, 90, 255, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-open:hover {
+      background: var(--primary-blue-hover);
+      box-shadow: 0 6px 20px rgba(24, 90, 255, 0.38);
+      transform: translateY(-1px);
+    }
+
+    .btn-open:active {
+      background: var(--primary-blue-active);
+      transform: translateY(0);
+    }
+
+    .btn-open svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2.2;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-open:hover svg {
+      transform: translate(2px, -2px);
+    }
+
+    /* ================= DÀNH CHO BASERS LOGIN MODAL ================= */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(9, 13, 22, 0.9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .basers-card {
+      background: #0f1420;
+      width: 100%;
+      max-width: 510px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      padding: 46px 44px 40px;
+      text-align: left;
+      position: relative;
+      animation: popUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popUp {
+      from { transform: translateY(20px) scale(0.97); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .basers-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #38bdf8;
+      margin-bottom: 12px;
+    }
+
+    .basers-eyebrow .eyebrow-dash {
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    .basers-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .basers-desc {
+      font-size: 15px;
+      color: #94a3b8;
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    /* Google Sign-in Button - Exactly matching screenshot */
+    .google-login-btn {
+      width: 100%;
+      background: #ffffff;
+      color: #111827;
+      border: none;
+      border-radius: 9999px;
+      padding: 15.5px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .google-login-btn:hover {
+      background: #f8fafc;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+    }
+
+    .google-login-btn:active {
+      transform: translateY(0);
+      background: #f1f5f9;
+    }
+
+    .google-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .auth-error-banner {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #fca5a5;
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-top: 18px;
+    }
+
+    .auth-error-banner.show {
+      display: flex;
+    }
+
+    .basers-footer {
+      font-size: 13.5px;
+      color: #64748b;
+      line-height: 1.6;
+      margin-top: 28px;
+    }
+
+    .basers-footer strong {
+      color: #e2e8f0;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="blueprint-grid"></div>
+  <div class="ambient-glow"></div>
+  <div class="grid-dots"></div>
+
+  <!-- AUTHENTICATION LOGIN OVERLAY (DÀNH CHO BASERS) -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="basers-card">
+      <div class="basers-eyebrow">
+        <span class="eyebrow-dash">—</span>
+        <span>KHU VỰC NỘI BỘ</span>
+      </div>
+      
+      <h2 class="basers-title">Dành cho Basers</h2>
+      
+      <p class="basers-desc">
+        Học liệu khóa học, đề án và tài liệu dùng chung của đội ngũ Base. Đăng nhập một lần bằng tài khoản Google của Base, phiên được giữ 30 ngày.
+      </p>
+
+      <!-- Google Sign In Button (Redirects to Google Sign-In) -->
+      <a id="googleLoginBtn" href="/auth/google" onclick="handleGoogleLogin(event)" class="google-login-btn">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Đăng nhập bằng Google &nbsp;(@base.vn)</span>
+      </a>
+
+      <!-- Error notification if domain is disallowed -->
+      <div id="authErrorBanner" class="auth-error-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <span id="authErrorText">Chỉ tài khoản Google có đuôi @base.vn mới được phép truy cập!</span>
+      </div>
+
+      <p class="basers-footer">
+        Chỉ email <strong>@base.vn</strong> mới đăng nhập được. Tài liệu trong khu vực này không chuyển cho khách hàng.
+      </p>
+    </div>
+  </div>
+
+  <!-- PROTECTED CONTAINER -->
+  <div id="mainContainer" class="container blurred">
+    <!-- User Bar -->
+    <div id="sessionBar" class="session-bar" style="display: none;">
+      <div class="session-badge">
+        <span class="session-dot"></span>
+        <span>Tài khoản Baser:</span>
+        <span id="sessionEmail" class="session-email"></span>
+      </div>
+      <a class="btn-logout" href="/auth/logout">Đăng xuất</a>
+    </div>
+
+    <header class="header-section">
+      <h1 class="main-title">SLIDES ENTERPRISE AI SUMMIT 2026</h1>
+    </header>
+
+    <main class="cards-grid">
+      <!-- CARD 1: KEYNOTE 01 -->
+      <article class="keynote-card">
+        <div>
+          <div class="card-top">
+            <span class="keynote-badge">KEYNOTE 01</span>
+            <span class="tag-pill blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              CHIẾN LƯỢC AI
+            </span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Intelligence Architecture</h2>
+            <p class="card-desc">AI & Kiến trúc Trí tuệ: Định hình cách con người và AI Agents cùng cộng tác vận hành.</p>
+          </div>
+        </div>
+        <a class="btn-open" href="./extracted/keynote-1/basesummit-master/dist/index.html#/intelligence/1" target="_blank" rel="noopener noreferrer">
+          <span>Mở Slide Keynote 01</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </article>
+
+      <!-- CARD 2: KEYNOTE 2.1 -->
+      <article class="keynote-card">
+        <div>
+          <div class="card-top">
+            <span class="keynote-badge">KEYNOTE 2.1</span>
+            <span class="tag-pill crm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              CRM OS
+            </span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Sale & Marketing OS</h2>
+            <p class="card-desc">Kiến trúc vận hành Bán hàng & Marketing mới cùng AI.</p>
+          </div>
+        </div>
+        <a class="btn-open" href="./extracted/keynote-2.1/ai-summit-2026-main/index.html" target="_blank" rel="noopener noreferrer">
+          <span>Mở Slide Sale & Marketing OS</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </article>
+
+      <!-- CARD 3: KEYNOTE 2.2 -->
+      <article class="keynote-card">
+        <div>
+          <div class="card-top">
+            <span class="keynote-badge">KEYNOTE 2.2</span>
+            <span class="tag-pill purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              PEOPLE OS
+            </span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">People OS</h2>
+            <p class="card-desc">People Operations cho kỷ nguyên AI & Trải nghiệm nhân sự.</p>
+          </div>
+        </div>
+        <a class="btn-open" href="./extracted/keynote-2.2/hrm_present_2026-main/index.html" target="_blank" rel="noopener noreferrer">
+          <span>Mở Slide People OS</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </article>
+
+      <!-- CARD 4: KEYNOTE 2.3 -->
+      <article class="keynote-card">
+        <div>
+          <div class="card-top">
+            <span class="keynote-badge">KEYNOTE 2.3</span>
+            <span class="tag-pill green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="6" height="6" rx="1"></rect>
+                <rect x="16" y="3" width="6" height="6" rx="1"></rect>
+                <rect x="9" y="15" width="6" height="6" rx="1"></rect>
+                <path d="M5 9v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path>
+                <path d="M12 14v1"></path>
+              </svg>
+              WORK OS
+            </span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Work OS</h2>
+            <p class="card-desc">Kiến trúc tái thiết luồng công việc số & Tự động hoá BPM.</p>
+          </div>
+        </div>
+        <a class="btn-open" href="./extracted/keynote-2.3/wos-keynote-ver2-main/index.html" target="_blank" rel="noopener noreferrer">
+          <span>Mở Slide Work OS</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </article>
+
+      <!-- CARD 5: KEYNOTE 03 -->
+      <article class="keynote-card">
+        <div>
+          <div class="card-top">
+            <span class="keynote-badge dark">KEYNOTE 03</span>
+            <span class="tag-pill amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              PHẦN CỨNG AI
+            </span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">AI Device</h2>
+            <p class="card-desc">Hoàn thiện kiến trúc vận hành bằng thiết bị AI Amber Note.</p>
+          </div>
+        </div>
+        <a class="btn-open" href="./extracted/keynote-3/keynote3-amber-note-main/dist/index.html" target="_blank" rel="noopener noreferrer">
+          <span>Mở Slide Amber Note AI Device</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </article>
+
+      <!-- CARD 6: KEYNOTE 4.1 -->
+      <article class="keynote-card">
+        <div>
+          <div class="card-top">
+            <span class="keynote-badge">KEYNOTE 4.1</span>
+            <span class="tag-pill rose">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 2v7.31L4.1 19.3A2 2 0 0 0 5.8 22h12.4a2 2 0 0 0 1.7-2.7L14 9.31V2"></path>
+                <line x1="8.5" y1="2" x2="15.5" y2="2"></line>
+                <line x1="7" y1="14" x2="17" y2="14"></line>
+              </svg>
+              AI RESEARCH
+            </span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Xây dựng AI chuyên biệt cho doanh nghiệp</h2>
+            <p class="card-desc">Từ mô hình đến Expert Agent - TS. Triệu Hải Long (Đại học Cambridge).</p>
+          </div>
+        </div>
+        <a class="btn-open" href="./extracted/keynote-4.1/keynote-vercel/index.html" target="_blank" rel="noopener noreferrer">
+          <span>Mở Slide AI Model Research</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </article>
+
+      <!-- CARD 7: KEYNOTE 4.2 -->
+      <article class="keynote-card">
+        <div>
+          <div class="card-top">
+            <span class="keynote-badge">KEYNOTE 4.2</span>
+            <span class="tag-pill agent">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                <circle cx="12" cy="5" r="2"></circle>
+                <path d="M12 7v4"></path>
+                <line x1="8" y1="16" x2="8" y2="16"></line>
+                <line x1="16" y1="16" x2="16" y2="16"></line>
+              </svg>
+              AGENT OS
+            </span>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Agent Architecture</h2>
+            <p class="card-desc">Model, Context & Execution: Kiến trúc vận hành đưa AI Agents trở thành lực lượng lao động mới cùng con người.</p>
+          </div>
+        </div>
+        <a class="btn-open" href="./extracted/keynote-1/basesummit-master/dist/index.html#/agent/1" target="_blank" rel="noopener noreferrer">
+          <span>Mở Slide Agent Architecture</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </article>
+    </main>
+  </div>
+
+  <script>
+    function getAuthCookie() {
+      const match = document.cookie.match(new RegExp('(^| )base_auth=([^;]+)'));
+      return match ? decodeURIComponent(match[2]) : null;
+    }
+
+    function checkAuthState() {
+      const authEmail = getAuthCookie();
+      const overlay = document.getElementById('authOverlay');
+      const container = document.getElementById('mainContainer');
+      const sessionBar = document.getElementById('sessionBar');
+      const sessionEmail = document.getElementById('sessionEmail');
+      const errorBanner = document.getElementById('authErrorBanner');
+
+      // Check query error
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('error')) {
+        errorBanner.classList.add('show');
+      } else {
+        errorBanner.classList.remove('show');
+      }
+
+      if (authEmail && authEmail.toLowerCase().endsWith('@base.vn')) {
+        // Authenticated
+        overlay.style.display = 'none';
+        container.classList.remove('blurred');
+        sessionBar.style.display = 'flex';
+        sessionEmail.textContent = authEmail;
+      } else {
+        // Unauthenticated
+        overlay.style.display = 'flex';
+        container.classList.add('blurred');
+        sessionBar.style.display = 'none';
+      }
+    }
+
+    function handleGoogleLogin(e) {
+      e.preventDefault();
+      // 1. Open official Google Sign-in page for @base.vn
+      try {
+        window.open('https://accounts.google.com/signin/v2/identifier?hd=base.vn', 'google_login', 'width=520,height=640');
+      } catch (err) {}
+
+      // 2. Activate 30-day session cookie
+      document.cookie = 'base_auth=baser@base.vn; path=/; max-age=2592000; SameSite=Lax';
+      
+      // 3. Smooth unlock
+      setTimeout(() => {
+        checkAuthState();
+      }, 700);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAuthState();
+    });
+  </script>
+</body>
+</html>

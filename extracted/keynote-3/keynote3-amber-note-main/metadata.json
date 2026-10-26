@@ -1,0 +1,7 @@
+{
+  "name": "Amber Note - Slide Presentation",
+  "description": "Website trình chiếu slide sản phẩm Amber Note phong cách tối giản, nền trắng thanh lịch, font Afacad mượt mà và hỗ trợ phím tắt điều khiển.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
