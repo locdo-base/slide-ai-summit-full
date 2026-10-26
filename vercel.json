@@ -9,5 +9,15 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/auth/logout",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/auth/google",
+      "destination": "/index.html"
+    }
   ]
 }

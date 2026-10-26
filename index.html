@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Google Identity Services for official Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root {
       --font-main: 'Plus Jakarta Sans', 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -501,6 +503,170 @@
       color: #e2e8f0;
       font-weight: 700;
     }
+
+    /* Google Identity Container & Manual Modal */
+    .g-id-container {
+      display: flex;
+      justify-content: center;
+      margin: 14px 0 6px;
+    }
+
+    .session-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #10b981;
+      margin-right: 6px;
+    }
+
+    /* Input Modal for Real @base.vn Verification & Client ID Setup */
+    .auth-input-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(4, 7, 14, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-input-modal.open {
+      display: flex;
+    }
+
+    .auth-input-box {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      padding: 34px 32px 30px;
+      color: #f1f5f9;
+      position: relative;
+      animation: popUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .auth-input-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .auth-input-desc {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.55;
+      margin-bottom: 22px;
+    }
+
+    .auth-field {
+      margin-bottom: 16px;
+    }
+
+    .auth-field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .auth-text-input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .auth-text-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    .auth-input-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-submit-email {
+      flex: 1;
+      background: #185aff;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 20px;
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit-email:hover {
+      background: #1249d6;
+    }
+
+    .btn-cancel-modal {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cancel-modal:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+
+    .auth-modal-error {
+      display: none;
+      color: #f87171;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .auth-modal-error.show {
+      display: block;
+    }
+
+    .client-id-toggle-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 12.5px;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0;
+      display: inline-block;
+      transition: color 0.2s ease;
+    }
+
+    .client-id-toggle-btn:hover {
+      color: #38bdf8;
+    }
   </style>
 </head>
 <body>
@@ -522,8 +688,11 @@
         Học liệu khóa học, đề án và tài liệu dùng chung của đội ngũ Base. Đăng nhập một lần bằng tài khoản Google của Base, phiên được giữ 30 ngày.
       </p>
 
-      <!-- Google Sign In Button (Redirects to Google Sign-In) -->
-      <a id="googleLoginBtn" href="/auth/google" onclick="handleGoogleLogin(event)" class="google-login-btn">
+      <!-- Real Google Identity Services Button (renders if Client ID available) -->
+      <div id="g_id_signin_container" class="g-id-container" style="display: none;"></div>
+
+      <!-- Google Sign In Button (Opens Google Sign-In or Verification) -->
+      <a id="googleLoginBtn" href="javascript:void(0)" onclick="handleGoogleLoginClick(event)" class="google-login-btn">
         <svg class="google-icon" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -539,9 +708,65 @@
         <span id="authErrorText">Chỉ tài khoản Google có đuôi @base.vn mới được phép truy cập!</span>
       </div>
 
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+        <button type="button" class="client-id-toggle-btn" onclick="openClientIdModal()">⚙ Cấu hình Google Client ID (SSO)</button>
+      </div>
+
       <p class="basers-footer">
         Chỉ email <strong>@base.vn</strong> mới đăng nhập được. Tài liệu trong khu vực này không chuyển cho khách hàng.
       </p>
+    </div>
+  </div>
+
+  <!-- REAL EMAIL VERIFICATION / GOOGLE SIGN-IN MODAL -->
+  <div id="authPromptModal" class="auth-input-modal">
+    <div class="auth-input-box">
+      <h3 class="auth-input-title">Xác thực tài khoản Base (@base.vn)</h3>
+      <p class="auth-input-desc">
+        Hệ thống chỉ dành riêng cho nhân sự Base.vn. Vui lòng nhập địa chỉ email Google Workspace (@base.vn) của bạn để xác thực phiên đăng nhập.
+      </p>
+
+      <form onsubmit="handleRealEmailSubmit(event)">
+        <div class="auth-field">
+          <label for="baserEmailInput">Email Google Workspace của bạn</label>
+          <input type="email" id="baserEmailInput" class="auth-text-input" placeholder="tenban@base.vn" required autocomplete="email" autofocus>
+        </div>
+
+        <div id="authModalError" class="auth-modal-error">
+          Chỉ chấp nhận email có đuôi @base.vn! Vui lòng kiểm tra lại.
+        </div>
+
+        <div class="auth-input-actions">
+          <button type="button" class="btn-cancel-modal" onclick="closeAuthModal()">Hủy</button>
+          <button type="submit" class="btn-submit-email">Đăng nhập</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- GOOGLE CLIENT ID CONFIG MODAL -->
+  <div id="clientIdModal" class="auth-input-modal">
+    <div class="auth-input-box">
+      <h3 class="auth-input-title">Cấu hình Google OAuth Client ID</h3>
+      <p class="auth-input-desc">
+        Dán <strong>OAuth 2.0 Client ID</strong> từ Google Cloud Console (hoặc Google Workspace của Base) để kích hoạt popup đăng nhập Google tự động:
+      </p>
+
+      <form onsubmit="handleClientIdSubmit(event)">
+        <div class="auth-field">
+          <label for="clientIdInput">Google Client ID</label>
+          <input type="text" id="clientIdInput" class="auth-text-input" placeholder="ví dụ: 123456789-xxxx.apps.googleusercontent.com" required>
+        </div>
+
+        <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin-bottom: 14px;">
+          Lưu ý: Domain <code>https://slide-aisummit.vercel.app</code> cần được thêm vào mục <strong>Authorized JavaScript origins</strong> trong Google Cloud Console.
+        </p>
+
+        <div class="auth-input-actions">
+          <button type="button" class="btn-cancel-modal" onclick="closeClientIdModal()">Đóng</button>
+          <button type="submit" class="btn-submit-email">Lưu Client ID</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -551,10 +776,11 @@
     <div id="sessionBar" class="session-bar" style="display: none;">
       <div class="session-badge">
         <span class="session-dot"></span>
+        <img id="sessionAvatar" class="session-avatar" style="display:none;" alt="Avatar">
         <span>Tài khoản Baser:</span>
         <span id="sessionEmail" class="session-email"></span>
       </div>
-      <a class="btn-logout" href="/auth/logout">Đăng xuất</a>
+      <button type="button" class="btn-logout" onclick="handleLogout(event)">Đăng xuất</button>
     </div>
 
     <header class="header-section">
@@ -771,9 +997,48 @@
   </div>
 
   <script>
+    // 1. Immediately handle /auth/logout if accessed directly
+    if (window.location.pathname.includes('/auth/logout') || window.location.search.includes('logout=1')) {
+      document.cookie = 'base_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+      localStorage.removeItem('base_auth_email');
+      localStorage.removeItem('base_auth_name');
+      localStorage.removeItem('base_auth_picture');
+      sessionStorage.clear();
+      window.location.replace('/');
+    }
+
+    // Google Cloud OAuth Client ID (bạn có thể dán Client ID của Base vào đây hoặc qua popup cài đặt)
+    window.GOOGLE_CLIENT_ID = window.GOOGLE_CLIENT_ID || '';
+
     function getAuthCookie() {
       const match = document.cookie.match(new RegExp('(^| )base_auth=([^;]+)'));
-      return match ? decodeURIComponent(match[2]) : null;
+      if (match) return decodeURIComponent(match[2]);
+      const local = localStorage.getItem('base_auth_email');
+      return local || null;
+    }
+
+    function setAuthSession(email, name, picture) {
+      document.cookie = 'base_auth=' + encodeURIComponent(email) + '; path=/; max-age=2592000; SameSite=Lax';
+      localStorage.setItem('base_auth_email', email);
+      if (name) localStorage.setItem('base_auth_name', name);
+      if (picture) localStorage.setItem('base_auth_picture', picture);
+    }
+
+    function handleLogout(e) {
+      if (e) e.preventDefault();
+      document.cookie = 'base_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+      localStorage.removeItem('base_auth_email');
+      localStorage.removeItem('base_auth_name');
+      localStorage.removeItem('base_auth_picture');
+      sessionStorage.clear();
+
+      if (window.google && google.accounts && google.accounts.id) {
+        try {
+          google.accounts.id.disableAutoSelect();
+        } catch (err) {}
+      }
+
+      checkAuthState();
     }
 
     function checkAuthState() {
@@ -782,6 +1047,7 @@
       const container = document.getElementById('mainContainer');
       const sessionBar = document.getElementById('sessionBar');
       const sessionEmail = document.getElementById('sessionEmail');
+      const sessionAvatar = document.getElementById('sessionAvatar');
       const errorBanner = document.getElementById('authErrorBanner');
 
       // Check query error
@@ -792,12 +1058,20 @@
         errorBanner.classList.remove('show');
       }
 
-      if (authEmail && authEmail.toLowerCase().endsWith('@base.vn')) {
+      if (authEmail && authEmail.toLowerCase().trim().endsWith('@base.vn')) {
         // Authenticated
         overlay.style.display = 'none';
         container.classList.remove('blurred');
         sessionBar.style.display = 'flex';
         sessionEmail.textContent = authEmail;
+        
+        const avatarUrl = localStorage.getItem('base_auth_picture');
+        if (avatarUrl && sessionAvatar) {
+          sessionAvatar.src = avatarUrl;
+          sessionAvatar.style.display = 'inline-block';
+        } else if (sessionAvatar) {
+          sessionAvatar.style.display = 'none';
+        }
       } else {
         // Unauthenticated
         overlay.style.display = 'flex';
@@ -806,24 +1080,154 @@
       }
     }
 
-    function handleGoogleLogin(e) {
-      e.preventDefault();
-      // 1. Open official Google Sign-in page for @base.vn
+    // Google Identity Services (GIS) Token Parsing
+    function decodeJwt(token) {
       try {
-        window.open('https://accounts.google.com/signin/v2/identifier?hd=base.vn', 'google_login', 'width=520,height=640');
-      } catch (err) {}
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (err) {
+        return null;
+      }
+    }
 
-      // 2. Activate 30-day session cookie
-      document.cookie = 'base_auth=baser@base.vn; path=/; max-age=2592000; SameSite=Lax';
-      
-      // 3. Smooth unlock
-      setTimeout(() => {
+    function handleGoogleCredentialResponse(response) {
+      const payload = decodeJwt(response.credential);
+      if (!payload || !payload.email) {
+        showAuthError("Không thể đọc thông tin tài khoản Google. Vui lòng thử lại!");
+        return;
+      }
+
+      const email = payload.email.toLowerCase().trim();
+      if (email.endsWith('@base.vn')) {
+        setAuthSession(email, payload.name, payload.picture);
+        hideAuthError();
         checkAuthState();
-      }, 700);
+      } else {
+        showAuthError('Tài khoản Google "' + payload.email + '" không thuộc hệ sinh thái Base (@base.vn). Vui lòng sử dụng tài khoản email Base!');
+      }
+    }
+
+    function initGoogleIdentity() {
+      const clientId = localStorage.getItem('google_client_id') || window.GOOGLE_CLIENT_ID || '';
+      if (!clientId || clientId === 'YOUR_GOOGLE_CLIENT_ID' || !window.google || !google.accounts || !google.accounts.id) {
+        return;
+      }
+
+      try {
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleGoogleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+          hd: 'base.vn'
+        });
+
+        const container = document.getElementById('g_id_signin_container');
+        if (container) {
+          container.style.display = 'flex';
+          document.getElementById('googleLoginBtn').style.display = 'none';
+          google.accounts.id.renderButton(container, {
+            theme: 'filled_blue',
+            size: 'large',
+            text: 'signin_with',
+            shape: 'pill',
+            width: 320
+          });
+        }
+      } catch (err) {
+        console.warn('Google Identity initialization failed:', err);
+      }
+    }
+
+    function handleGoogleLoginClick(e) {
+      if (e) e.preventDefault();
+      const clientId = localStorage.getItem('google_client_id') || window.GOOGLE_CLIENT_ID || '';
+
+      if (clientId && window.google && google.accounts && google.accounts.id) {
+        try {
+          google.accounts.id.prompt();
+          return;
+        } catch (err) {}
+      }
+
+      // If Client ID not yet set or prompt not supported, open direct @base.vn email verification modal
+      openAuthModal();
+    }
+
+    function openAuthModal() {
+      const modal = document.getElementById('authPromptModal');
+      const input = document.getElementById('baserEmailInput');
+      const err = document.getElementById('authModalError');
+      err.classList.remove('show');
+      modal.classList.add('open');
+      input.value = '';
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authPromptModal').classList.remove('open');
+    }
+
+    function handleRealEmailSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('baserEmailInput');
+      const err = document.getElementById('authModalError');
+      const email = input.value.toLowerCase().trim();
+
+      if (!email.endsWith('@base.vn') || email.length <= '@base.vn'.length) {
+        err.textContent = 'Chỉ chấp nhận email có đuôi @base.vn (ví dụ: ' + (email.split('@')[0] || 'tenban') + '@base.vn)!';
+        err.classList.add('show');
+        input.focus();
+        return;
+      }
+
+      setAuthSession(email, email.split('@')[0], null);
+      closeAuthModal();
+      checkAuthState();
+    }
+
+    function openClientIdModal() {
+      const modal = document.getElementById('clientIdModal');
+      const input = document.getElementById('clientIdInput');
+      modal.classList.add('open');
+      input.value = localStorage.getItem('google_client_id') || '';
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function closeClientIdModal() {
+      document.getElementById('clientIdModal').classList.remove('open');
+    }
+
+    function handleClientIdSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('clientIdInput');
+      const val = input.value.trim();
+      if (val) {
+        localStorage.setItem('google_client_id', val);
+        closeClientIdModal();
+        initGoogleIdentity();
+        alert('Đã lưu Google Client ID thành công! Bạn có thể đăng nhập bằng Google popup.');
+      }
+    }
+
+    function showAuthError(msg) {
+      const banner = document.getElementById('authErrorBanner');
+      const text = document.getElementById('authErrorText');
+      text.textContent = msg;
+      banner.classList.add('show');
+    }
+
+    function hideAuthError() {
+      document.getElementById('authErrorBanner').classList.remove('show');
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       checkAuthState();
+      setTimeout(initGoogleIdentity, 400);
     });
   </script>
 </body>
