@@ -1,0 +1,1477 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Amber Note Insights Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ app tokens (Amber Note dashboard) ============ */
+  :root{
+    color-scheme: light;
+    --surface-page:#ffffff;
+    --surface-card:#ffffff;
+    --surface-sunken:#f2f1ec;
+    --ink:#0b0b0b;
+    --ink-2:#52514e;
+    --ink-muted:#898781;
+    --grid:#e1e0d9;
+    --baseline:#c3c2b7;
+    --border: rgba(11,11,11,.10);
+    --accent:#2a78d6;
+    --accent-wash:#e8f1fc;
+    --accent-600:#1c5cab;
+    --amber:#d97706;
+    --amber-wash:#fdf1de;
+    --good:#0ca30c;
+    --good-wash:#e6f7e6;
+    --shadow: 0 1px 2px rgba(20,20,18,.04), 0 8px 24px -14px rgba(20,20,18,.18);
+
+    /* recorder chrome (always dark/light per stage, independent of app theme) */
+    --stage-bg:#ffffff;
+    --stage-bg-2:#f3f5fa;
+    --stage-ink:#1c2130;
+    --stage-muted:#7d8494;
+    --stage-border:#e4e7ee;
+    --rec:#ff4d4f;
+    --scrub:#2f6fed;
+    --stage-accent:#5b8cff;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --surface-page:#0d0d0d;
+      --surface-card:#1a1a19;
+      --surface-sunken:#141413;
+      --ink:#ffffff;
+      --ink-2:#c3c2b7;
+      --ink-muted:#898781;
+      --grid:#2c2c2a;
+      --baseline:#383835;
+      --border: rgba(255,255,255,.10);
+      --accent:#3987e5;
+      --accent-wash: rgba(57,135,229,.16);
+      --accent-600:#86b6ef;
+      --amber:#fbbf24;
+      --amber-wash: rgba(251,191,36,.16);
+      --good:#0ca30c;
+      --good-wash: rgba(12,163,12,.18);
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --surface-page:#0d0d0d;
+    --surface-card:#1a1a19;
+    --surface-sunken:#141413;
+    --ink:#ffffff;
+    --ink-2:#c3c2b7;
+    --ink-muted:#898781;
+    --grid:#2c2c2a;
+    --baseline:#383835;
+    --border: rgba(255,255,255,.10);
+    --accent:#3987e5;
+    --accent-wash: rgba(57,135,229,.16);
+    --accent-600:#86b6ef;
+    --amber:#fbbf24;
+    --amber-wash: rgba(251,191,36,.16);
+    --good:#0ca30c;
+    --good-wash: rgba(12,163,12,.18);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.5);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; height:100%; overflow:hidden; }
+  body{
+    background: radial-gradient(circle at 10% 15%, #f8faff 0%, #edf2f9 100%);
+    color:var(--stage-ink);
+    font-family:'Manrope','Segoe UI',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    height: 100%;
+    padding: 10px 14px;
+    box-sizing: border-box;
+  }
+  button, input, select, textarea{ font-family:inherit; }
+  button{ cursor:pointer; }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  .mono{ font-family:'JetBrains Mono',ui-monospace,Menlo,monospace; }
+  .tabnum{ font-variant-numeric:tabular-nums; }
+  .icon{ width:16px; height:16px; display:block; }
+
+  /* ============ recorder chrome (Side-by-side Hero Layout) ============ */
+  .layout{
+    width: min(1560px, 100%);
+    height: 100%;
+    max-height: 100%;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 14px;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  .recorder-top{
+    display: none; /* Merged into left sidebar layout */
+  }
+
+  .stage{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+  }
+
+  .sidebar{
+    order: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .sidebar-header-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .badge-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--accent-wash);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    width: fit-content;
+  }
+
+  .sidebar-hero-title {
+    font-family: 'Sora', 'Segoe UI', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.25;
+    letter-spacing: -.02em;
+    color: var(--stage-ink);
+  }
+
+  .sidebar__title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--stage-muted);
+    margin-top: 2px;
+  }
+
+  .rec-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--rec);
+    animation:recPulse 1.4s ease-in-out infinite;
+  }
+  @keyframes recPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+
+  .browser-frame{
+    position:relative;
+    width:100%;
+    height:100%;
+    max-height:100%;
+    border-radius:14px;
+    overflow:hidden;
+    background:var(--surface-page);
+    box-shadow:0 16px 40px -12px rgba(15,23,42,.15), 0 0 0 1px rgba(15,23,42,.08);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .browser-frame__bar{
+    height:36px;
+    flex:0 0 36px;
+    background:var(--stage-bg-2);
+    border-bottom:1px solid var(--stage-border);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:0 14px;
+  }
+  .traffic{ display:flex; gap:6px; }
+  .traffic i{ width:10px; height:10px; border-radius:50%; display:block; }
+  .traffic i:nth-child(1){ background:#ff5f57; }
+  .traffic i:nth-child(2){ background:#febc2e; }
+  .traffic i:nth-child(3){ background:#28c840; }
+  .browser-frame__url{
+    flex:1; height:24px; border-radius:7px; background:var(--surface-card); border:1px solid var(--stage-border);
+    display:flex; align-items:center; justify-content:flex-start; gap:6px; font-size:11px; color:var(--stage-muted);
+    max-width:340px; margin:0 auto; padding: 0 10px;
+  }
+  .browser-frame__url .icon{ width:11px; height:11px; }
+  .browser-frame__viewport{
+    position:absolute; left:0; right:0; top:36px; bottom:0; overflow-y:auto; overflow-x:hidden;
+    background:var(--surface-page);
+  }
+
+  .finger{ position:absolute; left:0; top:0; opacity:0; z-index:60; pointer-events:none; transform:translate(-50%,-50%); }
+  .finger__dot{ width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffffff, #d8dee9 60%, #b7c0d1); box-shadow:0 4px 10px rgba(20,25,40,.35), 0 0 0 1px rgba(20,25,40,.08); }
+  .finger__ring{ position:absolute; inset:-7px; border-radius:50%; border:2px solid var(--accent); opacity:0; }
+  .finger--press .finger__dot{ transform:scale(.82); }
+  .finger--press .finger__ring{ animation:fingerRipple .5s ease-out; }
+  @keyframes fingerRipple{ from{ opacity:.65; transform:scale(.4); } to{ opacity:0; transform:scale(1.7); } }
+
+  .pulse-target{ position:relative; }
+  .pulse-target.is-pulsing::after{ content:''; position:absolute; inset:-6px; border-radius:inherit; border:2px solid var(--stage-accent); opacity:0; animation:pulseRing 1.4s ease-out infinite; }
+  @keyframes pulseRing{ 0%{ opacity:.6; transform:scale(.9); } 100%{ opacity:0; transform:scale(1.3); } }
+
+  .caption-panel {
+    background: #ffffff;
+    border: 1px solid var(--stage-border);
+    border-radius: 11px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    box-shadow: 0 3px 10px -2px rgba(0,0,0,.04);
+  }
+  .caption{ text-align:left; font-size:12px; font-weight:700; color:var(--stage-ink); }
+  .caption-next{ text-align:left; font-size:11px; font-weight:500; color:var(--stage-muted); }
+  .caption-next strong{ color:var(--stage-accent); font-weight:700; }
+
+  .scrubber{ display:flex; align-items: center; justify-content: space-between; gap:10px; margin-top: 2px; }
+  .controls{ display:flex; align-items: center; gap:6px; }
+  .ctrl-btn{ width:30px; height:30px; border-radius:50%; border:1px solid var(--stage-border); background:var(--stage-bg-2); color:var(--stage-ink); font-size:12px; display:flex; align-items:center; justify-content:center; transition: all .15s ease; }
+  .ctrl-btn:hover{ background:#e7eaf2; transform: scale(1.05); }
+  .ctrl-btn:active{ transform:scale(.95); }
+  .sidebar-timer { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--stage-muted); font-variant-numeric:tabular-nums; }
+
+  .step-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap: 5px; }
+  .step-item{
+    position:relative; width:100%; display:flex; align-items:center; gap:9px; padding:6px 10px;
+    border:1px solid var(--stage-border); border-radius: 9px;
+    background: #ffffff; text-align:left; font-size:11.5px; font-weight:600; color:var(--stage-ink);
+    overflow:hidden; transition: all .2s ease; cursor: pointer;
+  }
+  .step-item:hover{ background:var(--stage-bg-2); border-color: rgba(91,140,255,.3); transform: translateX(2px); }
+  .step-item__fill{ position:absolute; left:0; bottom:0; height:2.5px; width:0%; background:var(--stage-accent); pointer-events:none; will-change:width; border-radius:0 2px 2px 0; }
+  .step-item__num, .step-item__label{ position:relative; z-index:1; }
+  .step-item__num{ width:19px; height:19px; border-radius:50%; background:var(--stage-bg-2); color:var(--stage-muted); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex:0 0 auto; transition:background .2s ease, color .2s ease; }
+  .step-item__label{ flex:1; transition:color .2s ease; line-height: 1.3; }
+  .step-item.is-current { border-color: var(--stage-accent); background: #ffffff; box-shadow: 0 3px 10px rgba(91, 140, 255, 0.15); }
+  .step-item.is-current .step-item__num{ background:var(--stage-accent); color:#fff; }
+  .step-item.is-current .step-item__label{ color:var(--stage-accent); font-weight: 700; }
+  .step-item.is-done .step-item__num{ background: var(--good); color: #fff; }
+  .step-item.is-done .step-item__fill{ opacity:0; }
+
+  @media (max-width:1080px){
+    .layout{ grid-template-columns: 1fr; }
+    .browser-frame{ height:100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  }
+
+  /* ============ Amber Note app (unchanged component styles) ============ */
+  .topbar{
+    position:sticky; top:0; z-index:10; background:var(--surface-card); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:12px; padding:8px 18px;
+  }
+  .brand{ display:flex; align-items:center; gap:8px; }
+  .brand__mark{
+    width:28px; height:28px; border-radius:8px; flex:0 0 auto;
+    background:linear-gradient(160deg,#fbbf24 0%, var(--amber) 100%);
+    display:flex; align-items:center; justify-content:center; gap:2.5px;
+  }
+  .brand__mark i{ display:block; width:3.5px; border-radius:2px; background:#fff; }
+  .brand__mark i:nth-child(1){ height:7px; }
+  .brand__mark i:nth-child(2){ height:14px; }
+  .brand__mark i:nth-child(3){ height:10px; }
+  .brand__name{ font-size:14px; font-weight:800; letter-spacing:-.01em; color:var(--ink); }
+  .source-pill{
+    display:flex; align-items:center; gap:5px; background:var(--surface-sunken); border-radius:999px;
+    padding:4px 10px; font-size:11.5px; color:var(--ink-2); font-weight:600;
+  }
+  .source-pill strong{ color:var(--ink); font-weight:800; }
+  .topbar__spacer{ flex:1; }
+  .btn-new{
+    height:32px; padding:0 14px; border-radius:9px; border:none;
+    background:var(--accent); color:#fff; font-size:12px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .btn-new .icon{ width:13px; height:13px; }
+  .btn-new:hover{ background:var(--accent-600); }
+
+  .main{ max-width:1080px; margin:0 auto; padding:14px 18px 40px; }
+  .page-head{ margin-bottom:10px; }
+  .page-head h1{ font-size:19px; font-weight:800; letter-spacing:-.01em; margin:0 0 3px; text-wrap:balance; color:var(--ink); }
+  .page-head p{ font-size:12px; color:var(--ink-2); margin:0; max-width:64ch; line-height:1.45; }
+
+  .filter-row{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    margin:10px 0 12px; padding-bottom:10px; border-bottom:1px solid var(--border);
+  }
+  .seg{ display:flex; background:var(--surface-sunken); border-radius:9px; padding:2px; gap:2px; }
+  .seg__btn{ border:none; background:transparent; padding:5px 10px; border-radius:7px; font-size:11.5px; font-weight:700; color:var(--ink-2); }
+  .seg__btn.is-active{ background:var(--surface-card); color:var(--ink); box-shadow:var(--shadow); }
+  .select{
+    height:30px; padding:0 26px 0 10px; border-radius:9px; border:1px solid var(--border);
+    background:var(--surface-card) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="%23898781" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat right 7px center/14px;
+    color:var(--ink); font-size:11.5px; font-weight:600; appearance:none;
+  }
+  .search-wrap{ position:relative; flex:1 1 200px; min-width:160px; max-width:320px; }
+  .search-wrap .icon{ position:absolute; left:9px; top:50%; transform:translateY(-50%); width:13px; height:13px; color:var(--ink-muted); }
+  .search-input{
+    width:100%; height:30px; border-radius:9px; border:1px solid var(--border);
+    background:var(--surface-card); color:var(--ink); padding:0 10px 0 28px; font-size:11.5px;
+  }
+  .search-input::placeholder{ color:var(--ink-muted); }
+  .filter-count{ margin-left:auto; font-size:11px; color:var(--ink-muted); }
+  .filter-count strong{ color:var(--ink-2); font-weight:700; }
+
+  .kpi-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:12px; }
+  .kpi-tile{ background:var(--surface-card); border:1px solid var(--border); border-radius:12px; padding:10px 12px; box-shadow:var(--shadow); }
+  .kpi-tile__label{ font-size:11px; color:var(--ink-muted); font-weight:600; }
+  .kpi-tile__value{ font-size:20px; font-weight:800; margin-top:2px; letter-spacing:-.01em; color:var(--ink); }
+  .kpi-tile__sub{ font-size:11px; color:var(--ink-2); margin-top:2px; display:flex; align-items:center; gap:4px; }
+  .kpi-tile__delta{ color:var(--good); font-weight:700; display:inline-flex; align-items:center; gap:2px; }
+  .kpi-tile__delta .icon{ width:10px; height:10px; }
+  .kpi-tile__spark{ margin-top:6px; height:24px; }
+
+  .chart-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:760px){ .chart-grid{ grid-template-columns:1fr; } }
+  .card{ background:var(--surface-card); border:1px solid var(--border); border-radius:13px; padding:12px 14px 10px; box-shadow:var(--shadow); }
+  .card__head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px; gap:8px; }
+  .card__title{ font-size:12.5px; font-weight:700; color:var(--ink); }
+  .card__note{ font-size:11px; color:var(--ink-muted); }
+
+  .trend-wrap{ position:relative; }
+  .trend-svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .trend-crosshair{ stroke:var(--baseline); stroke-width:1; }
+  .trend-tooltip{
+    position:absolute; pointer-events:none; background:var(--ink); color:var(--surface-card);
+    padding:7px 10px; border-radius:9px; font-size:11.5px; line-height:1.4; opacity:0; transform:translate(-50%,-6px);
+    transition:opacity .12s ease; white-space:nowrap; z-index:5;
+  }
+  .trend-tooltip.is-visible{ opacity:1; }
+  .trend-tooltip b{ font-size:13px; }
+
+  .bars{ display:flex; flex-direction:column; gap:10px; padding:4px 0 8px; }
+  .bar-row{ display:grid; grid-template-columns:112px 1fr 64px; align-items:center; gap:10px; position:relative; }
+  .bar-row__label{ font-size:12px; color:var(--ink-2); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bar-row__track{ height:24px; background:var(--surface-sunken); border-radius:5px; position:relative; }
+  .bar-row__fill{ position:absolute; left:0; top:0; bottom:0; border-radius:5px; background:var(--accent); transition:width .3s ease, filter .15s ease; }
+  .bar-row:hover .bar-row__fill{ filter:brightness(1.08); }
+  .bar-row__value{ font-size:12.5px; font-weight:700; text-align:right; color:var(--ink); }
+  .bar-tooltip{
+    position:absolute; pointer-events:none; background:var(--ink); color:var(--surface-card);
+    padding:6px 10px; border-radius:8px; font-size:11.5px; opacity:0; transition:opacity .12s ease;
+    left:50%; top:-8px; transform:translate(-50%,-100%); white-space:nowrap; z-index:5;
+  }
+  .bar-row:hover .bar-tooltip{ opacity:1; }
+  .empty-note{ padding:32px; text-align:center; color:var(--ink-muted); font-size:13px; }
+
+  .sections{ display:flex; flex-direction:column; gap:16px; margin-top:22px; }
+  #sectionsList{ display:flex; flex-direction:column; gap:32px; }
+  .sections__head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
+  .sections__title{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-muted); }
+  .section-card{
+    background:var(--surface-card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px 20px 16px;
+    box-shadow:var(--shadow);
+    transition: border-color .3s ease, box-shadow .3s ease;
+  }
+  .section-card.is-newly-added{
+    animation: sectionBorderGlow 1.2s ease-in-out 4 alternate;
+  }
+  @keyframes sectionBorderGlow{
+    0% {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 4px 14px rgba(42,120,214,.18);
+    }
+    100% {
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 4px rgba(251,191,36,.45), 0 12px 36px rgba(217,119,6,.28);
+    }
+  }
+  .section-card__top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:4px; }
+  .section-card__name{ font-size:16px; font-weight:800; margin:0; color:var(--ink); }
+  .section-card__meta{ font-size:11.5px; color:var(--ink-muted); margin-top:2px; }
+  .section-card__desc{ font-size:12.5px; color:var(--ink-2); margin:6px 0 0; max-width:64ch; line-height:1.5; }
+  .prompt-pill{
+    display:inline-flex; align-items:center; gap:7px; margin-top:9px; padding:5px 11px;
+    background:var(--amber-wash); color:var(--amber); border-radius:999px; font-size:11.5px; font-weight:600;
+    max-width:100%;
+  }
+  .prompt-pill .icon{ width:12px; height:12px; flex:0 0 auto; }
+  .prompt-pill span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .section-card__remove{
+    flex:0 0 auto; width:28px; height:28px; border-radius:9px; border:1px solid var(--border);
+    background:transparent; color:var(--ink-muted); display:flex; align-items:center; justify-content:center;
+  }
+  .section-card__remove:hover{ background:var(--surface-sunken); color:var(--ink); }
+  .section-card__body{ margin-top:14px; }
+
+  .empty-state{
+    border:1px dashed var(--border); border-radius:18px; padding:34px 24px; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .empty-state__icon{
+    width:40px; height:40px; border-radius:12px; background:var(--amber-wash); color:var(--amber);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .empty-state h3{ font-size:15px; font-weight:800; margin:0; color:var(--ink); }
+  .empty-state p{ font-size:13px; color:var(--ink-muted); margin:0; max-width:44ch; line-height:1.5; }
+
+  .modal-overlay{
+    position:absolute; inset:0; background:rgba(10,10,9,.45); display:flex; align-items:center; justify-content:center;
+    padding:20px; z-index:50; opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .modal-overlay.is-open{ opacity:1; pointer-events:auto; }
+  .modal{
+    width:min(440px,100%); background:var(--surface-card); border-radius:18px; padding:22px 22px 20px;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.4); transform:translateY(10px); transition:transform .2s ease;
+    max-height:88%; overflow-y:auto;
+  }
+  .modal-overlay.is-open .modal{ transform:translateY(0); }
+  .modal__title{ font-size:17px; font-weight:800; margin:0 0 3px; color:var(--ink); }
+  .modal__sub{ font-size:12.5px; color:var(--ink-muted); margin:0 0 16px; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:12px; font-weight:700; color:var(--ink-2); margin-bottom:6px; }
+  .field input, .field textarea{
+    width:100%; border-radius:11px; border:1px solid var(--border); background:var(--surface-page);
+    color:var(--ink); padding:9px 12px; font-size:13px; resize:vertical;
+  }
+  .field textarea{ min-height:56px; line-height:1.5; }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
+  .chip{
+    border:1px solid var(--border); background:var(--surface-page); color:var(--ink-2);
+    font-size:11.5px; font-weight:600; padding:6px 11px; border-radius:999px;
+  }
+  .chip:hover{ background:var(--amber-wash); border-color:transparent; color:var(--amber); }
+  .modal__actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
+  .btn-ghost{ height:38px; padding:0 16px; border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--ink-2); font-size:13px; font-weight:700; }
+  .btn-primary{ height:38px; padding:0 18px; border-radius:10px; border:none; background:var(--accent); color:#fff; font-size:13px; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .btn-primary:hover{ background:var(--accent-600); }
+  .btn-primary:disabled{ opacity:.6; cursor:default; }
+  .progress-note{ display:none; align-items:center; gap:9px; font-size:12.5px; color:var(--ink-2); margin-top:14px; padding:10px 12px; background:var(--surface-sunken); border-radius:10px; }
+  .progress-note.is-visible{ display:flex; }
+  .spinner{ width:14px; height:14px; border-radius:50%; border:2px solid var(--border); border-top-color:var(--accent); animation:spin .8s linear infinite; flex:0 0 auto; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- LEFT COLUMN: Steps, Captions, Controls -->
+  <aside class="sidebar">
+    <div class="sidebar-header-block">
+      <div class="badge-kicker">
+        <span class="rec-dot" aria-hidden="true"></span>
+        <span>Amber Note · Insights</span>
+      </div>
+      <h1 class="sidebar-hero-title">Amber Note Insights — Thêm Phần Phân Tích</h1>
+    </div>
+
+    <span class="sidebar__title">Các bước thao tác</span>
+    <ol class="step-list" id="stepList"></ol>
+
+    <div class="caption-panel">
+      <div class="caption" id="caption">Đang tải demo…</div>
+      <div class="caption-next" id="captionNext"></div>
+    </div>
+
+    <div class="scrubber">
+      <div class="controls">
+        <button class="ctrl-btn" id="btnPlay" aria-label="Tạm dừng">⏸</button>
+        <button class="ctrl-btn" id="btnReplay" aria-label="Phát lại">⟲</button>
+      </div>
+      <div class="sidebar-timer" id="timer">00:00 / 00:00</div>
+    </div>
+  </aside>
+
+  <!-- RIGHT COLUMN: Amber Note Browser Frame Demo -->
+  <div class="stage">
+    <div class="browser-frame" id="browserFrame">
+      <div class="browser-frame__bar">
+        <div class="traffic"><i></i><i></i><i></i></div>
+        <div class="browser-frame__url">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M6 10V7a6 6 0 0 1 12 0v3M5 10h14v10H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          amber-note.internal/dashboard
+        </div>
+      </div>
+
+      <div class="browser-frame__viewport" id="appViewport">
+
+        <svg style="position:absolute;width:0;height:0;overflow:hidden">
+          <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+          <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3 L14 10 L21 12 L14 14 L12 21 L10 14 L3 12 L10 10 Z" fill="currentColor"/></symbol>
+          <symbol id="i-deal" viewBox="0 0 24 24"><path d="M9 12.5 11 15 16 8.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+          <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+          <symbol id="i-close" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+          <symbol id="i-up" viewBox="0 0 24 24"><path d="M4 16 L12 8 L20 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+        </svg>
+
+        <div class="topbar">
+          <div class="brand">
+            <div class="brand__mark"><i></i><i></i><i></i></div>
+            <span class="brand__name">Amber Note</span>
+          </div>
+          <div class="source-pill"><strong class="tabnum" id="sourceCount">—</strong>&nbsp;file ghi âm đã transcript</div>
+          <div class="topbar__spacer"></div>
+          <button class="btn-new pulse-target" id="btnNewSection">
+            <svg class="icon" viewBox="0 0 24 24"><use href="#i-plus"></use></svg>
+            Thêm phần phân tích
+          </button>
+        </div>
+
+        <main class="main">
+          <div class="page-head">
+            <h1>Dashboard file ghi âm</h1>
+            <p>Toàn bộ file ghi âm cuộc gọi đã được transcript tự động. Lọc, tìm kiếm và thêm phần phân tích bằng prompt bên dưới.</p>
+          </div>
+
+          <div class="filter-row">
+            <div class="seg" id="rangeSeg">
+              <button type="button" class="seg__btn" data-range="7">7 ngày</button>
+              <button type="button" class="seg__btn" data-range="14">14 ngày</button>
+              <button type="button" class="seg__btn is-active" data-range="30">30 ngày</button>
+            </div>
+            <select class="select" id="channelSelect">
+              <option value="all">Tất cả kênh</option>
+              <option value="Điện thoại">Điện thoại</option>
+              <option value="Zalo">Zalo</option>
+              <option value="Facebook">Facebook</option>
+              <option value="WhatsApp">WhatsApp</option>
+            </select>
+            <div class="search-wrap">
+              <svg class="icon" viewBox="0 0 24 24"><use href="#i-search"></use></svg>
+              <input type="text" class="search-input" id="searchInput" placeholder="Tìm số điện thoại, nhân viên, nội dung transcript…" />
+            </div>
+            <span class="filter-count" id="filterCount"></span>
+          </div>
+
+          <div class="kpi-row" id="baseKpiRow"></div>
+
+          <div class="card">
+            <div class="card__head"><span class="card__title">File ghi âm theo ngày</span><span class="card__note" id="trendNote">30 ngày gần nhất</span></div>
+            <div id="baseTrend"></div>
+          </div>
+
+          <div class="sections">
+            <div class="sections__head"><span class="sections__title">Phần phân tích</span></div>
+            <div id="sectionsList"></div>
+          </div>
+        </main>
+
+      </div>
+
+      <!-- Sibling of the scrollable viewport (not inside it) so the modal
+           stays centered on the frame regardless of scroll position. -->
+      <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+          <h2 class="modal__title">Thêm phần phân tích mới</h2>
+          <p class="modal__sub">AI sẽ quét toàn bộ file ghi âm đã transcript và thêm phần phân tích này vào dashboard.</p>
+
+          <div class="field">
+            <label for="inputName">Tên phần phân tích</label>
+            <input type="text" id="inputName" placeholder="VD: Chào sản phẩm mới tháng 9" />
+          </div>
+          <div class="field">
+            <label for="inputContent">Nội dung theo dõi</label>
+            <textarea id="inputContent" placeholder="Mô tả ngắn về dữ liệu phần này cần theo dõi..."></textarea>
+          </div>
+          <div class="field">
+            <label for="inputPrompt">Prompt cho AI</label>
+            <textarea id="inputPrompt" placeholder="VD: Thống kê số file ghi âm có chào sản phẩm mới, theo ngày, theo sản phẩm và theo nhân viên tư vấn"></textarea>
+            <div class="chip-row">
+              <button type="button" class="chip" data-suggest="new_product">Gợi ý: Chào sản phẩm mới</button>
+              <button type="button" class="chip" data-suggest="deal_closed">Gợi ý: Chốt deal thành công</button>
+            </div>
+          </div>
+
+          <div class="progress-note" id="progressNote">
+            <span class="spinner"></span>
+            <span id="progressText">Đang quét file ghi âm…</span>
+          </div>
+
+          <div class="modal__actions">
+            <button type="button" class="btn-ghost" id="btnCancelModal">Hủy</button>
+            <button type="button" class="btn-primary" id="btnSubmitModal">
+              <svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><use href="#i-sparkle"></use></svg>
+              Thêm vào dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="finger" id="finger"><div class="finger__ring"></div><div class="finger__dot"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   Amber Note dashboard app — unmodified product logic.
+   ============================================================ */
+(function(){
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rand = mulberry32(20260601);
+  function pick(arr){ return arr[Math.floor(rand()*arr.length)]; }
+  function pickWeighted(pairs){
+    const total = pairs.reduce((s,p)=>s+p[1],0);
+    let r = rand()*total;
+    for(const p of pairs){ if(r < p[1]) return p[0]; r -= p[1]; }
+    return pairs[pairs.length-1][0];
+  }
+  function randInt(min,max){ return Math.floor(rand()*(max-min+1))+min; }
+
+  const EMPLOYEES = ['Minh Anh','Quốc Huy','Thu Trang','Đức Long','Ngọc Hà','Bảo Châu'];
+  const CHANNELS = [['Điện thoại',35],['Zalo',30],['Facebook',20],['WhatsApp',15]];
+  const NEW_PRODUCTS = [
+    ['Máy lọc nước AquaPro X2', 38],
+    ['Nồi chiên không dầu SmartFry S3', 26],
+    ['Robot hút bụi CleanBot Mini', 16],
+    ['Loa Bluetooth SoundWave 5', 12],
+    ['Đèn sưởi nhà tắm WarmLight Pro', 8],
+  ];
+  const OTHER_TOPICS = ['Bảo hành sản phẩm','Hướng dẫn sử dụng','Đổi trả hàng','Khiếu nại giao hàng chậm','Hỏi thông tin đơn hàng'];
+
+  const PITCH_SNIPPETS = [
+    'Dạ bên em vừa ra mắt {product}, anh/chị có muốn nghe qua tính năng mới không ạ?',
+    'Ngoài đơn hàng cũ, em giới thiệu thêm {product} đang có ưu đãi ra mắt ạ.',
+    'Sản phẩm {product} mới về, em gửi anh/chị thông tin để tham khảo nhé.',
+    'Bên em mới bổ sung {product} vào danh mục, rất phù hợp nhu cầu anh/chị đang hỏi.',
+  ];
+  const CLOSED_SNIPPETS = [
+    'Dạ vâng em chốt đơn {product} cho anh/chị nhé, bên em lên đơn ngay ạ.',
+    'Anh/chị đồng ý rồi ạ, em xác nhận chốt {product} và gửi thông tin thanh toán.',
+    'Dạ em ghi nhận chốt đơn, {product} sẽ được giao trong 2-3 ngày ạ.',
+    'Cảm ơn anh/chị đã tin tưởng, đơn {product} đã được chốt thành công.',
+  ];
+  const PLAIN_SALES_SNIPPETS = [
+    'Anh/chị cho em xin lại địa chỉ để tư vấn gói phù hợp ạ.',
+    'Bên em có vài mẫu đang bán chạy, để em gửi anh/chị so sánh nhé.',
+    'Em ghi nhận nhu cầu, để em báo giá lại qua Zalo cho anh/chị ạ.',
+    'Dạ anh/chị cứ tham khảo thêm, khi nào quyết định cứ liên hệ em nhé.',
+  ];
+  const SUPPORT_SNIPPETS = [
+    'Dạ em kiểm tra lại đơn hàng giúp anh/chị ngay ạ.',
+    'Sản phẩm còn bảo hành, bên em sẽ cử kỹ thuật qua kiểm tra ạ.',
+    'Em xin lỗi vì sự bất tiện, đơn hàng sẽ được giao lại trong hôm nay.',
+    'Dạ anh/chị đọc giúp em mã sản phẩm để em hỗ trợ đổi trả ạ.',
+  ];
+
+  function fillTpl(tpl, product){ return tpl.replace('{product}', product); }
+
+  const TOTAL_DAYS = 30;
+  const records = [];
+  let uid = 1;
+  for(let dayOffset = TOTAL_DAYS-1; dayOffset >= 0; dayOffset--){
+    const d = new Date();
+    d.setHours(0,0,0,0);
+    d.setDate(d.getDate()-dayOffset);
+    const dow = d.getDay();
+    const isWeekend = dow===0 || dow===6;
+    const baseCalls = isWeekend ? 34 : 66;
+    const callsToday = baseCalls + randInt(-8,10);
+    const recencyBoost = (TOTAL_DAYS-1-dayOffset)/(TOTAL_DAYS-1);
+    const pitchProb = 0.12 + recencyBoost*0.30;
+    const closeBoostBase = 0.28 + recencyBoost*0.08;
+
+    for(let i=0;i<callsToday;i++){
+      const type = rand() < 0.65 ? 'sales' : 'support';
+      const channel = pickWeighted(CHANNELS);
+      const employee = pick(EMPLOYEES);
+      const hour = randInt(8,20);
+      const minute = randInt(0,59);
+      const ts = new Date(d);
+      ts.setHours(hour, minute, randInt(0,59));
+
+      let newProductPitch = false, product = null, dealClosed = false, dealValue = 0, transcript = '', duration = 0;
+
+      if(type === 'support'){
+        duration = randInt(60,420);
+        transcript = pick(SUPPORT_SNIPPETS);
+      } else {
+        newProductPitch = rand() < pitchProb;
+        if(newProductPitch){
+          product = pickWeighted(NEW_PRODUCTS);
+        } else if(rand() < 0.5){
+          product = pick(OTHER_TOPICS);
+        }
+        const closeProb = newProductPitch ? (closeBoostBase+0.22) : closeBoostBase;
+        dealClosed = rand() < closeProb;
+        if(dealClosed){
+          const base = newProductPitch ? randInt(1_200_000, 15_000_000) : randInt(400_000, 6_000_000);
+          dealValue = base;
+          duration = randInt(240,900);
+          transcript = fillTpl(pick(CLOSED_SNIPPETS), product || 'sản phẩm');
+        } else if(newProductPitch){
+          duration = randInt(120,540);
+          transcript = fillTpl(pick(PITCH_SNIPPETS), product);
+        } else {
+          duration = randInt(90,480);
+          transcript = pick(PLAIN_SALES_SNIPPETS);
+        }
+      }
+
+      records.push({
+        id: uid++,
+        ts,
+        dayKey: ts.toISOString().slice(0,10),
+        channel, employee, type,
+        newProductPitch, product, dealClosed, dealValue, duration,
+        phone: '09' + randInt(10,49) + ' ' + String(randInt(100,999)) + ' ' + String(randInt(100,999)),
+        transcript,
+      });
+    }
+  }
+  records.sort((a,b)=> a.ts - b.ts);
+
+  function fmtInt(n){ return n.toLocaleString('vi-VN'); }
+  function fmtPct(n){ return (Math.round(n*10)/10).toLocaleString('vi-VN') + '%'; }
+  function fmtDuration(sec){
+    const h = sec/3600;
+    if(h >= 1) return (Math.round(h*10)/10).toLocaleString('vi-VN') + ' giờ';
+    return Math.round(sec/60) + ' phút';
+  }
+  function fmtMoney(v){
+    if(v >= 1e9) return (Math.round(v/1e8)/10).toLocaleString('vi-VN') + ' tỷ₫';
+    if(v >= 1e6) return Math.round(v/1e6).toLocaleString('vi-VN') + ' triệu₫';
+    return fmtInt(v) + '₫';
+  }
+  function fmtDateShort(d){ return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
+  function fmtDateTime(d){
+    return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+' '+
+      String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }
+  function hashStr(s){ let h=0; for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i))|0; } return Math.abs(h); }
+  function stableDelta(key){ return 8 + (hashStr(key) % 27); }
+  function niceMax(v){
+    if(v <= 0) return 10;
+    const mag = Math.pow(10, Math.floor(Math.log10(v)));
+    const norm = v/mag;
+    let step;
+    if(norm <= 1) step = 1; else if(norm <= 2) step = 2; else if(norm <= 5) step = 5; else step = 10;
+    return step*mag;
+  }
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  document.getElementById('sourceCount').textContent = fmtInt(records.length);
+
+  const DEAL_RE = /ch[ốo]t\s*(deal|đơn|sale)|t[ưu]\s*v[ấa]n\s*th[àa]nh\s*c[ôo]ng|th[àa]nh\s*c[ôo]ng|deal|conversion|k[ýy]\s*h[ơo]p\s*đ[ồo]ng/i;
+  const PRODUCT_RE = /s[ảa]n\s*ph[ẩâ]m\s*m[ớo]i|ra\s*m[ắawa]t|gi[ớo]i\s*thi[ệe]u\s*s[ảa]n\s*ph[ẩâ]m|ch[àa]o\s*s[ảa]n\s*ph[ẩâ]m|pitch/i;
+
+  function classifyPrompt(text){
+    const t = (text||'').toLowerCase();
+    const dealHits = (t.match(new RegExp(DEAL_RE.source,'gi'))||[]).length;
+    const productHits = (t.match(new RegExp(PRODUCT_RE.source,'gi'))||[]).length;
+    if(dealHits===0 && productHits===0) return 'custom';
+    return dealHits >= productHits ? 'deal_closed' : 'new_product';
+  }
+
+  function detectChannel(text){
+    const t = (text||'').toLowerCase();
+    if(t.includes('whatsapp')) return 'WhatsApp';
+    if(t.includes('zalo')) return 'Zalo';
+    if(t.includes('facebook')) return 'Facebook';
+    if(t.includes('điện thoại') || t.includes('dien thoai')) return 'Điện thoại';
+    return 'all';
+  }
+
+  const STOPWORDS = new Set(['thống','kê','các','cuộc','gọi','file','ghi','âm','theo','ngày','trong','của','một','những','với','và','cho','về','số','lượng','dashboard','tạo','xem','tôi','em','anh','chị','là','có','này','đã','sẽ']);
+  function extractKeywords(text){
+    return (text||'').toLowerCase()
+      .replace(/[^a-zà-ỹ0-9\s]/gi,' ')
+      .split(/\s+/)
+      .filter(w => w.length >= 4 && !STOPWORDS.has(w));
+  }
+
+  const state = {
+    filters: { range:30, channel:'all', q:'' },
+    sections: [],
+  };
+
+  function recordsInRange(range){
+    if(range >= 30) return records;
+    const cutoff = new Date(); cutoff.setHours(0,0,0,0); cutoff.setDate(cutoff.getDate()-(range-1));
+    return records.filter(r => r.ts >= cutoff);
+  }
+
+  function scopedRecords(){
+    const rangeSet = new Set(recordsInRange(state.filters.range).map(r=>r.id));
+    let subset = records.filter(r => rangeSet.has(r.id));
+    if(state.filters.channel !== 'all') subset = subset.filter(r => r.channel === state.filters.channel);
+    if(state.filters.q){
+      const q = state.filters.q.toLowerCase();
+      subset = subset.filter(r => r.transcript.toLowerCase().includes(q) || r.employee.toLowerCase().includes(q) || r.phone.includes(q));
+    }
+    return subset;
+  }
+
+  function sectionSubset(section, scoped){
+    let subset = scoped;
+    if(section.kind === 'new_product') subset = subset.filter(r=>r.newProductPitch);
+    else if(section.kind === 'deal_closed') subset = subset.filter(r=>r.dealClosed);
+    else if(section.kind === 'custom' && section.keywords && section.keywords.length){
+      subset = subset.filter(r => section.keywords.some(k => r.transcript.toLowerCase().includes(k)));
+    }
+    return subset;
+  }
+
+  function dailySeries(subset, days){
+    const map = new Map();
+    const dayKeys = [];
+    for(let i=days-1;i>=0;i--){
+      const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i);
+      const key = d.toISOString().slice(0,10);
+      dayKeys.push(key); map.set(key, 0);
+    }
+    subset.forEach(r => { if(map.has(r.dayKey)) map.set(r.dayKey, map.get(r.dayKey)+1); });
+    return dayKeys.map(k => ({ key:k, date:new Date(k), value:map.get(k) }));
+  }
+
+  function topCategories(subset, keyFn, limit){
+    const map = new Map();
+    subset.forEach(r=>{
+      const k = keyFn(r); if(!k) return;
+      map.set(k, (map.get(k)||0)+1);
+    });
+    return Array.from(map.entries()).map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value).slice(0, limit||6);
+  }
+
+  let uidCounter = 0;
+
+  function renderTrendChart(container, series, opts){
+    opts = opts || {};
+    const W = 640, H = 200, M = { top:16, right:14, bottom:26, left:38 };
+    const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
+    const maxVal = niceMax(Math.max(1, ...series.map(s=>s.value)) * 1.15);
+    const n = series.length;
+    const x = i => M.left + (n<=1 ? plotW/2 : (i/(n-1))*plotW);
+    const y = v => M.top + plotH - (v/maxVal)*plotH;
+
+    const linePts = series.map((s,i)=>[x(i), y(s.value)]);
+    const lineD = linePts.map((p,i)=> (i===0?'M':'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+    const areaD = lineD + ` L${x(n-1).toFixed(1)},${(M.top+plotH).toFixed(1)} L${x(0).toFixed(1)},${(M.top+plotH).toFixed(1)} Z`;
+
+    const gridSteps = 4;
+    let gridHtml = '';
+    for(let g=0; g<=gridSteps; g++){
+      const val = maxVal * g / gridSteps;
+      const gy = y(val);
+      gridHtml += `<line x1="${M.left}" y1="${gy.toFixed(1)}" x2="${W-M.right}" y2="${gy.toFixed(1)}" stroke="var(--grid)" stroke-width="1"/>`;
+      gridHtml += `<text x="${M.left-8}" y="${(gy+3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--ink-muted)">${Math.round(val).toLocaleString('vi-VN')}</text>`;
+    }
+
+    const labelEvery = Math.max(1, Math.ceil(n/6));
+    let axisHtml = '';
+    series.forEach((s,i)=>{
+      if(i % labelEvery === 0 || i === n-1){
+        axisHtml += `<text x="${x(i).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="10" fill="var(--ink-muted)">${fmtDateShort(s.date)}</text>`;
+      }
+    });
+
+    const lastVal = series[n-1] ? series[n-1].value : 0;
+    const endLabel = `<text x="${(x(n-1)-8).toFixed(1)}" y="${(y(lastVal)-10).toFixed(1)}" text-anchor="end" font-size="12" font-weight="700" fill="var(--ink)">${fmtInt(lastVal)}</text>`;
+
+    container.innerHTML = `
+      <div class="trend-wrap">
+        <svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img">
+          ${gridHtml}
+          <path d="${areaD}" fill="var(--accent)" opacity="0.10" stroke="none"></path>
+          <path d="${lineD}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+          <circle cx="${x(n-1).toFixed(1)}" cy="${y(lastVal).toFixed(1)}" r="4" fill="var(--accent)" stroke="var(--surface-card)" stroke-width="2"></circle>
+          ${endLabel}
+          ${axisHtml}
+          <line class="trend-crosshair" id="crosshair-${opts.uid}" x1="0" y1="${M.top}" x2="0" y2="${M.top+plotH}" opacity="0"></line>
+          <circle id="hoverdot-${opts.uid}" r="4.5" fill="var(--accent)" stroke="var(--surface-card)" stroke-width="2" opacity="0"></circle>
+          <rect id="hitrect-${opts.uid}" x="${M.left}" y="${M.top}" width="${plotW}" height="${plotH}" fill="transparent"></rect>
+        </svg>
+        <div class="trend-tooltip" id="tooltip-${opts.uid}"></div>
+      </div>`;
+
+    const svg = container.querySelector('svg');
+    const hitrect = container.querySelector('#hitrect-'+opts.uid);
+    const crosshair = container.querySelector('#crosshair-'+opts.uid);
+    const hoverdot = container.querySelector('#hoverdot-'+opts.uid);
+    const tooltip = container.querySelector('#tooltip-'+opts.uid);
+
+    function pointerMove(evt){
+      const rect = svg.getBoundingClientRect();
+      const clientX = (evt.touches ? evt.touches[0].clientX : evt.clientX);
+      const relX = (clientX - rect.left) / rect.width * W;
+      let idx = Math.round(((relX - M.left) / plotW) * (n-1));
+      idx = Math.max(0, Math.min(n-1, idx));
+      const px = x(idx), py = y(series[idx].value);
+      crosshair.setAttribute('x1', px.toFixed(1)); crosshair.setAttribute('x2', px.toFixed(1));
+      crosshair.setAttribute('opacity', 1);
+      hoverdot.setAttribute('cx', px.toFixed(1)); hoverdot.setAttribute('cy', py.toFixed(1)); hoverdot.setAttribute('opacity', 1);
+      const wrapRect = container.querySelector('.trend-wrap').getBoundingClientRect();
+      const tipLeft = (px/W)*wrapRect.width;
+      const tipTop = (py/H)*wrapRect.height;
+      tooltip.style.left = tipLeft + 'px';
+      tooltip.style.top = tipTop + 'px';
+      tooltip.innerHTML = `<b>${fmtInt(series[idx].value)}</b><br>${fmtDateShort(series[idx].date)}`;
+      tooltip.classList.add('is-visible');
+    }
+    function pointerLeave(){
+      crosshair.setAttribute('opacity', 0);
+      hoverdot.setAttribute('opacity', 0);
+      tooltip.classList.remove('is-visible');
+    }
+    hitrect.addEventListener('pointermove', pointerMove);
+    hitrect.addEventListener('pointerleave', pointerLeave);
+  }
+
+  function renderBarList(container, bars){
+    if(!bars.length){ container.innerHTML = '<div class="empty-note">Không có dữ liệu phù hợp.</div>'; return; }
+    const max = Math.max(...bars.map(b=>b.value), 1);
+    container.innerHTML = '<div class="bars">' + bars.map(b=>{
+      const pct = Math.max(3, Math.round((b.value/max)*100));
+      return `<div class="bar-row">
+        <span class="bar-row__label" title="${escapeHtml(b.label)}">${escapeHtml(b.label)}</span>
+        <div class="bar-row__track"><div class="bar-row__fill" style="width:${pct}%"></div></div>
+        <span class="bar-row__value tabnum">${fmtInt(b.value)}</span>
+        <div class="bar-tooltip">${escapeHtml(b.label)}: <b>${fmtInt(b.value)}</b></div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  function renderSparkline(container, series){
+    if(!series.length){ container.innerHTML=''; return; }
+    const W=120,H=28;
+    const max = Math.max(1, ...series.map(s=>s.value));
+    const n = series.length;
+    const x = i => (n<=1? W/2 : (i/(n-1))*W);
+    const y = v => H - (v/max)*(H-4) - 2;
+    const d = series.map((s,i)=>(i===0?'M':'L')+x(i).toFixed(1)+','+y(s.value).toFixed(1)).join(' ');
+    const lastX = x(n-1), lastY = y(series[n-1].value);
+    container.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none">
+      <path d="${d}" fill="none" stroke="var(--ink-muted)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"></path>
+      <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="2.6" fill="var(--accent)"></circle>
+    </svg>`;
+  }
+
+  function renderKpis(root, kpis){
+    uidCounter++;
+    root.innerHTML = kpis.map((k,i)=>{
+      const sparkId = 'spark-'+uidCounter+'-'+i;
+      return `<div class="kpi-tile">
+        <div class="kpi-tile__label">${escapeHtml(k.label)}</div>
+        <div class="kpi-tile__value tabnum">${k.value}</div>
+        ${k.sub ? `<div class="kpi-tile__sub">${escapeHtml(k.sub)}</div>` : ''}
+        ${k.delta!=null ? `<div class="kpi-tile__sub"><span class="kpi-tile__delta"><svg class="icon" viewBox="0 0 24 24"><use href="#i-up"></use></svg>${k.delta}%</span>&nbsp;so với 30 ngày trước</div>` : ''}
+        ${k.spark ? `<div class="kpi-tile__spark" id="${sparkId}"></div>` : ''}
+      </div>`;
+    }).join('');
+    kpis.forEach((k,i)=>{
+      if(k.spark){
+        const el = root.querySelector('#spark-'+uidCounter+'-'+i);
+        renderSparkline(el, k.spark.slice(-12));
+      }
+    });
+  }
+
+  function sectionKpis(section, subset, scoped){
+    const days = state.filters.range;
+    const series = dailySeries(subset, days);
+    if(section.kind === 'new_product'){
+      const pct = subset.length / Math.max(1, scoped.length) * 100;
+      const prodBars = topCategories(subset, r=>r.product, 6);
+      const top = prodBars[0] || {label:'—',value:0};
+      return [
+        { label:'File chào sản phẩm mới', value: fmtInt(subset.length), delta: stableDelta('np-'+section.id), spark: series },
+        { label:'Tỷ lệ trên tổng file ghi âm', value: fmtPct(pct) },
+        { label:'Sản phẩm được nhắc nhiều nhất', value: top.label, sub: fmtInt(top.value)+' file' },
+      ];
+    }
+    if(section.kind === 'deal_closed'){
+      const salesScope = scoped.filter(r=>r.type==='sales');
+      const pct = subset.length / Math.max(1, salesScope.length) * 100;
+      const value = subset.reduce((s,r)=>s+r.dealValue,0);
+      return [
+        { label:'Deal chốt thành công', value: fmtInt(subset.length), delta: stableDelta('deal-'+section.id), spark: series },
+        { label:'Tỷ lệ chốt / tư vấn', value: fmtPct(pct) },
+        { label:'Tổng giá trị chốt', value: fmtMoney(value) },
+      ];
+    }
+    const pct = subset.length / Math.max(1, scoped.length) * 100;
+    return [
+      { label:'Kết quả khớp với prompt', value: fmtInt(subset.length), delta: stableDelta('custom-'+section.id), spark: series },
+      { label:'Tỷ lệ trên tổng file ghi âm', value: fmtPct(pct) },
+    ];
+  }
+
+  function kindIcon(kind){ return kind==='deal_closed' ? '#i-deal' : '#i-sparkle'; }
+  function kindLabel(kind){
+    return kind==='new_product' ? 'Chào sản phẩm mới' : kind==='deal_closed' ? 'Chốt deal thành công' : 'Tùy chỉnh theo prompt';
+  }
+
+  function renderPage(){
+    const scoped = scopedRecords();
+    const days = state.filters.range;
+    const baseSeries = dailySeries(scoped, days);
+
+    document.getElementById('trendNote').textContent = days + ' ngày gần nhất';
+    document.getElementById('filterCount').innerHTML = `<strong class="tabnum">${fmtInt(scoped.length)}</strong> / ${fmtInt(records.length)} file khớp`;
+
+    const totalDur = scoped.reduce((s,r)=>s+r.duration,0);
+    const employeesActive = new Set(scoped.map(r=>r.employee)).size;
+    renderKpis(document.getElementById('baseKpiRow'), [
+      { label:'Tổng file ghi âm', value: fmtInt(scoped.length), delta: stableDelta('base-total'), spark: baseSeries },
+      { label:'Tổng thời lượng ghi âm', value: fmtDuration(totalDur) },
+      { label:'Nhân viên hoạt động', value: fmtInt(employeesActive) },
+    ]);
+    renderTrendChart(document.getElementById('baseTrend'), baseSeries, { uid: 'base' });
+
+    const listEl = document.getElementById('sectionsList');
+    if(state.sections.length === 0){
+      listEl.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state__icon"><svg class="icon" viewBox="0 0 24 24"><use href="#i-sparkle"></use></svg></div>
+          <h3>Chưa có phần phân tích nào</h3>
+          <p>Bấm "Thêm phần phân tích" và mô tả điều bạn muốn thống kê — AI sẽ quét toàn bộ file ghi âm và dựng phần tương ứng.</p>
+        </div>`;
+      return;
+    }
+
+    listEl.innerHTML = state.sections.map((s, idx) => `
+      <div class="section-card ${idx === state.sections.length - 1 ? 'is-newly-added' : ''}" data-section="${s.id}">
+        <div class="section-card__top">
+          <div>
+            <h2 class="section-card__name">${escapeHtml(s.name)}</h2>
+            <div class="section-card__meta">${kindLabel(s.kind)} · thêm lúc ${fmtDateTime(s.createdAt)}</div>
+            ${s.content ? `<p class="section-card__desc">${escapeHtml(s.content)}</p>` : ''}
+            ${s.prompt ? `<div class="prompt-pill"><svg class="icon" viewBox="0 0 24 24"><use href="${kindIcon(s.kind)}"></use></svg><span>${escapeHtml(s.prompt)}</span></div>` : ''}
+          </div>
+          <button type="button" class="section-card__remove" data-remove="${s.id}" aria-label="Xoá phần phân tích">
+            <svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-close"></use></svg>
+          </button>
+        </div>
+        <div class="section-card__body">
+          <div class="kpi-row" id="kpi-${s.id}"></div>
+          <div class="chart-grid">
+            <div class="card"><div class="card__head"><span class="card__title">Theo ngày</span></div><div id="trend-${s.id}"></div></div>
+            <div class="card"><div class="card__head"><span class="card__title">${s.kind==='deal_closed' ? 'Theo nhân viên tư vấn' : 'Theo sản phẩm'}</span></div><div id="bars1-${s.id}"></div></div>
+          </div>
+          ${s.kind!=='custom' ? `<div class="chart-grid" style="margin-top:14px;">
+            <div class="card"><div class="card__head"><span class="card__title">${s.kind==='deal_closed' ? 'Theo sản phẩm' : 'Theo nhân viên tư vấn'}</span></div><div id="bars2-${s.id}"></div></div>
+          </div>` : ''}
+        </div>
+      </div>
+    `).join('');
+
+    state.sections.forEach(s=>{
+      const subset = sectionSubset(s, scoped);
+      renderKpis(document.getElementById('kpi-'+s.id), sectionKpis(s, subset, scoped));
+      renderTrendChart(document.getElementById('trend-'+s.id), dailySeries(subset, days), { uid: s.id });
+      if(s.kind === 'deal_closed'){
+        renderBarList(document.getElementById('bars1-'+s.id), topCategories(subset, r=>r.employee, 6));
+        renderBarList(document.getElementById('bars2-'+s.id), topCategories(subset, r=>r.product, 6));
+      } else if(s.kind === 'new_product'){
+        renderBarList(document.getElementById('bars1-'+s.id), topCategories(subset, r=>r.product, 6));
+        renderBarList(document.getElementById('bars2-'+s.id), topCategories(subset, r=>r.employee, 6));
+      } else {
+        renderBarList(document.getElementById('bars1-'+s.id), topCategories(subset, r=>r.employee, 6));
+      }
+    });
+
+    listEl.querySelectorAll('[data-remove]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.remove;
+        state.sections = state.sections.filter(s=>s.id!==id);
+        renderPage();
+      });
+    });
+  }
+
+  document.getElementById('rangeSeg').addEventListener('click', (e)=>{
+    const btn = e.target.closest('[data-range]');
+    if(!btn) return;
+    state.filters.range = Number(btn.dataset.range);
+    document.querySelectorAll('#rangeSeg .seg__btn').forEach(b=>b.classList.toggle('is-active', b===btn));
+    renderPage();
+  });
+  document.getElementById('channelSelect').addEventListener('change', (e)=>{
+    state.filters.channel = e.target.value;
+    renderPage();
+  });
+  let searchDebounce;
+  document.getElementById('searchInput').addEventListener('input', (e)=>{
+    clearTimeout(searchDebounce);
+    const val = e.target.value;
+    searchDebounce = setTimeout(()=>{ state.filters.q = val; renderPage(); }, 250);
+  });
+
+  const overlay = document.getElementById('modalOverlay');
+  const inputName = document.getElementById('inputName');
+  const inputContent = document.getElementById('inputContent');
+  const inputPrompt = document.getElementById('inputPrompt');
+  const progressNote = document.getElementById('progressNote');
+  const progressText = document.getElementById('progressText');
+  const btnSubmit = document.getElementById('btnSubmitModal');
+
+  const SUGGESTIONS = {
+    new_product: {
+      name: 'Chào sản phẩm mới',
+      content: 'Theo dõi các file ghi âm có nhắc đến sản phẩm mới ra mắt, theo ngày, theo sản phẩm và theo nhân viên tư vấn.',
+      prompt: 'Thống kê số file ghi âm có chào sản phẩm mới trong 30 ngày qua, theo ngày, theo sản phẩm và theo nhân viên tư vấn',
+    },
+    deal_closed: {
+      name: 'Chốt deal thành công',
+      content: 'Theo dõi số cuộc tư vấn chốt deal thành công, tỷ lệ chốt và giá trị đơn hàng.',
+      prompt: 'Thống kê số file ghi âm tư vấn thành công đã chốt deal, tỷ lệ chốt trên tổng tư vấn, theo nhân viên và theo sản phẩm',
+    },
+  };
+
+  function openModal(){
+    overlay.classList.add('is-open');
+    progressNote.classList.remove('is-visible');
+    btnSubmit.disabled = false;
+    inputName.value=''; inputContent.value=''; inputPrompt.value='';
+  }
+  function closeModal(){ overlay.classList.remove('is-open'); }
+
+  document.getElementById('btnNewSection').addEventListener('click', openModal);
+  document.getElementById('btnCancelModal').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
+
+  document.querySelectorAll('.chip[data-suggest]').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      const s = SUGGESTIONS[chip.dataset.suggest];
+      inputName.value = s.name; inputContent.value = s.content; inputPrompt.value = s.prompt;
+    });
+  });
+
+  const PROGRESS_STEPS = ['Đang quét file ghi âm…','Đang phân tích transcript với AI…','Đang tổng hợp số liệu…'];
+  let uidSection = 0;
+
+  btnSubmit.addEventListener('click', ()=>{
+    const name = inputName.value.trim();
+    const content = inputContent.value.trim();
+    const prompt = inputPrompt.value.trim();
+    if(!name || !prompt){
+      if(!name) inputName.focus(); else inputPrompt.focus();
+      return;
+    }
+    btnSubmit.disabled = true;
+    progressNote.classList.add('is-visible');
+    let step = 0;
+    progressText.textContent = PROGRESS_STEPS[0];
+    const stepTimer = setInterval(()=>{
+      step++;
+      if(step < PROGRESS_STEPS.length) progressText.textContent = PROGRESS_STEPS[step];
+    }, 550);
+
+    setTimeout(()=>{
+      clearInterval(stepTimer);
+      const combined = prompt + ' ' + content + ' ' + name;
+      const kind = classifyPrompt(combined);
+      const detectedChannel = detectChannel(combined);
+      if(detectedChannel !== 'all'){
+        state.filters.channel = detectedChannel;
+        document.getElementById('channelSelect').value = detectedChannel;
+      }
+      const section = {
+        id: 'sec' + (++uidSection),
+        name, content, prompt, kind,
+        createdAt: new Date(),
+      };
+      if(kind === 'custom') section.keywords = extractKeywords(prompt);
+      state.sections.push(section);
+      closeModal();
+      renderPage();
+      requestAnimationFrame(()=>{
+        const el = document.querySelector('[data-section="'+section.id+'"]');
+        if(el) {
+          const vp = document.getElementById('appViewport');
+          if(vp) {
+            const vRect = vp.getBoundingClientRect();
+            const elRect = el.getBoundingClientRect();
+            const targetTop = vp.scrollTop + (elRect.top - vRect.top) - 130;
+            vp.scrollTo({ top: Math.max(0, targetTop), behavior:'smooth' });
+          }
+        }
+      });
+    }, 1750);
+  });
+
+  renderPage();
+})();
+</script>
+
+<script>
+/* ============================================================
+   Outer demo recorder — drives the real app above via real
+   clicks, records nothing, just narrates + automates.
+   ============================================================ */
+(function(){
+  const STEPS = [
+    { caption:'Dashboard file ghi âm (mặc định)', dur:2600 },
+    { caption:'Bấm "Thêm phần phân tích"', dur:2800 },
+    { caption:'Chọn gợi ý: Chào sản phẩm mới', dur:2400 },
+    { caption:'AI quét file ghi âm & tạo phần phân tích', dur:3400 },
+    { caption:'Kết quả: Chào sản phẩm mới', dur:2600 },
+    { caption:'Thêm phần: Chốt deal thành công', dur:3500 },
+    { caption:'AI quét & tổng hợp số liệu', dur:3400 },
+    { caption:'Hoàn tất: 2 phần phân tích trên dashboard', dur:3000 },
+  ];
+  const totalDuration = STEPS.reduce((a,s)=>a+s.dur,0);
+  const STORAGE_KEY = 'amberDashDemoTarget';
+
+  const state = { paused:false, elapsedMs:0 };
+  let fastForward = false;
+  let seekTarget = -1;
+
+  const captionEl = document.getElementById('caption');
+  const captionNextEl = document.getElementById('captionNext');
+  const timerEl = document.getElementById('timer');
+  const btnPlay = document.getElementById('btnPlay');
+  const btnReplay = document.getElementById('btnReplay');
+  const frame = document.getElementById('browserFrame');
+  const finger = document.getElementById('finger');
+  const stepListEl = document.getElementById('stepList');
+
+  const segFills = [];
+  const stepItems = [];
+  STEPS.forEach((s,i)=>{
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'step-item';
+    btn.dataset.idx = String(i);
+    btn.innerHTML = '<span class="step-item__fill"></span><span class="step-item__num">'+(i+1)+'</span><span class="step-item__label">'+s.caption+'</span>';
+    li.appendChild(btn);
+    stepListEl.appendChild(li);
+    segFills.push(btn.querySelector('.step-item__fill'));
+    stepItems.push(btn);
+  });
+  stepListEl.addEventListener('click', e=>{
+    const btn = e.target.closest('.step-item');
+    if(!btn) return;
+    sessionStorage.setItem(STORAGE_KEY, btn.dataset.idx);
+    location.reload();
+  });
+
+  function fmt(ms){
+    const s = Math.floor(ms/1000);
+    const m = Math.floor(s/60);
+    const ss = String(s%60).padStart(2,'0');
+    return String(m).padStart(2,'0')+':'+ss;
+  }
+
+  let lastCurrentIdx = -1;
+  function updateSegments(){
+    let cum = 0;
+    let currentIdx = STEPS.length - 1;
+    STEPS.forEach((s,i)=>{
+      const segStart = cum, segEnd = cum+s.dur;
+      let pct;
+      if(state.elapsedMs >= segEnd){ pct = 100; }
+      else if(state.elapsedMs <= segStart){ pct = 0; }
+      else { pct = (state.elapsedMs-segStart)/s.dur*100; if(currentIdx===STEPS.length-1 || i<currentIdx) currentIdx = i; }
+      segFills[i].style.width = pct+'%';
+      const item = stepItems[i];
+      item.classList.toggle('is-done', pct>=100);
+      item.classList.toggle('is-current', pct>0 && pct<100);
+      cum = segEnd;
+    });
+    if(currentIdx !== lastCurrentIdx){
+      lastCurrentIdx = currentIdx;
+      stepItems[currentIdx].scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+  }
+
+  // requestAnimationFrame clock — smooth, sub-frame progress instead of
+  // coarse 250ms ticks; pause simply stops accumulating elapsed time.
+  timerEl.textContent = fmt(0)+' / '+fmt(totalDuration);
+  updateSegments();
+  let lastFrameTime = null;
+  function frameTick(now){
+    if(lastFrameTime === null) lastFrameTime = now;
+    const delta = now - lastFrameTime;
+    lastFrameTime = now;
+    if(!state.paused){
+      state.elapsedMs += delta;
+      timerEl.textContent = fmt(state.elapsedMs)+' / '+fmt(totalDuration);
+      updateSegments();
+    }
+    requestAnimationFrame(frameTick);
+  }
+  requestAnimationFrame(frameTick);
+
+  function wait(ms){
+    if(fastForward) return Promise.resolve();
+    return new Promise(resolve=>{
+      let remaining = ms;
+      const step = 50;
+      (function tick(){
+        if(fastForward){ resolve(); return; }
+        if(state.paused){ setTimeout(tick, step); return; }
+        remaining -= step;
+        if(remaining<=0) resolve(); else setTimeout(tick, step);
+      })();
+    });
+  }
+
+  // Real wall-clock wait, ignores fastForward — used where the embedded
+  // app itself is doing real async work (its own setTimeout) that a demo
+  // "seek" cannot skip past, only pause respects it.
+  function realWait(ms){
+    return new Promise(resolve=>{
+      let remaining = ms;
+      const step = 50;
+      (function tick(){
+        if(state.paused){ setTimeout(tick, step); return; }
+        remaining -= step;
+        if(remaining<=0) resolve(); else setTimeout(tick, step);
+      })();
+    });
+  }
+
+  function goToStep(idx){
+    captionEl.textContent = STEPS[idx].caption;
+    captionNextEl.textContent = idx < STEPS.length-1
+      ? 'Tiếp theo: ' + STEPS[idx+1].caption
+      : 'Sắp lặp lại từ đầu…';
+    if(fastForward && idx===seekTarget){
+      fastForward = false;
+      state.elapsedMs = STEPS.slice(0, idx).reduce((a,s)=>a+s.dur,0);
+    }
+    updateSegments();
+  }
+
+  async function fingerTap(el){
+    if(!el) return;
+    if(fastForward){ el.click(); return; }
+    // Elements inside the modal or sticky topbar do not require viewport scroll
+    const insideModal = !!el.closest('#modalOverlay');
+    const insideSticky = !!el.closest('.topbar');
+    if(!insideModal && !insideSticky){
+      el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+      await wait(240);
+    }
+    const fRect = frame.getBoundingClientRect();
+    const tRect = el.getBoundingClientRect();
+    const x = tRect.left - fRect.left + tRect.width/2;
+    const y = tRect.top - fRect.top + tRect.height/2;
+
+    finger.style.transition = 'none';
+    finger.style.left = x+'px';
+    finger.style.top = (y+60)+'px';
+    finger.style.opacity = '0';
+    void finger.offsetWidth;
+    finger.style.transition = 'left .4s cubic-bezier(.22,.61,.36,1), top .4s cubic-bezier(.22,.61,.36,1), opacity .25s ease';
+    finger.style.opacity = '1';
+    finger.style.top = y+'px';
+    await wait(440);
+    finger.classList.add('finger--press');
+    await wait(140);
+    el.click();
+    finger.classList.remove('finger--press');
+    finger.style.opacity = '0';
+    await wait(260);
+  }
+
+  function pulse(el, on){
+    if(!el) return;
+    el.classList.toggle('is-pulsing', !!on);
+  }
+
+  async function runSequence(){
+    const pending = sessionStorage.getItem(STORAGE_KEY);
+    sessionStorage.removeItem(STORAGE_KEY);
+    if(pending !== null){
+      seekTarget = Number(pending);
+      fastForward = true;
+      state.elapsedMs = STEPS.slice(0, seekTarget).reduce((a,s)=>a+s.dur,0);
+    }
+
+    goToStep(0);
+    await wait(2600);
+
+    goToStep(1);
+    const newBtn = document.getElementById('btnNewSection');
+    pulse(newBtn, true);
+    await wait(500);
+    pulse(newBtn, false);
+    await fingerTap(newBtn);
+    await wait(900);
+
+    goToStep(2);
+    await fingerTap(document.querySelector('.chip[data-suggest="new_product"]'));
+    await wait(1000);
+
+    goToStep(3);
+    await fingerTap(document.getElementById('btnSubmitModal'));
+    await realWait(2000);
+
+    goToStep(4);
+    await wait(2600);
+
+    goToStep(5);
+    await fingerTap(document.getElementById('btnNewSection'));
+    await wait(500);
+    await fingerTap(document.querySelector('.chip[data-suggest="deal_closed"]'));
+    await wait(1000);
+
+    goToStep(6);
+    await fingerTap(document.getElementById('btnSubmitModal'));
+    await realWait(2000);
+
+    goToStep(7);
+    await wait(3500);
+
+    if(seekTarget === -1){
+      // natural end of a full run: loop forever
+      location.reload();
+    }
+  }
+
+  btnPlay.addEventListener('click', ()=>{
+    state.paused = !state.paused;
+    btnPlay.textContent = state.paused ? '▶' : '⏸';
+    btnPlay.setAttribute('aria-label', state.paused ? 'Phát tiếp' : 'Tạm dừng');
+  });
+  btnReplay.addEventListener('click', ()=>{
+    sessionStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  });
+
+  runSequence();
+})();
+</script>
+
+</body>
+</html>

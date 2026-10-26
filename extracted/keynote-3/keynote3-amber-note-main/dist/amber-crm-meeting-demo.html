@@ -1,0 +1,2554 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base CRM &times; Amber Note &mdash; Trích xuất lịch hẹn từ cuộc gọi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --bg-page: #f8fafc;
+      --bg-gradient: radial-gradient(circle at 10% 10%, rgba(219, 234, 254, 0.45) 0%, rgba(241, 245, 249, 0.7) 45%, #e2e8f0 100%);
+
+      --base-blue: #0068ff;
+      --base-blue-hover: #0056d6;
+      --base-green: #10b981;
+      --base-orange: #f59e0b;
+      --base-red: #ef4444;
+
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #94a3b8;
+
+      --shadow-phone: 0 16px 35px -8px rgba(0, 0, 0, 0.3), 0 0 0 5px #1e293b, 0 0 0 7px #64748b;
+      --shadow-card: 0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      font-family: var(--font-main);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 12px 14px 10px;
+      position: relative;
+    }
+
+    /* Container */
+    .app-container {
+      width: min(1560px, 100%);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    /* Top Hero Control Bar */
+    .top-hero-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 12px;
+      padding: 2px 4px;
+      flex-shrink: 0;
+    }
+
+    .brand-headline {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      width: fit-content;
+      border: 1px solid #bfdbfe;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2563eb;
+      animation: pulseDot 1.4s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.8); opacity: 0.4; }
+    }
+
+    .hero-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    /* 5 Steps Bar */
+    .steps-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .step-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .step-tab:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .step-tab.active {
+      background: #ffffff;
+      color: #0068ff;
+      font-weight: 700;
+      border-color: #dbeafe;
+      box-shadow: 0 2px 8px -2px rgba(0, 104, 255, 0.15);
+    }
+
+    .step-tab.is-done .step-num {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .step-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #475569;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-tab.active .step-num {
+      background: #0068ff;
+      color: #ffffff;
+    }
+
+    /* Controls */
+    .controls-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .ctrl-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      transition: all 0.15s ease;
+    }
+    .ctrl-btn:hover { background: #f8fafc; transform: scale(1.05); }
+
+    .timer-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    /* Main Showcase Grid: Left Mobile Phone + Right Activity Timeline / Details */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 16px;
+      align-items: stretch;
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      .showcase-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        overflow-y: auto;
+      }
+    }
+
+    /* =========================================================
+       SMARTPHONE FRAME (Compact)
+       ========================================================= */
+    .phone-container {
+      width: 100%;
+      max-width: 290px;
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .phone-device {
+      position: relative;
+      width: 280px;
+      height: 570px;
+      max-height: 100%;
+      background: #000000;
+      border-radius: 34px;
+      box-shadow: var(--shadow-phone);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 3px solid #1e293b;
+      flex-shrink: 0;
+      margin: auto 0;
+    }
+
+    /* Top Status Bar */
+    .phone-statusbar {
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 600;
+      z-index: 50;
+      background: transparent;
+      flex-shrink: 0;
+    }
+
+    .phone-statusbar.dark-text {
+      color: #000000;
+    }
+
+    .dynamic-island {
+      width: 80px;
+      height: 20px;
+      background: #000000;
+      border-radius: 12px;
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+    }
+
+    /* Phone Screen Container */
+    .phone-screen {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      background: #ffffff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================================================
+       TOP PUSH NOTIFICATION BANNER (Amber Note recording & sync)
+       ========================================================= */
+    .ios-top-push-banner {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      background: rgba(30, 30, 32, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      padding: 8px 10px;
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      z-index: 100;
+      transform: translateY(-90px);
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ios-top-push-banner.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .push-head {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 2px;
+    }
+
+    .push-app-icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #0068ff 0%, #004dc7 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7.5px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .push-app-name {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #60a5fa;
+      letter-spacing: 0.02em;
+    }
+
+    .push-time {
+      font-size: 8.5px;
+      color: #94a3b8;
+      margin-left: auto;
+    }
+
+    .push-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pulse-dot-red {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: pulseDot 1.2s infinite;
+    }
+
+    .push-desc {
+      font-size: 9.5px;
+      color: #cbd5e1;
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    /* =========================================================
+       SCREEN 1: PHONE HOME SCREEN (Apps grid)
+       ========================================================= */
+    .view-home-screen {
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80') center/cover;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 14px 16px;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.05);
+      transition: opacity 0.35s cubic-bezier(0.32, 0.72, 0, 1), transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      z-index: 5;
+      will-change: transform, opacity;
+    }
+    .view-home-screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+    .view-home-screen.app-open-bg {
+      opacity: 0.15;
+      transform: scale(0.92);
+    }
+
+    .home-clock-box {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 24px;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    }
+    .home-clock-time {
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .home-clock-date {
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .home-apps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px 10px;
+      margin-top: 8px;
+    }
+
+    .app-icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .app-icon-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      transition: transform 0.15s ease;
+      position: relative;
+    }
+
+    .app-icon-img:hover {
+      transform: scale(1.06);
+    }
+
+    .app-icon-img.base-crm {
+      background: #0068ff;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 104, 255, 0.45);
+      animation: appPulseGlow 1.8s infinite alternate;
+    }
+
+    @keyframes appPulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(0, 104, 255, 0.5); }
+      100% { box-shadow: 0 0 0 7px rgba(0, 104, 255, 0); }
+    }
+
+    .app-icon-img.amber-note {
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .app-icon-img.phone-app {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .app-icon-label {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* =========================================================
+       SCREEN 2: BASE CRM SALES - DEAL LIST VIEW
+       ========================================================= */
+    .view-crm-list {
+      position: absolute;
+      inset: 0;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      padding-top: 32px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0, 0, 0);
+      transition: opacity 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+                  transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      z-index: 10;
+      will-change: transform, opacity;
+    }
+    .view-crm-list.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .view-crm-list.app-open-zoom {
+      animation: zoomInApp 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    .view-crm-list.pushed-left {
+      transform: translate3d(-30%, 0, 0);
+      opacity: 0.6;
+    }
+
+    @keyframes zoomInApp {
+      0% { opacity: 0; transform: scale(0.7); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .crm-header-bar {
+      height: 38px;
+      background: #ffffff;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      flex-shrink: 0;
+    }
+
+    .crm-header-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .crm-logo-s {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .crm-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .crm-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+      font-size: 11px;
+    }
+
+    /* CRM Search & Filters */
+    .crm-search-box {
+      margin: 6px 10px 4px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 5px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+      font-size: 10.5px;
+    }
+
+    /* Metric Cards Horizontal Scroll */
+    .crm-metrics-strip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px 6px;
+      overflow-x: auto;
+      flex-shrink: 0;
+    }
+
+    .metric-card-pill {
+      flex: 1;
+      min-width: 75px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 5px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .metric-card-pill.blue {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+    }
+    .metric-card-pill.orange {
+      border-color: #fed7aa;
+      background: #fff7ed;
+    }
+    .metric-card-pill.light-blue {
+      border-color: #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .metric-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .metric-label {
+      font-size: 8.5px;
+      color: #64748b;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Deal list scroll container */
+    .crm-deals-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 10px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .deal-list-item {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+      position: relative;
+    }
+
+    .deal-list-item:hover {
+      border-color: #0068ff;
+      box-shadow: 0 2px 10px rgba(0, 104, 255, 0.12);
+    }
+
+    .deal-list-item.selected-target {
+      border: 2px solid #0068ff;
+      background: #f0f7ff;
+      animation: dealItemGlow 1.2s infinite alternate;
+    }
+
+    @keyframes dealItemGlow {
+      0% { box-shadow: 0 0 0 1px #0068ff; }
+      100% { box-shadow: 0 0 0 3px rgba(0, 104, 255, 0.35); }
+    }
+
+    .deal-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 11.5px;
+      color: #475569;
+    }
+
+    .deal-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .deal-info-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+
+    .deal-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .deal-contact {
+      font-size: 9.5px;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .deal-value {
+      font-size: 9.5px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .deal-tag-active {
+      font-size: 8.5px;
+      font-weight: 600;
+      color: #0284c7;
+      background: #e0f2fe;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: auto;
+      align-self: flex-start;
+      flex-shrink: 0;
+    }
+
+    /* Floating Add button */
+    .crm-fab-add {
+      position: absolute;
+      bottom: 50px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #0068ff;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0, 104, 255, 0.4);
+      cursor: pointer;
+      z-index: 15;
+    }
+
+    /* Bottom CRM Navigation */
+    .crm-bottom-nav {
+      height: 44px;
+      background: #ffffff;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 4px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+    }
+
+    .crm-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: #94a3b8;
+      font-size: 8.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .crm-nav-item.active {
+      color: #0068ff;
+    }
+
+    .crm-nav-item svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    /* =========================================================
+       SCREEN 3: DEAL DETAIL VIEW
+       ========================================================= */
+    .view-deal-detail {
+      position: absolute;
+      inset: 0;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      padding-top: 32px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(100%, 0, 0);
+      transition: opacity 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+                  transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      z-index: 20;
+      will-change: transform, opacity;
+    }
+    .view-deal-detail.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0);
+    }
+    .view-deal-detail.slide-in-right {
+      animation: slideInFromRight 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    .view-deal-detail.slide-out-right {
+      animation: slideOutToRight 0.32s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+
+    @keyframes slideInFromRight {
+      0% { transform: translate3d(100%, 0, 0); opacity: 0.4; }
+      100% { transform: translate3d(0, 0, 0); opacity: 1; }
+    }
+    @keyframes slideOutToRight {
+      0% { transform: translate3d(0, 0, 0); opacity: 1; }
+      100% { transform: translate3d(100%, 0, 0); opacity: 0; }
+    }
+
+    .detail-head-bar {
+      height: 36px;
+      background: #ffffff;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      flex-shrink: 0;
+    }
+
+    .btn-back-deal {
+      background: none;
+      border: none;
+      color: #0068ff;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+    }
+
+    .detail-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .detail-tabs-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #ffffff;
+      padding: 5px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 10px;
+      font-weight: 600;
+      color: #64748b;
+      overflow-x: auto;
+      flex-shrink: 0;
+    }
+
+    .detail-tab.active {
+      color: #0068ff;
+      font-weight: 700;
+      border-bottom: 2px solid #0068ff;
+      padding-bottom: 2px;
+    }
+
+    .detail-body-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 10px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .detail-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .contact-card-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .contact-circle-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contact-title-box {
+      flex: 1;
+    }
+
+    .contact-label-sub {
+      font-size: 9px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .contact-links-right {
+      display: flex;
+      gap: 6px;
+      color: #0068ff;
+      font-weight: 600;
+      font-size: 9px;
+    }
+
+    .contact-name-main {
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .contact-fields-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: #f8fafc;
+      padding: 6px 8px;
+      border-radius: 8px;
+      font-size: 9.5px;
+    }
+
+    .c-field-row {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+    }
+
+    .c-field-val {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Highlighted Phone Now Button inside Contact Card */
+    .btn-phone-now {
+      background: #0068ff;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 10.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 104, 255, 0.35);
+      transition: all 0.15s ease;
+      margin-top: 2px;
+    }
+
+    .btn-phone-now:hover {
+      background: #0056d6;
+    }
+
+    .btn-phone-now.highlight-glow {
+      animation: buttonPulseGlow 1.2s infinite alternate;
+    }
+
+    @keyframes buttonPulseGlow {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 104, 255, 0.5); }
+      100% { transform: scale(1.02); box-shadow: 0 0 0 5px rgba(0, 104, 255, 0); }
+    }
+
+    /* Detail Bottom Bar */
+    .detail-bottom-bar {
+      height: 42px;
+      background: #ffffff;
+      border-top: 1px solid #f1f5f9;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 8px;
+      z-index: 20;
+    }
+
+    .detail-btn-action {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+    }
+
+    .detail-btn-plus {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #0068ff;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* =========================================================
+       SCREEN 4: PHONE NATIVE CALL SCREEN
+       ========================================================= */
+    .view-phone-call {
+      position: absolute;
+      inset: 0;
+      background: #111827;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px 16px 28px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0, 100%, 0);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 30;
+      color: #ffffff;
+      will-change: transform, opacity;
+    }
+    .view-phone-call.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0);
+    }
+    .view-phone-call.slide-up-modal {
+      animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .view-phone-call.slide-down-modal {
+      animation: modalSlideDown 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes modalSlideUp {
+      0% { transform: translate3d(0, 100%, 0); opacity: 0; }
+      100% { transform: translate3d(0, 0, 0); opacity: 1; }
+    }
+    @keyframes modalSlideDown {
+      0% { transform: translate3d(0, 0, 0); opacity: 1; }
+      100% { transform: translate3d(0, 100%, 0); opacity: 0; }
+    }
+
+    .native-caller-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      margin-top: 6px;
+    }
+
+    .native-caller-name {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .native-caller-sub {
+      font-size: 10.5px;
+      color: #94a3b8;
+    }
+
+    .native-call-timer {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #60a5fa;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .ios-call-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px 14px;
+      width: 100%;
+      max-width: 220px;
+      margin: auto 0;
+    }
+
+    .ios-call-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .ios-action-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .ios-action-circle:hover { background: rgba(255, 255, 255, 0.25); }
+
+    .ios-action-circle svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .ios-action-label {
+      font-size: 9px;
+      color: #cbd5e1;
+    }
+
+    .ios-endcall-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #ef4444;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.45);
+      transition: transform 0.15s ease;
+      margin-bottom: 10px;
+    }
+    .ios-endcall-btn:hover { transform: scale(1.05); }
+
+    .ios-endcall-btn svg {
+      width: 22px;
+      height: 22px;
+      transform: rotate(135deg);
+    }
+
+    /* Centered AI Floating Loading Card */
+    .ai-center-loading-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.92);
+      width: 230px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+      z-index: 70;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ai-center-loading-card.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .ai-loader-orb {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orb-core {
+      font-size: 18px;
+      z-index: 2;
+      animation: pulseCore 1.4s ease-in-out infinite;
+    }
+
+    .orb-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255, 255, 255, 0.12);
+      border-top-color: #0068ff;
+      border-right-color: #38bdf8;
+      animation: spinOrb 0.9s linear infinite;
+    }
+
+    .orb-glow {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 104, 255, 0.4) 0%, transparent 70%);
+      animation: pulseGlow 1.8s ease-in-out infinite;
+    }
+
+    @keyframes spinOrb {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes pulseCore {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.5; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.25); }
+    }
+
+    .ai-loader-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.3;
+      transition: color 0.3s ease;
+    }
+    .ai-loader-title.success {
+      color: #34d399;
+    }
+
+    .ai-loader-sub {
+      font-size: 9.5px;
+      color: #94a3b8;
+      line-height: 1.3;
+    }
+
+    /* =========================================================
+       SCREEN 5: AI MEETING EXTRACTION & EMAIL CONFIRM MODAL
+       ========================================================= */
+    .view-ai-meeting-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .view-ai-meeting-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .meeting-sheet {
+      width: 100%;
+      max-height: 92%;
+      background: #ffffff;
+      border-radius: 18px 18px 0 0;
+      padding: 12px 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+      transform: translate3d(0, 100%, 0);
+      transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .view-ai-meeting-modal.active .meeting-sheet {
+      transform: translate3d(0, 0, 0);
+    }
+
+    .sheet-handle-bar {
+      width: 32px;
+      height: 3.5px;
+      background: #cbd5e1;
+      border-radius: 999px;
+      align-self: center;
+      margin-bottom: 2px;
+    }
+
+    .ai-processing-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    .ai-processing-pill.meeting-detected {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #047857;
+    }
+
+    .meeting-modal-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    /* Email Confirmation Preview Box */
+    .email-preview-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 9.5px;
+    }
+
+    .email-row-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .email-label {
+      color: #64748b;
+      font-weight: 600;
+      min-width: 60px;
+    }
+
+    .email-val {
+      color: #0f172a;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .email-val.highlight-time {
+      color: #0068ff;
+      background: #dbeafe;
+      padding: 1px 4px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .email-body-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 7px;
+      font-size: 9px;
+      line-height: 1.35;
+      color: #334155;
+    }
+
+    /* Bottom Modal Buttons */
+    .modal-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 8px;
+      border-radius: 9px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #475569;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-modal-confirm {
+      flex: 1.4;
+      padding: 8px;
+      border-radius: 9px;
+      border: none;
+      background: #0068ff;
+      color: #ffffff;
+      font-size: 10.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 104, 255, 0.35);
+      transition: all 0.15s ease;
+    }
+    .btn-modal-confirm:hover { background: #0056d6; }
+    .btn-modal-confirm:active { transform: scale(0.97); }
+
+    /* Home Bar indicator */
+    .home-bar {
+      width: 90px;
+      height: 3.5px;
+      border-radius: 999px;
+      background: #000000;
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+    }
+    .home-bar.white {
+      background: #ffffff;
+    }
+
+    /* =========================================================
+       RIGHT SIDE PANEL: AI ACTIVITY & DETAILS BREAKDOWN
+       ========================================================= */
+    .side-info-panel {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: var(--shadow-card);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+      height: 100%;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .current-step-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: #0068ff;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .activity-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .act-card-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .act-card-desc {
+      font-size: 10.5px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* Audio Waveform Live Visual */
+    .waveform-live {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 24px;
+      padding: 0 8px;
+      background: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+    .wave-bar {
+      flex: 1;
+      background: #0068ff;
+      border-radius: 99px;
+      height: 5px;
+      animation: wavePulse 0.9s infinite ease-in-out alternate;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; height: 12px; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; height: 20px; }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; height: 10px; }
+    .wave-bar:nth-child(5) { animation-delay: 0.6s; height: 16px; }
+    .wave-bar:nth-child(6) { animation-delay: 0.2s; height: 14px; }
+    @keyframes wavePulse {
+      0% { transform: scaleY(0.4); opacity: 0.5; }
+      100% { transform: scaleY(1); opacity: 1; }
+    }
+
+    /* Transcript Quote Box in Side Panel */
+    .transcript-quote-box {
+      background: #ffffff;
+      border-left: 3px solid #0068ff;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      line-height: 1.45;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      border-left-width: 3px;
+    }
+
+    .transcript-quote-box mark {
+      background: #dbeafe;
+      color: #1e40af;
+      font-weight: 700;
+      padding: 1px 3px;
+      border-radius: 3px;
+    }
+
+    /* Extraction Key-Value Table */
+    .nlp-key-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10.5px;
+    }
+    .nlp-key-table th {
+      text-align: left;
+      color: #64748b;
+      padding: 4px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 9.5px;
+    }
+    .nlp-key-table td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+    }
+
+    .badge-success-mini {
+      background: #ecfdf5;
+      color: #059669;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9.5px;
+    }
+
+    /* Tap Indicator Cursor */
+    .tap-indicator {
+      position: fixed;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(0, 104, 255, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
+      opacity: 0;
+      box-shadow: 0 0 10px rgba(0, 104, 255, 0.6);
+    }
+    .tap-indicator.active {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tap Indicator Effect -->
+  <div class="tap-indicator" id="tapCursor"></div>
+
+  <div class="app-container">
+    
+    <!-- Top Hero Header -->
+    <header class="top-hero-bar">
+      <div class="brand-headline">
+        <div class="badge-pill">
+          <span class="pulse-dot"></span>
+          <span>Base CRM &times; Amber Note</span>
+        </div>
+        <h1 class="hero-title">Gọi điện trên Base CRM &amp; Tự động trích xuất lịch hẹn từ cuộc gọi</h1>
+      </div>
+
+      <!-- 5 Steps Navigation Bar -->
+      <ul class="steps-nav" id="stepsNav">
+        <li class="step-tab active" data-step="1">
+          <span class="step-num">1</span>
+          <span>Màn hình Home</span>
+        </li>
+        <li class="step-tab" data-step="2">
+          <span class="step-num">2</span>
+          <span>Mở Deal CRM</span>
+        </li>
+        <li class="step-tab" data-step="3">
+          <span class="step-num">3</span>
+          <span>Gọi Phone Now</span>
+        </li>
+        <li class="step-tab" data-step="4">
+          <span class="step-num">4</span>
+          <span>Ghi âm &amp; Trích xuất AI</span>
+        </li>
+        <li class="step-tab" data-step="5">
+          <span class="step-num">5</span>
+          <span>Xác nhận gửi Email hẹn</span>
+        </li>
+      </ul>
+
+      <!-- Controls & Timer -->
+      <div class="controls-wrap">
+        <button class="ctrl-btn" id="btnPlayPause" title="Tạm dừng / Tiếp tục">⏸</button>
+        <button class="ctrl-btn" id="btnReplayAll" title="Phát lại từ đầu">⟲</button>
+        <div class="timer-badge" id="demoTimer">00:00 / 00:28</div>
+      </div>
+    </header>
+
+    <!-- Main Showcase Grid -->
+    <main class="showcase-grid">
+      
+      <!-- =========================================================
+           LEFT: Smartphone Screen
+           ========================================================= -->
+      <div class="phone-container">
+        <div class="phone-device" id="phoneDevice">
+          
+          <!-- Top Status Bar & Dynamic Island -->
+          <div class="phone-statusbar" id="phoneStatusBar">
+            <span id="phoneClock">10:02</span>
+            <div class="dynamic-island"></div>
+            <span>5G 􀋦</span>
+          </div>
+
+          <!-- Phone Screen Container -->
+          <div class="phone-screen" id="phoneScreen">
+            
+            <!-- Top Push Notification Banner -->
+            <div class="ios-top-push-banner" id="topPushBanner">
+              <div class="push-head">
+                <div class="push-app-icon">Ba</div>
+                <span class="push-app-name">Base.vn CRM</span>
+                <span class="push-time" id="pushTimeText">Vừa xong</span>
+              </div>
+              <div class="push-title" id="pushTitle">
+                <span class="pulse-dot-red"></span>
+                <span>Cuộc gọi đang được ghi âm</span>
+              </div>
+              <div class="push-desc" id="pushDesc">Đang tự động ghi âm cuộc gọi Base CRM với Chị Giang CFO...</div>
+            </div>
+
+            <!-- View 1: Phone Home Screen with Base CRM App Icon -->
+            <div class="view-home-screen active" id="viewHome">
+              <div class="home-clock-box">
+                <div class="home-clock-time">10:02</div>
+                <div class="home-clock-date">Thứ Tư, 16 tháng 9</div>
+              </div>
+
+              <div class="home-apps-grid">
+                <div class="app-icon-item" id="appIconBaseCrm">
+                  <div class="app-icon-img base-crm">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </div>
+                  <span class="app-icon-label">Base CRM</span>
+                </div>
+
+                <div class="app-icon-item">
+                  <div class="app-icon-img amber-note">AN</div>
+                  <span class="app-icon-label">Amber Note</span>
+                </div>
+
+                <div class="app-icon-item">
+                  <div class="app-icon-img phone-app">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  </div>
+                  <span class="app-icon-label">Phone</span>
+                </div>
+
+                <div class="app-icon-item">
+                  <div class="app-icon-img" style="background: linear-gradient(135deg, #6366f1, #4f46e5)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  </div>
+                  <span class="app-icon-label">Mail</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- View 2: Base CRM Sales - Deal List Screen -->
+            <div class="view-crm-list" id="viewCrmList">
+              <div class="crm-header-bar">
+                <div class="crm-header-left">
+                  <div class="crm-logo-s">
+                    <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                      <circle cx="12" cy="12" r="10" fill="#0068ff" />
+                      <path d="M8 9h8M8 12h8M8 15h5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </div>
+                  <span class="crm-title">Sales</span>
+                </div>
+                <div class="crm-header-actions">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                  <span>|</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </div>
+              </div>
+
+              <!-- Search Bar -->
+              <div class="crm-search-box">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Search</span>
+              </div>
+
+              <!-- Metric Pills Strip -->
+              <div class="crm-metrics-strip">
+                <div class="metric-card-pill blue">
+                  <div class="metric-top-row">
+                    <span>6</span>
+                    <span>🤝</span>
+                  </div>
+                  <span class="metric-label">Owned deals</span>
+                </div>
+                <div class="metric-card-pill orange">
+                  <div class="metric-top-row">
+                    <span>0</span>
+                    <span>🔔</span>
+                  </div>
+                  <span class="metric-label">Followings</span>
+                </div>
+                <div class="metric-card-pill light-blue">
+                  <div class="metric-top-row">
+                    <span>0</span>
+                    <span>🚩</span>
+                  </div>
+                  <span class="metric-label">Contributed</span>
+                </div>
+              </div>
+
+              <!-- Deals Scrollable List -->
+              <div class="crm-deals-scroll" id="crmDealsScroll">
+                
+                <!-- Target Deal: Deal chị Giang -->
+                <div class="deal-list-item selected-target" id="itemDealGiang">
+                  <div class="deal-avatar">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80" alt="Chị Giang CFO" />
+                  </div>
+                  <div class="deal-info-box">
+                    <div class="deal-name">Deal chị Giang</div>
+                    <div class="deal-contact">Contact: <strong>Chị Giang CFO</strong></div>
+                    <div class="deal-value">Value: $ 33,333</div>
+                  </div>
+                  <span class="deal-tag-active">Active</span>
+                </div>
+
+                <div class="deal-list-item">
+                  <div class="deal-avatar">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" alt="Giang 4" />
+                  </div>
+                  <div class="deal-info-box">
+                    <div class="deal-name">Deal 4</div>
+                    <div class="deal-contact">Contact: Chị Giang CFO</div>
+                    <div class="deal-value">Value: $ 55,555</div>
+                  </div>
+                  <span class="deal-tag-active">Active</span>
+                </div>
+
+                <div class="deal-list-item">
+                  <div class="deal-avatar">TTH</div>
+                  <div class="deal-info-box">
+                    <div class="deal-name">Deal 1</div>
+                    <div class="deal-contact">Contact: Tăng Thanh Hà</div>
+                    <div class="deal-value">Value: $ 3,444,445</div>
+                  </div>
+                  <span class="deal-tag-active">Active</span>
+                </div>
+
+                <div class="deal-list-item">
+                  <div class="deal-avatar">D2</div>
+                  <div class="deal-info-box">
+                    <div class="deal-name">Deal 2</div>
+                    <div class="deal-contact">Contact: ---</div>
+                    <div class="deal-value">Value: $ 55,555</div>
+                  </div>
+                  <span class="deal-tag-active">Active</span>
+                </div>
+              </div>
+
+              <!-- Floating + Button -->
+              <div class="crm-fab-add">+</div>
+
+              <!-- Bottom Nav -->
+              <div class="crm-bottom-nav">
+                <div class="crm-nav-item active">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="crm-nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                  <span>Pipelines</span>
+                </div>
+                <div class="crm-nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="22.01"></line><line x1="15" y1="22" x2="15" y2="22.01"></line></svg>
+                  <span>Accounts</span>
+                </div>
+                <div class="crm-nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                  <span>Contacts</span>
+                </div>
+                <div class="crm-nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                  <span>Reports</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- View 3: Deal Detail Screen -->
+            <div class="view-deal-detail" id="viewDealDetail">
+              <div class="detail-head-bar">
+                <button class="btn-back-deal" id="btnBackToDeals">&larr;</button>
+                <span class="detail-title">Deal detail</span>
+                <span style="color:#64748b; font-size:14px;">&#8942;</span>
+              </div>
+
+              <div class="detail-tabs-row">
+                <span class="detail-tab active">About</span>
+                <span class="detail-tab">Work stream (20)</span>
+                <span class="detail-tab">Action plan (0)</span>
+                <span class="detail-tab">Discuss</span>
+              </div>
+
+              <div class="detail-body-scroll" id="detailBodyScroll">
+                
+                <!-- Contact Card -->
+                <div class="detail-card" id="contactCard">
+                  <div class="contact-card-head">
+                    <div class="contact-circle-avatar">GT</div>
+                    <div class="contact-title-box">
+                      <div class="contact-label-sub">
+                        <span>Contact</span>
+                        <div class="contact-links-right">
+                          <span>Detail</span>
+                          <span>Edit</span>
+                        </div>
+                      </div>
+                      <div class="contact-name-main">Chị Giang CFO</div>
+                    </div>
+                  </div>
+
+                  <div class="contact-fields-grid">
+                    <div class="c-field-row">
+                      <span>Phone number</span>
+                      <span class="c-field-val">VN:0966375558</span>
+                    </div>
+                    <div class="c-field-row">
+                      <span>Email</span>
+                      <span class="c-field-val">giang2@yopmail.com</span>
+                    </div>
+                    <div class="c-field-row">
+                      <span>Prefix</span>
+                      <span class="c-field-val">---</span>
+                    </div>
+                  </div>
+
+                  <!-- Big Phone Now Button -->
+                  <button class="btn-phone-now highlight-glow" id="btnPhoneNow" type="button">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <span>Phone now</span>
+                  </button>
+                </div>
+
+                <!-- Account Card -->
+                <div class="detail-card">
+                  <div style="display:flex; justify-content:space-between; font-size:10.5px; font-weight:700;">
+                    <span>Account</span>
+                    <span style="color:#0068ff;">Add</span>
+                  </div>
+                  <div style="font-size:9.5px; color:#94a3b8;">No primary account</div>
+                </div>
+
+                <!-- Deal Flows Card -->
+                <div class="detail-card">
+                  <div style="display:flex; justify-content:space-between; font-size:10.5px; font-weight:700;">
+                    <span>Deal flows</span>
+                    <span>&#9662;</span>
+                  </div>
+                  <div class="contact-fields-grid">
+                    <div class="c-field-row">
+                      <span>Created at</span>
+                      <span class="c-field-val">19:23 10-09-2026</span>
+                    </div>
+                    <div class="c-field-row">
+                      <span>Current stage</span>
+                      <span class="c-field-val">Contact made (2/5)</span>
+                    </div>
+                    <div class="c-field-row">
+                      <span>Deal age</span>
+                      <span class="c-field-val">5 days</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Bottom Action Bar in Detail -->
+              <div class="detail-bottom-bar">
+                <div class="detail-btn-plus">+</div>
+                <div class="detail-btn-action" id="btnBottomCall">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.12-8.68A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"></path></svg>
+                  <span>Call</span>
+                </div>
+                <div class="detail-btn-action">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                  <span>Note</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- View 4: Phone In-Call Screen -->
+            <div class="view-phone-call" id="viewPhoneCall">
+              <div class="native-caller-box">
+                <div class="native-caller-name">Chị Giang CFO</div>
+                <div class="native-caller-sub">0966 375 558 · Base CRM Call</div>
+                <div class="native-call-timer" id="callTimerText">00:18</div>
+              </div>
+
+              <div class="ios-call-grid">
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                  </button>
+                  <span class="ios-action-label">Tắt tiếng</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="4" height="4" rx="1"></rect><rect x="10" y="4" width="4" height="4" rx="1"></rect><rect x="16" y="4" width="4" height="4" rx="1"></rect><rect x="4" y="10" width="4" height="4" rx="1"></rect><rect x="10" y="10" width="4" height="4" rx="1"></rect><rect x="16" y="10" width="4" height="4" rx="1"></rect><rect x="4" y="16" width="4" height="4" rx="1"></rect><rect x="10" y="16" width="4" height="4" rx="1"></rect><rect x="16" y="16" width="4" height="4" rx="1"></rect></svg>
+                  </button>
+                  <span class="ios-action-label">Bàn phím</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                  </button>
+                  <span class="ios-action-label">Loa ngoài</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                  </button>
+                  <span class="ios-action-label">Thêm</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                  </button>
+                  <span class="ios-action-label">FaceTime</span>
+                </div>
+                <div class="ios-call-action">
+                  <button class="ios-action-circle" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </button>
+                  <span class="ios-action-label">Danh bạ</span>
+                </div>
+              </div>
+
+              <!-- End Call Button -->
+              <button class="ios-endcall-btn" id="btnEndCall" title="Kết thúc cuộc gọi" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-6-6 19.8 19.8 0 0 1-3.12-8.68A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Floating Centered AI Loading Card -->
+            <div class="ai-center-loading-card" id="aiCenterLoadingCard">
+              <div class="ai-loader-orb">
+                <div class="orb-glow"></div>
+                <div class="orb-ring"></div>
+                <div class="orb-core" id="aiLoaderIcon">⚡</div>
+              </div>
+              <div class="ai-loader-title" id="aiLoaderTitle">Đang xử lý dữ liệu…</div>
+              <div class="ai-loader-sub" id="aiLoaderSub">AI trích xuất thông tin cuộc gọi vừa kết thúc</div>
+            </div>
+
+            <!-- View 5: AI Meeting Detected & Confirm Modal -->
+            <div class="view-ai-meeting-modal" id="viewMeetingModal">
+              <div class="meeting-sheet">
+                <div class="sheet-handle-bar"></div>
+
+                <div class="ai-processing-pill meeting-detected" id="modalAiBadge">
+                  <span>🤖</span>
+                  <span id="modalAiStatusText">Phát hiện lịch hẹn trong cuộc gọi</span>
+                </div>
+
+                <h3 class="meeting-modal-title">Gửi Email xác nhận lịch hẹn</h3>
+
+                <!-- Email Form Preview -->
+                <div class="email-preview-card">
+                  <div class="email-row-item">
+                    <span class="email-label">Tên lịch hẹn:</span>
+                    <span class="email-val">Hẹn Demo giải pháp Base CRM &amp; Ký HĐ</span>
+                  </div>
+                  <div class="email-row-item">
+                    <span class="email-label">Khách hàng:</span>
+                    <span class="email-val">Chị Giang CFO (giang2@yopmail.com)</span>
+                  </div>
+                  <div class="email-row-item">
+                    <span class="email-label">Thời gian:</span>
+                    <span class="email-val highlight-time">📅 14:30 &mdash; Thứ Năm, 18/09/2026</span>
+                  </div>
+                  <div class="email-row-item">
+                    <span class="email-label">Tóm tắt:</span>
+                    <div class="email-body-box">
+                      "Chào chị Giang, như đã trao đổi qua điện thoại, em xin phép gửi thư xác nhận buổi hẹn demo chi tiết tính năng Base CRM vào 14h30 chiều Thứ 5 tuần này..."
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="modal-actions-row">
+                  <button class="btn-modal-cancel" id="btnCancelMeeting" type="button">Cancel</button>
+                  <button class="btn-modal-confirm" id="btnConfirmMeeting" type="button">
+                    <span id="txtConfirmMeeting">Confirm &amp; Gửi Email</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Home Bar Indicator -->
+          <div class="home-bar" id="bottomHomeBar"></div>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           RIGHT: AI Activity Breakdown & Insights Side Panel
+           ========================================================= -->
+      <div class="side-info-panel">
+        <div class="panel-head">
+          <h2 class="panel-title">
+            <span>✨</span>
+            <span>Amber AI Activity &amp; NLP Insights</span>
+          </h2>
+          <span class="current-step-badge" id="stepInfoBadge">Step 1: Khởi động</span>
+        </div>
+
+        <!-- Dynamic Activity Card -->
+        <div class="activity-card" id="sideActivityCard">
+          <div class="act-card-title">
+            <span>📱</span>
+            <span id="sideStepTitle">Khởi đầu trên màn hình điện thoại</span>
+          </div>
+          <p class="act-card-desc" id="sideStepDesc">
+            Hệ thống hiển thị màn hình chính điện thoại, sẵn sàng truy cập ứng dụng Base.vn CRM để quản lý các cơ hội kinh doanh (Deals).
+          </p>
+        </div>
+
+        <!-- Audio Waveform Live Visual (Active in Step 4) -->
+        <div class="activity-card" id="sideWaveformCard" style="display: none;">
+          <div class="act-card-title">
+            <span>🎙</span>
+            <span>Trạng thái âm thanh cuộc gọi (Real-time Recording)</span>
+          </div>
+          <div class="waveform-live">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+          </div>
+        </div>
+
+        <!-- Transcript Quote Box -->
+        <div class="activity-card" id="sideTranscriptCard">
+          <div class="act-card-title">
+            <span>📝</span>
+            <span>Transcript cuộc gọi &amp; Nhận diện thực thể (NLP)</span>
+          </div>
+          <div class="transcript-quote-box" id="sideTranscriptBox">
+            "Alo chị Giang à, em gọi từ Base CRM đây ạ... Chiều Thứ 5 lúc <mark>14h30 ngày 18/09/2026</mark> em qua văn phòng demo hệ thống cho team mình và chốt hợp đồng luôn nhé!"
+          </div>
+        </div>
+
+        <!-- NLP Structured Fields Table -->
+        <div class="activity-card" id="sideNlpTableCard">
+          <div class="act-card-title">
+            <span>🔍</span>
+            <span>Dữ liệu trích xuất tự động vào Base CRM</span>
+          </div>
+          <table class="nlp-key-table">
+            <thead>
+              <tr>
+                <th>Trường thông tin</th>
+                <th>Giá trị AI trích xuất</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Khách hàng</td>
+                <td><strong>Chị Giang CFO</strong> (0966 375 558)</td>
+                <td><span class="badge-success-mini">✓ Khớp Deal</span></td>
+              </tr>
+              <tr>
+                <td>Mục đích</td>
+                <td>Hẹn Demo Base CRM &amp; Ký HĐ</td>
+                <td><span class="badge-success-mini">✓ Nhận diện</span></td>
+              </tr>
+              <tr>
+                <td>Thời gian hẹn</td>
+                <td><strong style="color:#0068ff">14:30 &mdash; 18/09/2026</strong></td>
+                <td><span class="badge-success-mini">✓ Trích xuất</span></td>
+              </tr>
+              <tr>
+                <td>Hành động kế tiếp</td>
+                <td>Tạo lịch hẹn &amp; Gửi Email xác nhận</td>
+                <td><span class="badge-success-mini" style="background:#eff6ff; color:#1d4ed8;">⚡ Tự động</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Simulation Logic -->
+  <script>
+    (function(){
+      const STEPS = [
+        { num: 1, name: "Màn hình Home", dur: 3500 },
+        { num: 2, name: "Mở Deal CRM", dur: 4500 },
+        { num: 3, name: "Gọi Phone Now", dur: 5000 },
+        { num: 4, name: "Ghi âm & Trích xuất AI", dur: 8500 },
+        { num: 5, name: "Xác nhận gửi Email hẹn", dur: 6500 }
+      ];
+      const totalDuration = STEPS.reduce((acc, s) => acc + s.dur, 0);
+
+      const state = {
+        currentStep: 1,
+        paused: false,
+        elapsedMs: 0
+      };
+
+      const stepTabs = document.querySelectorAll('.step-tab');
+      const btnPlayPause = document.getElementById('btnPlayPause');
+      const btnReplayAll = document.getElementById('btnReplayAll');
+      const demoTimer = document.getElementById('demoTimer');
+      const tapCursor = document.getElementById('tapCursor');
+
+      // Screens & Views
+      const viewHome = document.getElementById('viewHome');
+      const viewCrmList = document.getElementById('viewCrmList');
+      const viewDealDetail = document.getElementById('viewDealDetail');
+      const viewPhoneCall = document.getElementById('viewPhoneCall');
+      const viewMeetingModal = document.getElementById('viewMeetingModal');
+      const aiCenterLoadingCard = document.getElementById('aiCenterLoadingCard');
+      const aiLoaderTitle = document.getElementById('aiLoaderTitle');
+      const aiLoaderSub = document.getElementById('aiLoaderSub');
+      const aiLoaderIcon = document.getElementById('aiLoaderIcon');
+      const topPushBanner = document.getElementById('topPushBanner');
+      const pushTitle = document.getElementById('pushTitle');
+      const pushDesc = document.getElementById('pushDesc');
+      const pushTimeText = document.getElementById('pushTimeText');
+      const phoneStatusBar = document.getElementById('phoneStatusBar');
+      const bottomHomeBar = document.getElementById('bottomHomeBar');
+
+      // Interactive items
+      const appIconBaseCrm = document.getElementById('appIconBaseCrm');
+      const itemDealGiang = document.getElementById('itemDealGiang');
+      const btnPhoneNow = document.getElementById('btnPhoneNow');
+      const btnBackToDeals = document.getElementById('btnBackToDeals');
+      const btnEndCall = document.getElementById('btnEndCall');
+      const btnCancelMeeting = document.getElementById('btnCancelMeeting');
+      const btnConfirmMeeting = document.getElementById('btnConfirmMeeting');
+      const txtConfirmMeeting = document.getElementById('txtConfirmMeeting');
+      const detailBodyScroll = document.getElementById('detailBodyScroll');
+
+      // Side panel elements
+      const stepInfoBadge = document.getElementById('stepInfoBadge');
+      const sideStepTitle = document.getElementById('sideStepTitle');
+      const sideStepDesc = document.getElementById('sideStepDesc');
+      const sideWaveformCard = document.getElementById('sideWaveformCard');
+
+      let stepTimers = [];
+
+      function clearTimers(){
+        stepTimers.forEach(t => clearTimeout(t));
+        stepTimers = [];
+      }
+
+      function addTimer(fn, delay){
+        const t = setTimeout(fn, delay);
+        stepTimers.push(t);
+      }
+
+      function fmtTime(ms){
+        const s = Math.floor(ms / 1000);
+        const m = Math.floor(s / 60);
+        const ss = String(s % 60).padStart(2, '0');
+        return String(m).padStart(2, '0') + ':' + ss;
+      }
+
+      function showTapAt(el, callback, delay = 500){
+        if(!el) return;
+        const rect = el.getBoundingClientRect();
+        tapCursor.style.left = (rect.left + rect.width / 2) + 'px';
+        tapCursor.style.top = (rect.top + rect.height / 2) + 'px';
+        tapCursor.classList.add('active');
+
+        setTimeout(() => {
+          tapCursor.classList.remove('active');
+          if(callback) callback();
+        }, delay);
+      }
+
+      function setStepActive(stepNum){
+        state.currentStep = stepNum;
+        stepTabs.forEach(tab => {
+          const s = parseInt(tab.getAttribute('data-step'), 10);
+          tab.classList.toggle('active', s === stepNum);
+          tab.classList.toggle('is-done', s < stepNum);
+        });
+      }
+
+      stepTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const s = parseInt(tab.getAttribute('data-step'), 10);
+          jumpToStep(s);
+        });
+      });
+
+      function jumpToStep(stepNum){
+        clearTimers();
+        let targetMs = 0;
+        for(let i = 0; i < stepNum - 1; i++){
+          targetMs += STEPS[i].dur;
+        }
+        state.elapsedMs = targetMs;
+        executeStepVisuals(stepNum);
+      }
+
+      function resetAllViews(){
+        [viewHome, viewCrmList, viewDealDetail, viewPhoneCall, viewMeetingModal].forEach(v => {
+          v.classList.remove('active', 'pushed-left', 'slide-in-right', 'slide-out-right', 'slide-up-modal', 'slide-down-modal', 'app-open-zoom', 'app-open-bg');
+        });
+        if(aiCenterLoadingCard){
+          aiCenterLoadingCard.classList.remove('show');
+          aiLoaderTitle.classList.remove('success');
+        }
+      }
+
+      function executeStepVisuals(stepNum){
+        clearTimers();
+        setStepActive(stepNum);
+        resetAllViews();
+
+        topPushBanner.classList.remove('show');
+        sideWaveformCard.style.display = 'none';
+        phoneStatusBar.classList.remove('dark-text');
+        bottomHomeBar.classList.remove('white');
+
+        if(stepNum === 1){
+          // STEP 1: Phone Home Screen
+          viewHome.classList.add('active');
+          bottomHomeBar.classList.add('white');
+
+          stepInfoBadge.textContent = "Step 1: Màn hình Home";
+          sideStepTitle.textContent = "Màn hình điện thoại chính";
+          sideStepDesc.textContent = "Khởi đầu tại màn hình Home của điện thoại với các ứng dụng Base CRM, Phone và Mail.";
+
+          // Auto tap Base CRM app icon after 1.8s -> zoom open Base CRM
+          addTimer(() => {
+            showTapAt(appIconBaseCrm, () => {
+              viewHome.classList.add('app-open-bg');
+              viewCrmList.classList.add('active', 'app-open-zoom');
+              phoneStatusBar.classList.add('dark-text');
+              bottomHomeBar.classList.remove('white');
+            });
+          }, 1800);
+        }
+        else if(stepNum === 2){
+          // STEP 2: Base CRM Deals List -> Tap "Deal chị Giang" -> Slide in Deal Detail
+          viewCrmList.classList.add('active');
+          phoneStatusBar.classList.add('dark-text');
+
+          stepInfoBadge.textContent = "Step 2: Mở Deal CRM";
+          sideStepTitle.textContent = "Truy cập danh sách Deal trên Base CRM";
+          sideStepDesc.textContent = "Người dùng mở ứng dụng Base CRM, xem danh sách cơ hội bán hàng (Owned deals), và bấm chọn 'Deal chị Giang' (Chị Giang CFO - $33,333).";
+
+          // Auto tap Deal chị Giang after 1.5s -> Push transition
+          addTimer(() => {
+            showTapAt(itemDealGiang, () => {
+              viewCrmList.classList.add('pushed-left');
+              viewDealDetail.classList.add('active', 'slide-in-right');
+            });
+          }, 1500);
+        }
+        else if(stepNum === 3){
+          // STEP 3: In Deal Detail -> Scroll down to Contact -> Tap "Phone now" -> Phone Call Modal Slides Up
+          viewCrmList.classList.add('pushed-left');
+          viewDealDetail.classList.add('active');
+          phoneStatusBar.classList.add('dark-text');
+
+          stepInfoBadge.textContent = "Step 3: Gọi Phone Now";
+          sideStepTitle.textContent = "Bấm 'Phone now' để gọi điện cho khách";
+          sideStepDesc.textContent = "Tại màn hình Deal detail của Chị Giang CFO (0966 375 558), nhân viên bấm nút 'Phone now' để thực hiện cuộc gọi trực tiếp.";
+
+          // Scroll slightly and tap Phone Now
+          detailBodyScroll.scrollTo({ top: 30, behavior: 'smooth' });
+
+          addTimer(() => {
+            showTapAt(btnPhoneNow, () => {
+              viewPhoneCall.classList.add('active', 'slide-up-modal');
+              phoneStatusBar.classList.remove('dark-text');
+              bottomHomeBar.classList.add('white');
+            });
+          }, 2000);
+        }
+        else if(stepNum === 4){
+          // STEP 4: Ghi âm cuộc gọi -> Transcript -> Mở lại Base CRM Detail -> Loading AI phát hiện lịch hẹn
+          viewPhoneCall.classList.add('active');
+          bottomHomeBar.classList.add('white');
+          sideWaveformCard.style.display = 'flex';
+
+          stepInfoBadge.textContent = "Step 4: Ghi âm & Trích xuất AI";
+          sideStepTitle.textContent = "Ghi âm, Transcript & Phát hiện lịch hẹn trong Base CRM";
+          sideStepDesc.textContent = "Cuộc gọi được tự động ghi âm và đồng bộ lên Base Cloud. AI tự động phân tích hội thoại và trích xuất lịch hẹn gặp demo.";
+
+          // Phase 4A: Active Call Recording Notification
+          topPushBanner.classList.add('show');
+          pushTimeText.textContent = "Vừa xong";
+          pushTitle.innerHTML = '<span class="pulse-dot-red"></span><span>Cuộc gọi đang được ghi âm</span>';
+          pushDesc.textContent = 'Base.vn CRM đang tự động ghi âm cuộc gọi Base CRM với Chị Giang CFO...';
+
+          // Phase 4B: End call at 2.8s -> Return to Home -> Notification sync
+          addTimer(() => {
+            viewPhoneCall.classList.remove('slide-up-modal');
+            viewPhoneCall.classList.add('slide-down-modal');
+            viewHome.classList.add('active');
+            sideWaveformCard.style.display = 'none';
+
+            pushTitle.innerHTML = '<span>Đang tải file ghi âm lên hệ thống…</span>';
+            pushDesc.textContent = 'Đang đồng bộ tệp âm thanh cuộc gọi lên Base Cloud.';
+
+            setTimeout(() => {
+              viewPhoneCall.classList.remove('active', 'slide-down-modal');
+            }, 350);
+          }, 2800);
+
+          // Phase 4C: Notification transcript & summary at 4.2s
+          addTimer(() => {
+            pushTitle.innerHTML = '<span style="color:#fbbf24">⚡ Đang transcript &amp; tóm tắt…</span>';
+            pushDesc.textContent = 'AI phân tích cuộc gọi và phát hiện lịch hẹn gặp demo khách hàng.';
+          }, 4200);
+
+          // Phase 4D: Re-open Base CRM Deal Detail + Show centered AI Processing Dialog at 5.6s
+          addTimer(() => {
+            topPushBanner.classList.remove('show');
+            viewHome.classList.remove('active');
+            viewDealDetail.classList.add('active');
+            phoneStatusBar.classList.add('dark-text');
+            bottomHomeBar.classList.remove('white');
+
+            aiCenterLoadingCard.classList.add('show');
+            aiLoaderTitle.textContent = "Đang xử lý dữ liệu…";
+            aiLoaderTitle.classList.remove('success');
+            aiLoaderIcon.textContent = "⚡";
+            aiLoaderSub.textContent = "AI phân tích nội dung đoạn ghi âm cuộc gọi...";
+          }, 5600);
+
+          // Phase 4E: AI Detects Meeting inside Dialog at 7.2s
+          addTimer(() => {
+            aiLoaderTitle.textContent = "Phát hiện có lịch hẹn trong đoạn hội thoại!";
+            aiLoaderTitle.classList.add('success');
+            aiLoaderIcon.textContent = "✨";
+            aiLoaderSub.textContent = "📅 Hẹn Demo Base CRM & Ký hợp đồng · 14h30 Thứ Năm (18/09)";
+          }, 7200);
+        }
+        else if(stepNum === 5){
+          // STEP 5: Re-open Base CRM -> Modal AI Email Confirm Slides Up -> Confirm -> Email Sent
+          viewDealDetail.classList.add('active');
+          phoneStatusBar.classList.add('dark-text');
+          bottomHomeBar.classList.remove('white');
+
+          aiCenterLoadingCard.classList.remove('show');
+          viewMeetingModal.classList.add('active');
+
+          stepInfoBadge.textContent = "Step 5: Xác nhận gửi Email hẹn";
+          sideStepTitle.textContent = "Xác nhận & Gửi Email đặt lịch hẹn cho khách";
+          sideStepDesc.textContent = "Ứng dụng Base CRM hiển thị form gửi email xác nhận lịch hẹn kèm thời gian và nội dung tóm tắt. Nhân viên bấm 'Confirm' để gửi email cho khách.";
+
+          txtConfirmMeeting.textContent = "Confirm & Gửi Email";
+          btnConfirmMeeting.disabled = false;
+          btnConfirmMeeting.style.background = "#0068ff";
+
+          // Auto click Confirm after 2.6s
+          addTimer(() => {
+            showTapAt(btnConfirmMeeting, () => {
+              txtConfirmMeeting.textContent = "✓ Đã gửi Email thành công!";
+              btnConfirmMeeting.style.background = "#10b981";
+            });
+          }, 2600);
+        }
+      }
+
+      // Button listeners
+      appIconBaseCrm.addEventListener('click', () => {
+        showTapAt(appIconBaseCrm, () => jumpToStep(2));
+      });
+      itemDealGiang.addEventListener('click', () => {
+        showTapAt(itemDealGiang, () => jumpToStep(3));
+      });
+      btnPhoneNow.addEventListener('click', () => {
+        showTapAt(btnPhoneNow, () => jumpToStep(4));
+      });
+      btnBackToDeals.addEventListener('click', () => {
+        viewDealDetail.classList.add('slide-out-right');
+        viewCrmList.classList.remove('pushed-left');
+        viewCrmList.classList.add('active');
+        setTimeout(() => {
+          jumpToStep(2);
+        }, 340);
+      });
+      btnEndCall.addEventListener('click', () => {
+        jumpToStep(5);
+      });
+      btnCancelMeeting.addEventListener('click', () => {
+        viewMeetingModal.classList.remove('active');
+      });
+      btnConfirmMeeting.addEventListener('click', () => {
+        showTapAt(btnConfirmMeeting, () => {
+          txtConfirmMeeting.textContent = "✓ Đã gửi Email thành công!";
+          btnConfirmMeeting.style.background = "#10b981";
+        });
+      });
+
+      // Timer & Loop Controller
+      let lastTimestamp = performance.now();
+      function tick(now){
+        const delta = now - lastTimestamp;
+        lastTimestamp = now;
+
+        if(!state.paused){
+          state.elapsedMs += delta;
+          if(state.elapsedMs >= totalDuration){
+            state.elapsedMs = 0;
+            executeStepVisuals(1);
+          } else {
+            // Determine which step corresponds to elapsedMs
+            let accumulated = 0;
+            for(let i = 0; i < STEPS.length; i++){
+              accumulated += STEPS[i].dur;
+              if(state.elapsedMs < accumulated){
+                const currentS = STEPS[i].num;
+                if(state.currentStep !== currentS){
+                  executeStepVisuals(currentS);
+                }
+                break;
+              }
+            }
+          }
+          demoTimer.textContent = fmtTime(state.elapsedMs) + ' / ' + fmtTime(totalDuration);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      btnPlayPause.addEventListener('click', () => {
+        state.paused = !state.paused;
+        btnPlayPause.textContent = state.paused ? '▶' : '⏸';
+      });
+
+      btnReplayAll.addEventListener('click', () => {
+        state.elapsedMs = 0;
+        state.paused = false;
+        btnPlayPause.textContent = '⏸';
+        executeStepVisuals(1);
+      });
+
+      // Init on step 1
+      executeStepVisuals(1);
+      requestAnimationFrame(tick);
+
+    })();
+  </script>
+</body>
+</html>
